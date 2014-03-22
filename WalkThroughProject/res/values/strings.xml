@@ -1,5 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">WalkThrough</string>
+    <string name="title_activity_register">Registro</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <string name="register_nickname_hint">Nombre de usuario</string>
+    <string name="register_password1_hint">Contraseña</string>
+    <string name="register_password2_hint">Conf. Contraseña</string>
+    <string name="register_name_hint">Nombre</string>
+    <string name="register_lastname_hint">Apellidos</string>
+    <string name="register_born_title">Fecha de nacimiento</string>
+    <string name="register_gender_title">Sexo</string>
+    <string name="register_height_title">Altura</string>
+    <string name="register_height_hint">Altura (cm)</string>
+    <string name="register_weight_hint">Peso (kg)</string>
+    <string name="register_done_title">OK</string>
+    
+    <string name="sexpicker_title">Sexo</string>
 
 </resources>
