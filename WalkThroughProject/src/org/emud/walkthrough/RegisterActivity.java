@@ -7,6 +7,7 @@ import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.GenderPickerDialogFragment;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
 import org.emud.walkthrough.webclient.UsedNicknameException;
+import org.emud.walkthrough.webclient.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.os.Bundle;
@@ -65,7 +66,9 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 			return true;
 		}
 		
-		if(!WebClient.checkConnection()){
+		WebClient client = ((WalkThroughApplication) getApplicationContext()).getDefaultWebClient();
+		
+		if(!client.checkConnection()){
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;
 		}
@@ -75,8 +78,6 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		String lastName = ((TextView)findViewById(R.id.register_lastname)).getText().toString();
 		int height = Integer.valueOf(((TextView)findViewById(R.id.register_height)).getText().toString()).intValue();
 		double weight = Double.valueOf(((TextView)findViewById(R.id.register_weight)).getText().toString()).intValue();
-		
-		WebClient client = ((WalkThroughApplication) getApplicationContext()).getDefaultWebClient();
 		
 		int id = 0; 
 		try {
