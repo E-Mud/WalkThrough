@@ -8,7 +8,6 @@ import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.GenderPickerDialogFragment;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
 import org.emud.walkthrough.webclient.UsedNicknameException;
-import org.emud.walkthrough.webclient.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.os.Bundle;
@@ -49,8 +48,7 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		gender = 0;
 		genderView = ((TextView)findViewById(R.id.register_gender));
 		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
-		
-		((TextView)findViewById(R.id.register_borndate)).setText(getResources().getStringArray(R.array.genderpicker_stringarray)[0]);
+		genderView.setOnClickListener(this);
 	}
 
 	@Override
@@ -94,8 +92,10 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		Intent intent = new Intent();
 		intent.putExtra("id", id);
 		intent.putExtra("password", password);
-		intent.putExtra("nickname", nickname);
+		intent.putExtra("username", nickname);
 		setResult(Activity.RESULT_OK, intent);
+		
+		finish();
 		
 		return true;
 	}

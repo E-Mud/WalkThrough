@@ -5,7 +5,6 @@
     <string name="title_activity_register">Registro</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    
     <string name="register_nickname_hint">Nombre de usuario</string>
     <string name="register_password1_hint">Contraseña</string>
     <string name="register_password2_hint">Conf. Contraseña</string>
@@ -17,19 +16,16 @@
     <string name="register_height_hint">Altura (cm)</string>
     <string name="register_weight_hint">Peso (kg)</string>
     <string name="register_done_title">OK</string>
-    
     <string name="genderpicker_title">Sexo</string>
-    
-    
+
     <!-- Dialog -->
     <string name="accept_label">Aceptar</string>
-    
     <string name="und_title">Nombre de usuario erróneo</string>
     <string name="und_message">El nombre de usuario ya esta en uso. Elija uno distinto.</string>
-    
     <string name="pned_title">Contraseña incorrecta</string>
     <string name="pned_message">Los campos Contraseña y Conf. Contraseña deben coincidir.</string>
-    
     <string name="cfd_title">Fallo de conexion</string>
     <string name="cfd_message">No ha sido posible conectarse al servicio web. Compruebe su conexion a internet y pruebe más tarde.</string>
+    <string name="title_activity_main">MainActivity</string>
+
 </resources>

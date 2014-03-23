@@ -67,7 +67,6 @@
             android:id="@+id/register_borndate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="asdasdsadas"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
@@ -88,7 +87,6 @@
             android:id="@+id/register_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmallPopupMenu" />
 
     </LinearLayout>
