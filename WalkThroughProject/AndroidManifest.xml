@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.emud.walkthrough"
     android:versionCode="1"
@@ -8,10 +9,15 @@
         android:targetSdkVersion="16" />
 
     <application
+        android:name="org.emud.walkthrough.WalkThroughApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <activity
+            android:name="org.emud.walkthrough.RegisterActivity"
+            android:label="@string/title_activity_register" >
+        </activity>
     </application>
 
 </manifest>

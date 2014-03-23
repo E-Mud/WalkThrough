@@ -1,0 +1,33 @@
+package org.emud.walkthrough.webclient;
+
+import java.util.GregorianCalendar;
+
+public class StubWebClient implements WebClient{
+
+	@Override
+	public boolean checkConnection(){
+		//TODO
+		return true;
+	}
+	
+	@Override
+	public int registerNewUser(String nickname, String password, String name, String lastName,
+			GregorianCalendar borndate, int sex, int height, double weight)
+			throws ConnectionFailedException, UsedNicknameException{
+		//TODO
+		return 0;
+	}
+
+	@Override
+	public String getAuthToken(String userName, String password)
+			throws ConnectionFailedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAuthToken(String authToken) {
+		// TODO Auto-generated method stub
+		
+	}
+}
