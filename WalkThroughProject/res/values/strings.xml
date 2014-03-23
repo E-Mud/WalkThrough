@@ -18,6 +18,18 @@
     <string name="register_weight_hint">Peso (kg)</string>
     <string name="register_done_title">OK</string>
     
-    <string name="sexpicker_title">Sexo</string>
-
+    <string name="genderpicker_title">Sexo</string>
+    
+    
+    <!-- Dialog -->
+    <string name="accept_label">Aceptar</string>
+    
+    <string name="und_title">Nombre de usuario erróneo</string>
+    <string name="und_message">El nombre de usuario ya esta en uso. Elija uno distinto.</string>
+    
+    <string name="pned_title">Contraseña incorrecta</string>
+    <string name="pned_message">Los campos Contraseña y Conf. Contraseña deben coincidir.</string>
+    
+    <string name="cfd_title">Fallo de conexion</string>
+    <string name="cfd_message">No ha sido posible conectarse al servicio web. Compruebe su conexion a internet y pruebe más tarde.</string>
 </resources>

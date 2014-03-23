@@ -22,8 +22,8 @@ public class GenderPickerDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		return new AlertDialog.Builder(getActivity())
-				.setTitle(getActivity().getResources().getString(R.string.sexpicker_title))
-				.setSingleChoiceItems(R.array.sexpicker_stringarray, getArguments().getInt("which"), (OnClickListener) getActivity())
+				.setTitle(getActivity().getResources().getString(R.string.genderpicker_title))
+				.setSingleChoiceItems(R.array.genderpicker_stringarray, getArguments().getInt("which"), (OnClickListener) getActivity())
 				.create();
 				
 	}

@@ -3,6 +3,7 @@ package org.emud.walkthrough;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.GenderPickerDialogFragment;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
@@ -32,8 +33,8 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 			CONNECTION_FAILED_DIALOG = 4;
 	
 	private GregorianCalendar bornDate;
-	private int sex;
-	private TextView bornDateView, sexView;
+	private int gender;
+	private TextView bornDateView, genderView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +46,11 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		bornDateView.setText(""+bornDate.get(Calendar.DAY_OF_MONTH)+"/"+bornDate.get(Calendar.MONTH)+"/"+bornDate.get(Calendar.YEAR));
 		bornDateView.setOnClickListener(this);
 		
-		sex = 0;
-		sexView = ((TextView)findViewById(R.id.register_gender));
-		sexView.setText(getResources().getStringArray(R.array.sexpicker_stringarray)[sex]);
+		gender = 0;
+		genderView = ((TextView)findViewById(R.id.register_gender));
+		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
 		
-		((TextView)findViewById(R.id.register_borndate)).setText(getResources().getStringArray(R.array.sexpicker_stringarray)[0]);
+		((TextView)findViewById(R.id.register_borndate)).setText(getResources().getStringArray(R.array.genderpicker_stringarray)[0]);
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		
 		int id = 0; 
 		try {
-			id = client.registerNewUser(nickname, password, name, lastName, bornDate, sex, height, weight);
+			id = client.registerNewUser(nickname, password, name, lastName, bornDate, gender, height, weight);
 		} catch (ConnectionFailedException e) {
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;
@@ -107,17 +108,20 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 			dialogFragment.show(getSupportFragmentManager(), "datePickerDialog");
 			break;
 		case SEX_PICKER_DIALOG:
-			dialogFragment = GenderPickerDialogFragment.newInstance(sex);
-			dialogFragment.show(getSupportFragmentManager(), "sexPickerDialog");
+			dialogFragment = GenderPickerDialogFragment.newInstance(gender);
+			dialogFragment.show(getSupportFragmentManager(), "genderPickerDialog");
 			break;
 		case USED_NICKNAME_DIALOG:
-			//TODO
+			dialogFragment = AlertDialogFragment.newInstance(R.string.und_title, R.string.und_message);
+			dialogFragment.show(getSupportFragmentManager(), "usedNickNameDialog");
 			break;
 		case PASSWORDS_NOT_EQUAL_DIALOG:
-			//TODO
+			dialogFragment = AlertDialogFragment.newInstance(R.string.pned_title, R.string.pned_message);
+			dialogFragment.show(getSupportFragmentManager(), "passwordsNotEqualDialog");
 			break;
 		case CONNECTION_FAILED_DIALOG:
-			//TODO
+			dialogFragment = AlertDialogFragment.newInstance(R.string.cfd_title, R.string.cfd_message);
+			dialogFragment.show(getSupportFragmentManager(), "connectionFailedDialog");
 			break;
 		}
 	}
@@ -142,8 +146,8 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		sex = which;
-		sexView.setText(getResources().getStringArray(R.array.sexpicker_stringarray)[sex]);
+		gender = which;
+		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
 	}
 
 }
