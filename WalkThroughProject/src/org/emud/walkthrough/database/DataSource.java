@@ -4,6 +4,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.emud.walkthrough.model.User;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -72,41 +74,41 @@ public class DataSource implements UserDataSource{
 		}
 	}
 
+
 	@Override
-	public void createProfile(String nickname, int wsId, String name, String lastName,
-			GregorianCalendar borndate, int gender, int height, double weight) {
+	public void createProfile(User user) {
 		ContentValues values = new ContentValues();
 		
-		values.put(PROFILE_COLS[0], nickname);
-		values.put(PROFILE_COLS[1], wsId);
-		values.put(PROFILE_COLS[2], name);
-		values.put(PROFILE_COLS[3], lastName);
-		values.put(PROFILE_COLS[4], borndate.getTimeInMillis());
-		values.put(PROFILE_COLS[5], gender);
-		values.put(PROFILE_COLS[6], height);
-		values.put(PROFILE_COLS[7], weight);
+		values.put(PROFILE_COLS[0], user.getUsername());
+		values.put(PROFILE_COLS[1], user.getWebServiceId());
+		values.put(PROFILE_COLS[2], user.getName());
+		values.put(PROFILE_COLS[3], user.getLastname());
+		values.put(PROFILE_COLS[4], user.getBorndate().getTimeInMillis());
+		values.put(PROFILE_COLS[5], user.getGender());
+		values.put(PROFILE_COLS[6], user.getHeight());
+		values.put(PROFILE_COLS[7], user.getWeight());
 		
 		db.insert(PROFILE_NAME, null, values);
 	}
 
 	@Override
-	public Map<String, Object> getProfile() {
+	public User getProfile() {
 		Cursor cursor;
-		Map<String, Object> result = new HashMap<String, Object>();
+		User result = new User();
 		
 		cursor = db.query(PROFILE_NAME, PROFILE_COLS, null, null, null, null, null);
 		cursor.moveToFirst(); //XXX Esta linea es un poco estupida
 		
-		result.put(PROFILE_COLS[0], cursor.getInt(0));
-		result.put(PROFILE_COLS[1], cursor.getString(1));
-		result.put(PROFILE_COLS[2], cursor.getString(2));
-		result.put(PROFILE_COLS[3], cursor.getString(3));
+		result.setWebServiceId(cursor.getInt(0));
+		result.setUsername(cursor.getString(1));
+		result.setName(cursor.getString(2));
+		result.setLastname(cursor.getString(3));
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTimeInMillis(cursor.getLong(4));
-		result.put(PROFILE_COLS[4], calendar);
-		result.put(PROFILE_COLS[5], cursor.getInt(5));
-		result.put(PROFILE_COLS[6], cursor.getInt(6));
-		result.put(PROFILE_COLS[7], cursor.getString(7));
+		result.setBorndate(calendar);
+		result.setGender(cursor.getInt(5));
+		result.setHeight(cursor.getInt(6));
+		result.setWeight(cursor.getDouble(7));
 		
 		return result;
 	}

@@ -67,6 +67,13 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	public boolean containsRegisteredUser(String username) {
+		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
+		
+		return registeredUsers.contains(username);
+	}
+	
 	public boolean addUser(String user){
 		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);

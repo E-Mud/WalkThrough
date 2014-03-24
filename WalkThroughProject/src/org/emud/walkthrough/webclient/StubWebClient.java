@@ -2,6 +2,8 @@ package org.emud.walkthrough.webclient;
 
 import java.util.GregorianCalendar;
 
+import org.emud.walkthrough.model.User;
+
 public class StubWebClient implements WebClient{
 
 	@Override
@@ -29,5 +31,19 @@ public class StubWebClient implements WebClient{
 	public void setAuthToken(String authToken) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean logIn(String username, String password)
+			throws ConnectionFailedException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public User getProfile() throws ConnectionFailedException,
+			UnauthorizedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

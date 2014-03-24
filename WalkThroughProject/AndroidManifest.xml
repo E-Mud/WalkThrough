@@ -18,6 +18,10 @@
             android:name="org.emud.walkthrough.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity
+            android:name="org.emud.walkthrough.LogInActivity"
+            android:label="@string/title_activity_log_in" >
+        </activity>
     </application>
 
 </manifest>
