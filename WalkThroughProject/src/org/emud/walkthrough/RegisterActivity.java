@@ -148,6 +148,7 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 	public void onClick(DialogInterface dialog, int which) {
 		gender = which;
 		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
+		dialog.dismiss();
 	}
 
 }

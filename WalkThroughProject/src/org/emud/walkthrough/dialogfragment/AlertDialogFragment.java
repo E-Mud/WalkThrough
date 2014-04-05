@@ -32,8 +32,8 @@ public class AlertDialogFragment extends DialogFragment implements OnClickListen
 	}
 
 	@Override
-	public void onClick(DialogInterface arg0, int arg1) {
-		getDialog().dismiss();
+	public void onClick(DialogInterface dialog, int arg1) {
+		dialog.dismiss();
 	}
 
 }

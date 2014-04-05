@@ -32,6 +32,7 @@
     
     
     <string name="title_activity_log_in">Log In</string>
+    <string name="title_activity_settings">Preferencias</string>
     
     
     
@@ -48,5 +49,13 @@
     
     
     <string name="login_register_text">Registrarse</string>
+    
+    
+    <!-- Settings -->
+    <string name="settings_session_title">Sesion</string>
+    <string name="settings_useraccount_title">Cuenta de usuario</string>
+    <string name="settings_falling_title">Detección de caidas</string>
+    <string name="settings_delete_title">Borrar usuario</string>
+    <string name="settings_logout_title">Cerrar sesión</string>
 
 </resources>
