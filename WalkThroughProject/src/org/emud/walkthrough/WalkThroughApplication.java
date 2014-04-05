@@ -47,10 +47,10 @@ public class WalkThroughApplication extends Application {
 			editor.remove("activeUserName");
 			editor.remove("activeUserPassword");
 			editor.commit();
-			dataSource = null;
+			closeDataSource();
 		}
 	}
-	
+
 	public String getActiveUserName(){
 		return activeUser;
 	}
@@ -119,13 +119,25 @@ public class WalkThroughApplication extends Application {
 		String databaseName = DataSource.buildDatabaseName(user);
 		super.deleteDatabase(databaseName);
 	}
+	
+
+	public void close() {
+		closeDataSource();
+	}
+	
+	private void closeDataSource() {
+		if(dataSource != null){
+			dataSource.closeDatabase();
+			dataSource = null;
+		}
+	}
 
 	public WebClient getDefaultWebClient(){
 		return defaultWebClient == null ? defaultWebClient = new StubWebClient() : defaultWebClient;
 	}
 	
 	
-	
+	//XXX DEBUGING
 	public void logUsers(){
 		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
@@ -137,6 +149,7 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	//XXX DEBUGING
 	public void logActiveUser(){
 		Log.v("XXXXXXX user", getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
 		.getString("activeUserName", "NONE"));

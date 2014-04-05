@@ -5,7 +5,8 @@ import java.util.GregorianCalendar;
 import org.emud.walkthrough.model.User;
 
 public class StubWebClient implements WebClient{
-
+	private User user;
+	
 	@Override
 	public boolean checkConnection(){
 		//TODO
@@ -14,9 +15,17 @@ public class StubWebClient implements WebClient{
 	
 	@Override
 	public int registerNewUser(String nickname, String password, String name, String lastName,
-			GregorianCalendar borndate, int sex, int height, double weight)
+			GregorianCalendar borndate, int gender, int height, double weight)
 			throws ConnectionFailedException, UsedNicknameException{
 		//TODO
+		user = new User();
+		user.setUsername(nickname);
+		user.setName(name);
+		user.setLastname(lastName);
+		user.setBorndate((GregorianCalendar)GregorianCalendar.getInstance());
+		user.setGender(gender);
+		user.setHeight(height);
+		user.setWeight(weight);
 		return 0;
 	}
 
@@ -44,11 +53,6 @@ public class StubWebClient implements WebClient{
 	public User getProfile() throws ConnectionFailedException,
 			UnauthorizedException {
 		// TODO Auto-generated method stub
-		User user = new User();
-		user.setLastname("Alvarez");
-		user.setName("Antonio");
-		user.setUsername("AA");
-		user.setBorndate((GregorianCalendar)GregorianCalendar.getInstance());
 		return user;
 	}
 }

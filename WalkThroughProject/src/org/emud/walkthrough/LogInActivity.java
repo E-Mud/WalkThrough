@@ -10,6 +10,7 @@ import org.emud.walkthrough.webclient.WebClient;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -36,6 +37,9 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 			logIn();
 			break;
 		case R.id.login_register:
+			//XXX DEBUGING
+			((WalkThroughApplication) getApplicationContext()).unsetActiveUser();
+			
 			Intent intent = new Intent();
 			intent.setClass(this, RegisterActivity.class);
 			startActivityForResult(intent, 0);
@@ -55,6 +59,7 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		}
 	}
 
+	//XXX DEBUGING
 	private void palasiguiente() {
 		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
 		String username, password;
@@ -63,10 +68,6 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		password = app.getActiveUserPassword();
 		Toast toast = Toast.makeText(this, "PA LA SIGUIENTE "+ username + " " + password, Toast.LENGTH_LONG);
 		toast.show();
-		
-		app.logActiveUser();
-		app.removeUser(username);
-		app.logActiveUser();
 	}
 
 	private void showCustomDialog(int id){
@@ -131,6 +132,30 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		
 		userDataSource = app.getUserDataSource();
 		userDataSource.createProfile(user);
+		
+		//XXX DEBUGGING
+		logUser(user);
+		user = userDataSource.getProfile();
+		logUser(user);
+	}
+	
+
+	//XXX DEBUGING
+	@Override
+	public void onDestroy(){
+		((WalkThroughApplication) getApplicationContext()).close();
+		super.onDestroy();
+	}
+	
+	//XXX DEBUGGING
+	private void logUser(User user){
+		Log.v("XXXXX un", user.getUsername());
+		Log.v("XXXXX n", user.getName());
+		Log.v("XXXXX ln", user.getLastname());
+		Log.v("XXXXX g", ""+ user.getGender());
+		Log.v("XXXXX h", ""+user.getHeight());
+		Log.v("XXXXX w", ""+user.getWeight());
+		Log.v("XXXXX b", ""+user.getBorndate());
 	}
 
 }

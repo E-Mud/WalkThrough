@@ -76,9 +76,9 @@ public class DataSource implements UserDataSource{
 	@Override
 	public void createProfile(User user) {
 		ContentValues values = new ContentValues();
-		
-		values.put(PROFILE_COLS[0], user.getUsername());
-		values.put(PROFILE_COLS[1], user.getWebServiceId());
+
+		values.put(PROFILE_COLS[0], user.getWebServiceId());
+		values.put(PROFILE_COLS[1], user.getUsername());
 		values.put(PROFILE_COLS[2], user.getName());
 		values.put(PROFILE_COLS[3], user.getLastname());
 		values.put(PROFILE_COLS[4], user.getBorndate().getTimeInMillis());
