@@ -11,6 +11,7 @@ import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
@@ -20,6 +21,8 @@ public class WalkThroughApplication extends Application {
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		activeUser = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+				.getString("activeUserName", null);
 	}
 	
 	public boolean setActiveUser(String user, String password){
@@ -44,12 +47,12 @@ public class WalkThroughApplication extends Application {
 			editor.remove("activeUserName");
 			editor.remove("activeUserPassword");
 			editor.commit();
+			dataSource = null;
 		}
 	}
 	
 	public String getActiveUserName(){
-		return getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
-		.getString("activeUserName", null);
+		return activeUser;
 	}
 	
 	public String getActiveUserPassword(){
@@ -106,6 +109,8 @@ public class WalkThroughApplication extends Application {
 				editor.putStringSet("registeredUsers", registeredUsers);
 				editor.commit();
 				removeUserDatabase(user);
+				if(activeUser != null && activeUser.equals(user))
+					unsetActiveUser();
 			}
 		}
 	}	
@@ -117,5 +122,25 @@ public class WalkThroughApplication extends Application {
 
 	public WebClient getDefaultWebClient(){
 		return defaultWebClient == null ? defaultWebClient = new StubWebClient() : defaultWebClient;
+	}
+	
+	
+	
+	public void logUsers(){
+		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
+		if(registeredUsers != null){
+			for(String username : registeredUsers)
+				Log.v("XXXXXXXXXXXXXXXXXXXXXX", username);
+		}else{
+			Log.v("XXXXXXXXXXXXXXXXXXXXXX", "Vacio");
+		}
+	}
+	
+	public void logActiveUser(){
+		Log.v("XXXXXXX user", getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		.getString("activeUserName", "NONE"));
+		Log.v("XXXXXXX pass", getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		.getString("activeUserPassword", "NONE"));
 	}
 }

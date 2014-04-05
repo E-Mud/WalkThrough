@@ -37,13 +37,18 @@ public class StubWebClient implements WebClient{
 	public boolean logIn(String username, String password)
 			throws ConnectionFailedException {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public User getProfile() throws ConnectionFailedException,
 			UnauthorizedException {
 		// TODO Auto-generated method stub
-		return null;
+		User user = new User();
+		user.setLastname("Alvarez");
+		user.setName("Antonio");
+		user.setUsername("AA");
+		user.setBorndate((GregorianCalendar)GregorianCalendar.getInstance());
+		return user;
 	}
 }

@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.content.Intent;
 
 public class LogInActivity extends FragmentActivity implements OnClickListener {
@@ -48,7 +49,24 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		if(resultCode == RESULT_OK){
 			Bundle extra = data.getExtras();
 			setUpNewUser(extra.getString("username"), extra.getString("password"));
+			
+			////TODO Pa la siguiente
+			palasiguiente();
 		}
+	}
+
+	private void palasiguiente() {
+		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
+		String username, password;
+		
+		username = app.getActiveUserName();
+		password = app.getActiveUserPassword();
+		Toast toast = Toast.makeText(this, "PA LA SIGUIENTE "+ username + " " + password, Toast.LENGTH_LONG);
+		toast.show();
+		
+		app.logActiveUser();
+		app.removeUser(username);
+		app.logActiveUser();
 	}
 
 	private void showCustomDialog(int id){
@@ -86,7 +104,7 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 			}else{
 				app.setActiveUser(username, password);
 			}
-			//TODO pa la siguiente
+			palasiguiente();
 		}else{
 			showCustomDialog(WRONG_DATA_DIALOG);
 		}

@@ -1,7 +1,5 @@
 package org.emud.walkthrough.database;
 
-import java.util.Map;
-
 import org.emud.walkthrough.model.User;
 
 public interface UserDataSource {

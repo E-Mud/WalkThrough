@@ -1,8 +1,6 @@
 package org.emud.walkthrough.database;
 
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.emud.walkthrough.model.User;
 
@@ -13,13 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource{
-	private static final int VERSION = 0;
+	private static final int VERSION = 1;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	
 	//FIXME Mejorar esto si o si
 	private static final String[] PROFILE_COLS = new String[]{
-		"_id", "wsId", "nickname", "name", "lastname", "borndate", "gender", "height", "weight"
+		"wsId", "nickname", "name", "lastname", "borndate", "gender", "height", "weight"
 	};
 	private static final String PROFILE_NAME = "profile";
 
@@ -109,6 +107,8 @@ public class DataSource implements UserDataSource{
 		result.setGender(cursor.getInt(5));
 		result.setHeight(cursor.getInt(6));
 		result.setWeight(cursor.getDouble(7));
+		
+		cursor.close();
 		
 		return result;
 	}

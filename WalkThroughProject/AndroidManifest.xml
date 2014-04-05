@@ -20,7 +20,14 @@
         </activity>
         <activity
             android:name="org.emud.walkthrough.LogInActivity"
-            android:label="@string/title_activity_log_in" >
+            android:label="@string/title_activity_log_in"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="org.emud.walkthrough.LogInActivity" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
