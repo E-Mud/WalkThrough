@@ -8,11 +8,19 @@
     </PreferenceCategory>
     
     <PreferenceCategory
+        android:title="@string/settings_falling_title">
+    	<Preference
+        	android:key="emergencycontact_pref"
+        	android:title="@string/settings_emergencycontact_title"
+        	android:summary="@string/settings_emergencycontact_summary" />
+    </PreferenceCategory>
+
+    
+    <PreferenceCategory
         android:title="@string/settings_useraccount_title">
     	<Preference
         	android:key="delete_pref"
         	android:title="@string/settings_delete_title" />
     </PreferenceCategory>
-
 
 </PreferenceScreen>

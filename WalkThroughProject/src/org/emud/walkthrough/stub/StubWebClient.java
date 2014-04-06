@@ -1,8 +1,12 @@
-package org.emud.walkthrough.webclient;
+package org.emud.walkthrough.stub;
 
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.model.User;
+import org.emud.walkthrough.webclient.ConnectionFailedException;
+import org.emud.walkthrough.webclient.UnauthorizedException;
+import org.emud.walkthrough.webclient.UsedNicknameException;
+import org.emud.walkthrough.webclient.WebClient;
 
 public class StubWebClient implements WebClient{
 	private User user;

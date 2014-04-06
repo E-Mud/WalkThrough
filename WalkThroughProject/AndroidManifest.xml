@@ -7,9 +7,13 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="16" />
+    
+    <uses-permission android:name="android.permission.READ_CONTACTS" >
+    </uses-permission>
+    
 
     <application
-        android:name="org.emud.walkthrough.WalkThroughApplication"
+        android:name="org.emud.walkthrough.stub.StubApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"

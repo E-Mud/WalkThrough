@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
-import org.emud.walkthrough.webclient.StubWebClient;
+import org.emud.walkthrough.stub.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
@@ -134,6 +134,26 @@ public class WalkThroughApplication extends Application {
 
 	public WebClient getDefaultWebClient(){
 		return defaultWebClient == null ? defaultWebClient = new StubWebClient() : defaultWebClient;
+	}
+	
+	public long getEmergencyContact(){
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + "Preferences", MODE_PRIVATE);
+			
+			return userPrefs.getLong("emergencyContactID", -1);
+		}else{
+			return -1;
+		}
+	}
+	
+	public void setEmergencyContact(long contactID) {
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + "Preferences", MODE_PRIVATE);
+			SharedPreferences.Editor editor = userPrefs.edit();
+			
+			editor.putLong("emergencyContactID", contactID);
+			editor.commit();			
+		}
 	}
 	
 	

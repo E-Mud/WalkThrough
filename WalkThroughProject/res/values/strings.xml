@@ -20,6 +20,7 @@
 
     <!-- Dialog -->
     <string name="accept_label">Aceptar</string>
+    <string name="cancel_label">Cancelar</string>
     <string name="und_title">Nombre de usuario erróneo</string>
     <string name="und_message">El nombre de usuario ya esta en uso. Elija uno distinto.</string>
     <string name="pned_title">Contraseña incorrecta</string>
@@ -28,6 +29,10 @@
     <string name="cfd_message">No ha sido posible conectarse al servicio web. Compruebe su conexion a internet y pruebe más tarde.</string>
     <string name="wdd_title">LogIn incorrecto</string>
     <string name="wdd_message">Nombre de usuario o contraseña incorrectos.</string>
+    <string name="cdd_title">Borrar usuario</string>
+    <string name="cdd_message">Si esta seguro de borrar este usuario introduzca su nombre de usuario y presione Aceptar.</string>
+    <string name="icd_title">Contacto invalido</string>
+    <string name="icd_message">El contacto de emergencia debe tener número de teléfono.</string>
     
     
     
@@ -57,5 +62,7 @@
     <string name="settings_falling_title">Detección de caidas</string>
     <string name="settings_delete_title">Borrar usuario</string>
     <string name="settings_logout_title">Cerrar sesión</string>
+    <string name="settings_emergencycontact_title">Contacto de emergencia</string>
+    <string name="settings_emergencycontact_summary">Ninguno seleccionado</string>
 
 </resources>
