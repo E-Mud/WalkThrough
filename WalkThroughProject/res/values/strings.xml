@@ -57,4 +57,6 @@
     <string name="myactivities_title">Mis actividades</string>
     <string name="myresults_title">Mis resultados</string>
 
+    <!-- MainActivity -->
+    <string name="myactivitieslist_empty">No hay actividades.</string>
 </resources>

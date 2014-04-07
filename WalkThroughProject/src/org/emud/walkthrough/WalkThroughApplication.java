@@ -4,6 +4,7 @@ package org.emud.walkthrough;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
 import org.emud.walkthrough.stub.StubWebClient;
@@ -61,6 +62,15 @@ public class WalkThroughApplication extends Application {
 	}
 	
 	public UserDataSource getUserDataSource(){
+		return getDataSource();
+		
+	}
+	
+	public ActivitiesDataSource getActivitiesDataSource(){
+		return getDataSource();
+	}
+	
+	private DataSource getDataSource(){
 		if(activeUser != null){
 			if(dataSource == null)
 				dataSource = new DataSource(this, activeUser);

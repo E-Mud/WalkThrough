@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DataSource implements UserDataSource{
+public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static final int VERSION = 1;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
@@ -19,7 +19,11 @@ public class DataSource implements UserDataSource{
 	private static final String[] PROFILE_COLS = new String[]{
 		"wsId", "nickname", "name", "lastname", "borndate", "gender", "height", "weight"
 	};
-	private static final String PROFILE_NAME = "profile";
+	private static final String[] ACTIVITY_COLS = new String[]{
+		"date"
+	};
+	private static final String PROFILE_NAME = "profile",
+			ACTIVITY_NAME = "activity";
 
 	public DataSource(Context context, String userName){
 		String database_name = buildDatabaseName(userName);
@@ -55,6 +59,9 @@ public class DataSource implements UserDataSource{
                 PROFILE_COLS[5] + " INTEGER NOT NULL, " +
                 PROFILE_COLS[6] + " INTEGER NOT NULL, " +
                 PROFILE_COLS[7] + " REAL );";
+		private static final String DB_ACTIVITY_CREATE = "CREATE TABLE " + ACTIVITY_NAME + " (" +
+                "_id LONG PRIMARY KEY, " +
+				ACTIVITY_COLS[0] + " LONG NOT NULL);";
 
 		public SQLiteHelper(Context context, String name, int version) {
 			super(context, name, null, version);
@@ -63,11 +70,13 @@ public class DataSource implements UserDataSource{
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(DB_PROFILE_CREATE);
+			db.execSQL(DB_ACTIVITY_CREATE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			db.execSQL("DROP TABLE IF EXISTS "+ DB_PROFILE_CREATE);
+			db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
             onCreate(db);
 		}
 	}
@@ -129,5 +138,36 @@ public class DataSource implements UserDataSource{
 	@Override
 	public String[] getColumns() {
 		return PROFILE_COLS;
+	}
+
+	@Override
+	public Cursor getActivities(GregorianCalendar startDate, GregorianCalendar endDate) {
+		StringBuilder builder = new StringBuilder();
+		Cursor cursor;
+		
+		if(startDate != null)
+			builder.append(ACTIVITY_COLS[0] + " >= " + startDate.getTimeInMillis());
+		
+		if(endDate != null){
+			if(startDate != null)
+				builder.append(" AND ");
+			
+			builder.append(ACTIVITY_COLS[0] + " <= " + endDate.getTimeInMillis());
+		}
+		
+		if(builder.length() > 0){
+			cursor = db.query(ACTIVITY_NAME, null, builder.toString(), null, null, null, ACTIVITY_COLS[0]);
+		}else{
+			cursor = db.query(ACTIVITY_NAME, null, null, null, null, null, ACTIVITY_COLS[0]);
+		}
+		
+		cursor.moveToFirst();
+		
+		return cursor;
+	}
+
+	@Override
+	public Cursor getAllActivities() {
+		return getActivities(null, null);
 	}
 }
