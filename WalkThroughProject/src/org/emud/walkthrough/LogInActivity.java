@@ -37,20 +37,10 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 			logIn();
 			break;
 		case R.id.login_register:
-			//XXX DEBUGGING
-			WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
-			app.logActiveUser();
-			Intent intent = new Intent();
-			intent.setClass(this, SettingsActivity.class);
-			startActivity(intent);
-			/*
-			//XXX DEBUGING
-			((WalkThroughApplication) getApplicationContext()).unsetActiveUser();
-			
 			Intent intent = new Intent();
 			intent.setClass(this, RegisterActivity.class);
 			startActivityForResult(intent, 0);
-			*/
+			
 			break;
 		}
 	}

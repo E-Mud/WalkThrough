@@ -3,8 +3,10 @@
 
     <string name="app_name">WalkThrough</string>
     <string name="title_activity_register">Registro</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_log_in">Log In</string>
+    <string name="title_activity_settings">Preferencias</string>
+    <string name="title_activity_main">Walkthrough</string>
+    <string name="action_settings">Preferencias</string>
     <string name="register_nickname_hint">Nombre de usuario</string>
     <string name="register_password1_hint">Contraseña</string>
     <string name="register_password2_hint">Conf. Contraseña</string>
@@ -17,6 +19,8 @@
     <string name="register_weight_hint">Peso (kg)</string>
     <string name="register_done_title">OK</string>
     <string name="genderpicker_title">Sexo</string>
+    <string name="drawer_open">Abrir menu</string>
+    <string name="drawer_close">Cerrar menu</string>
 
     <!-- Dialog -->
     <string name="accept_label">Aceptar</string>
@@ -35,27 +39,11 @@
     <string name="icd_message">El contacto de emergencia debe tener número de teléfono.</string>
     
     
-    
-    <string name="title_activity_log_in">Log In</string>
-    <string name="title_activity_settings">Preferencias</string>
-    
-    
-    
     <string name="login_username_hint">Nombre de usuario</string>
-    
-    
-    
     <string name="login_password_hint">Contraseña</string>
-    
-    
-    
     <string name="login_login_text">Log In</string>
-    
-    
-    
     <string name="login_register_text">Registrarse</string>
-    
-    
+
     <!-- Settings -->
     <string name="settings_session_title">Sesion</string>
     <string name="settings_useraccount_title">Cuenta de usuario</string>
@@ -64,5 +52,9 @@
     <string name="settings_logout_title">Cerrar sesión</string>
     <string name="settings_emergencycontact_title">Contacto de emergencia</string>
     <string name="settings_emergencycontact_summary">Ninguno seleccionado</string>
+    <string name="newactivity_title">Nueva actividad</string>
+    <string name="fallingdetection_title">Deteccion de caidas</string>
+    <string name="myactivities_title">Mis actividades</string>
+    <string name="myresults_title">Mis resultados</string>
 
 </resources>

@@ -7,10 +7,9 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="16" />
-    
+
     <uses-permission android:name="android.permission.READ_CONTACTS" >
     </uses-permission>
-    
 
     <application
         android:name="org.emud.walkthrough.stub.StubApplication"
@@ -26,16 +25,20 @@
             android:name="org.emud.walkthrough.LogInActivity"
             android:label="@string/title_activity_log_in"
             android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity
+            android:name="org.emud.walkthrough.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="org.emud.walkthrough.MainActivity"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="org.emud.walkthrough.LogInActivity" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="org.emud.walkthrough.SettingsActivity"
-            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

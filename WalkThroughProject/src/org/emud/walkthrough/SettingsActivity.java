@@ -13,9 +13,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 public class SettingsActivity extends FragmentActivity implements OnPreferenceClickListener, OnAcceptButtonListener {
 	private static final int INVALID_CONTACT_DIALOG = 0,
@@ -95,10 +93,6 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
 			
 			app.unsetActiveUser();
-			
-			//XXX DEBUGGING
-			app.logActiveUser();
-			
 			finish();
 			
 			return true;
