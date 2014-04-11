@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
+import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.dialogfragment.GenderPickerDialogFragment;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
 import org.emud.walkthrough.webclient.UsedNicknameException;
@@ -24,7 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
-public class RegisterActivity extends FragmentActivity implements OnClickListener, OnDateSetListener, DialogInterface.OnClickListener {
+public class RegisterActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, DialogInterface.OnClickListener {
 	private static final int DATE_PICKER_DIALOG = 0,
 			SEX_PICKER_DIALOG = 1,
 			USED_NICKNAME_DIALOG = 2,
@@ -105,6 +106,7 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 		switch(dialogId){
 		case DATE_PICKER_DIALOG:
 			dialogFragment = DatePickerDialogFragment.newInstance(bornDate.get(Calendar.DAY_OF_MONTH), bornDate.get(Calendar.MONTH), bornDate.get(Calendar.YEAR));
+			((DatePickerDialogFragment)dialogFragment).setOnDatePickedListener(this);
 			dialogFragment.show(getSupportFragmentManager(), "datePickerDialog");
 			break;
 		case SEX_PICKER_DIALOG:
@@ -136,19 +138,18 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 	}
 
 	@Override
-	public void onDateSet(DatePicker view, int year, int monthOfYear,
-			int dayOfMonth) {
-		bornDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-		bornDate.set(Calendar.MONTH, monthOfYear);
-		bornDate.set(Calendar.YEAR, year);
-		bornDateView.setText(""+dayOfMonth+"/"+monthOfYear+"/"+year);
-	}
-
-	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		gender = which;
 		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
 		dialog.dismiss();
+	}
+
+	@Override
+	public void datePicked(int year, int month, int day) {
+		bornDate.set(Calendar.DAY_OF_MONTH, day);
+		bornDate.set(Calendar.MONTH, month);
+		bornDate.set(Calendar.YEAR, year);
+		bornDateView.setText(""+day+"/"+month+"/"+year);
 	}
 
 }

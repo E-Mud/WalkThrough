@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill"
-    android:background="#2c5e69"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -18,22 +18,17 @@
             android:src="@drawable/ic_newactivity_icon" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/item_activity_datetext"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/newactivity_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:layout_marginLeft="4dp"
+            android:text="@string/newactivity_title" />
 
     </LinearLayout>
 
     <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:background="#ffffff"
-        android:paddingLeft="@dimen/draweritem_padding"
-        android:paddingRight="@dimen/draweritem_padding" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,23 +39,20 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_newactivity_icon" />
+            android:src="@drawable/ic_fallingdetection_icon" />
 
         <TextView
+            style="@style/DrawerItemText"
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/fallingdetection_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/fallingdetection_title"/>
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,23 +63,20 @@
             android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_newactivity_icon" />
+            android:src="@drawable/ic_myobjects_icon" />
 
         <TextView
+            style="@style/DrawerItemText"
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/myactivities_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/myactivities_title"/>
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -98,21 +87,18 @@
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_newactivity_icon" />
+            android:src="@drawable/ic_myobjects_icon" />
 
         <TextView
-            android:id="@+id/textView4"
+            style="@style/DrawerItemText"
+            android:id="@+id/mainactivity_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/myresults_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/myresults_title"/>
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
 </LinearLayout>

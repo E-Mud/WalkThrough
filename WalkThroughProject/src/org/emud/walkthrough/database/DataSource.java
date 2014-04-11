@@ -2,7 +2,10 @@ package org.emud.walkthrough.database;
 
 import java.util.GregorianCalendar;
 
+import org.emud.content.DataSubject;
+import org.emud.content.observer.Subject;
 import org.emud.walkthrough.model.User;
+import org.emud.walkthrough.model.WalkActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,6 +17,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static final int VERSION = 1;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
+	
+	private DataSubject userSubject, activitiesSubject;
 	
 	//FIXME Mejorar esto si o si
 	private static final String[] PROFILE_COLS = new String[]{
@@ -28,6 +33,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public DataSource(Context context, String userName){
 		String database_name = buildDatabaseName(userName);
 		helper = new SQLiteHelper(context, database_name, VERSION);
+		userSubject = new DataSubject();
+		activitiesSubject = new DataSubject();
 		openDatabase();
 	}
 	
@@ -139,6 +146,11 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public String[] getColumns() {
 		return PROFILE_COLS;
 	}
+	
+	@Override
+	public Subject getUserSubject() {
+		return userSubject;
+	}
 
 	@Override
 	public Cursor getActivities(GregorianCalendar startDate, GregorianCalendar endDate) {
@@ -156,9 +168,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		}
 		
 		if(builder.length() > 0){
-			cursor = db.query(ACTIVITY_NAME, null, builder.toString(), null, null, null, ACTIVITY_COLS[0]);
+			cursor = db.query(ACTIVITY_NAME, null, builder.toString(), null, null, null, ACTIVITY_COLS[0] + " DESC");
 		}else{
-			cursor = db.query(ACTIVITY_NAME, null, null, null, null, null, ACTIVITY_COLS[0]);
+			cursor = db.query(ACTIVITY_NAME, null, null, null, null, null, ACTIVITY_COLS[0] + " DESC");
 		}
 		
 		cursor.moveToFirst();
@@ -170,4 +182,24 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public Cursor getAllActivities() {
 		return getActivities(null, null);
 	}
+
+	@Override
+	public Subject getActivitiesSubject() {
+		return activitiesSubject;
+	}
+
+	@Override
+	public long createNewActivity(WalkActivity act) {
+		ContentValues values = new ContentValues();
+		
+		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
+		long id = db.insert(ACTIVITY_NAME, null, values);
+		
+		getActivitiesSubject().notifyObservers();
+		
+		return id;
+		
+	}
+
+	
 }

@@ -1,15 +1,19 @@
 package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.database.ActivitiesDataSource;
+import org.emud.walkthrough.database.DataSource;
 
 import android.content.SharedPreferences;
 import android.util.Log;
 
 public class StubApplication extends WalkThroughApplication {
-
+	private DataSource dataSource;
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		
+		dataSource = new DataSource(this, "default");
 	}
 	
 	public boolean setActiveUser(String user, String password){
@@ -49,5 +53,14 @@ public class StubApplication extends WalkThroughApplication {
 
 		editor.putLong("emergencyContactID", contactID);
 		editor.commit();
+	}
+	
+	public ActivitiesDataSource getActivitiesDataSource(){
+		return dataSource;
+	}
+	
+	public void removeStubADS(){
+		String databaseName = DataSource.buildDatabaseName("default");
+		super.deleteDatabase(databaseName);
 	}
 }

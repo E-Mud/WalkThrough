@@ -4,16 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- The main content view -->
+
     <FrameLayout
         android:id="@+id/main_content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    
+    
     <!-- The navigation drawer -->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#2c5e69"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -29,22 +32,16 @@
             android:src="@drawable/ic_newactivity_icon" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/drawer_newactivity_text"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/newactivity_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/newactivity_title"/>
 
     </LinearLayout>
 
     <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:background="#ffffff"
-        android:paddingLeft="@dimen/draweritem_padding"
-        android:paddingRight="@dimen/draweritem_padding" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:id="@+id/drawer_fallingdetection_item"
@@ -60,19 +57,15 @@
 
         <TextView
             android:id="@+id/textView2"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/fallingdetection_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/fallingdetection_title" />
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:id="@+id/drawer_myactivities_item"
@@ -88,19 +81,15 @@
 
         <TextView
             android:id="@+id/textView3"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/myactivities_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            android:text="@string/myactivities_title" />
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
     
     <LinearLayout
         android:id="@+id/drawer_myresults_item"
@@ -120,14 +109,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/myresults_title"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff" />
+            style="@style/DrawerItemText"/>
 
     </LinearLayout>
 
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#ffffff" />
+        style="@style/Divider"/>
 </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

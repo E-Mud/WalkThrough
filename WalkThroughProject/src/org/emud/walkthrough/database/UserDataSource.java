@@ -1,8 +1,11 @@
 package org.emud.walkthrough.database;
 
+import org.emud.content.observer.Subject;
 import org.emud.walkthrough.model.User;
 
 public interface UserDataSource {
+	
+	public Subject getUserSubject();
 
 	public void createProfile(User user);
 	
