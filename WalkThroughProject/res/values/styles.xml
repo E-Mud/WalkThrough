@@ -23,6 +23,16 @@
     </style>
     
     <style name="DrawerItemText" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">#505050</item>
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+    
+    <style name="DrawerDateText" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:textColor">#505050</item>
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+    
+    <style name="DrawerHeaderText" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">#6a6a6a</item>
         <item name="android:layout_marginLeft">4dp</item>
     </style>

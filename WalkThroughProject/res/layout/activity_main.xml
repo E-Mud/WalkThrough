@@ -12,11 +12,23 @@
     
     
     <!-- The navigation drawer -->
+    <ScrollView
+    android:background="#EDEDED"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="260dp"
+    android:layout_gravity="start|bottom">
+   
 <LinearLayout
+    android:background="#EDEDED"
+    android:layout_width="260dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -115,5 +127,65 @@
 
     <View
         style="@style/Divider"/>
+
 </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="bottom"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView5"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:text="@string/mainactivity_from_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_fromDate"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_beginning_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView6"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/mainactivity_to_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_toDate"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_today_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <!-- 
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="75dp" -->
+    
+</LinearLayout>
+</ScrollView>
 </android.support.v4.widget.DrawerLayout>

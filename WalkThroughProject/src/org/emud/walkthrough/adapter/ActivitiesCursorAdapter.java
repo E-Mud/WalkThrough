@@ -1,6 +1,5 @@
 package org.emud.walkthrough.adapter;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -10,6 +9,7 @@ import org.emud.walkthrough.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,7 @@ public class ActivitiesCursorAdapter extends CursorAdapter {
 	public ActivitiesCursorAdapter(Context context) {
 		super(context, null, 0);
 		
-		dateFormat = new SimpleDateFormat("EEE d/M/yyyy");
+		dateFormat = new DateFormat();
 		date = new GregorianCalendar();
 	}
 
@@ -38,7 +38,7 @@ public class ActivitiesCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		date.setTimeInMillis(cursor.getLong(1));
-		((TextView) view.findViewById(R.id.item_activity_datetext)).setText(""+date.get(Calendar.DAY_OF_MONTH)+"/"+date.get(Calendar.MONTH));
+		((TextView) view.findViewById(R.id.item_activity_datetext)).setText(dateFormat.format("EEE d/M/yyyy h:m a", date));
 	}
 
 }

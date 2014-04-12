@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill"
+    android:orientation="vertical" >
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
     android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/drawer_newactivity_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/draweritem_padding" >
@@ -18,12 +25,11 @@
             android:src="@drawable/ic_newactivity_icon" />
 
         <TextView
-            android:id="@+id/item_activity_datetext"
+            android:id="@+id/drawer_newactivity_text"
             style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:text="@string/newactivity_title" />
+            android:text="@string/newactivity_title"/>
 
     </LinearLayout>
 
@@ -31,6 +37,7 @@
         style="@style/Divider"/>
     
     <LinearLayout
+        android:id="@+id/drawer_fallingdetection_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/draweritem_padding" >
@@ -42,12 +49,11 @@
             android:src="@drawable/ic_fallingdetection_icon" />
 
         <TextView
-            style="@style/DrawerItemText"
             android:id="@+id/textView2"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/fallingdetection_title"/>
+            android:text="@string/fallingdetection_title" />
 
     </LinearLayout>
 
@@ -55,6 +61,7 @@
         style="@style/Divider"/>
     
     <LinearLayout
+        android:id="@+id/drawer_myactivities_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/draweritem_padding" >
@@ -66,12 +73,11 @@
             android:src="@drawable/ic_myobjects_icon" />
 
         <TextView
-            style="@style/DrawerItemText"
             android:id="@+id/textView3"
+            style="@style/DrawerItemText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/myactivities_title"/>
+            android:text="@string/myactivities_title" />
 
     </LinearLayout>
 
@@ -79,6 +85,7 @@
         style="@style/Divider"/>
     
     <LinearLayout
+        android:id="@+id/drawer_myresults_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/draweritem_padding" >
@@ -90,15 +97,71 @@
             android:src="@drawable/ic_myobjects_icon" />
 
         <TextView
-            style="@style/DrawerItemText"
-            android:id="@+id/mainactivity_to"
+            android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/myresults_title"/>
+            android:text="@string/myresults_title"
+            style="@style/DrawerItemText"/>
 
     </LinearLayout>
 
     <View
         style="@style/Divider"/>
+
 </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="75dp"
+        android:gravity="bottom"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:text="@string/mainactivity_from_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_fromDate"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_beginning_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/drawer_textView6"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/mainactivity_to_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_textView6"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_today_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+</RelativeLayout>

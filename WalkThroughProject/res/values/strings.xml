@@ -59,7 +59,8 @@
 
     <!-- MainActivity -->
     <string name="myactivitieslist_empty">No hay actividades.</string>
-    <string name="mainactivity_from_label">Desde:</string>
-    <string name="mainactivity_to_label">Hasta:</string>
+    <string name="mainactivity_from_label">DESDE:</string>
+    <string name="mainactivity_to_label">HASTA:</string>
     <string name="mainactivity_today_label">Hoy</string>
+    <string name="mainactivity_beginning_label">...</string>
 </resources>

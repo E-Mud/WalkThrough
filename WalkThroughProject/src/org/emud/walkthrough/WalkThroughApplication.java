@@ -18,20 +18,22 @@ public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
 	private DataSource dataSource;
 	private String activeUser;
+	private static final String APP_PREFERENCES = "WalkThroughPreferences",
+			USER_PREFERENCES_SUFIX = "Preferences";
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		activeUser = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		activeUser = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getString("activeUserName", null);
 	}
 	
 	public boolean setActiveUser(String user, String password){
-		Set<String> registeredUsers = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		Set<String> registeredUsers = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getStringSet("registeredUsers", null);
 		if(registeredUsers != null && registeredUsers.contains(user)){
 			activeUser = user;
-			SharedPreferences.Editor editor = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE).edit();
+			SharedPreferences.Editor editor = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE).edit();
 			editor.putString("activeUserName", activeUser);
 			editor.putString("activeUserPassword", password);
 			editor.commit();
@@ -44,7 +46,7 @@ public class WalkThroughApplication extends Application {
 	public void unsetActiveUser(){
 		if(activeUser != null){
 			activeUser = null;
-			SharedPreferences.Editor editor = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE).edit();
+			SharedPreferences.Editor editor = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE).edit();
 			editor.remove("activeUserName");
 			editor.remove("activeUserPassword");
 			editor.commit();
@@ -57,7 +59,7 @@ public class WalkThroughApplication extends Application {
 	}
 	
 	public String getActiveUserPassword(){
-		return getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		return getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 		.getString("activeUserPassword", null);
 	}
 	
@@ -81,24 +83,26 @@ public class WalkThroughApplication extends Application {
 	}
 	
 	public boolean containsRegisteredUser(String username) {
-		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
 		
-		return registeredUsers.contains(username);
+		if(registeredUsers != null){
+			return registeredUsers.contains(username);
+		}else{
+			return false;
+		}
 	}
 	
 	public boolean addUser(String user){
-		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
 		boolean added;
 		
-		if(registeredUsers != null){
-			added = registeredUsers.add(user);
-		}else{
-			added = true;
+		if(registeredUsers == null){
 			registeredUsers = new HashSet<String>();
-			registeredUsers.add(user);
 		}
+
+		added = registeredUsers.add(user);
 		
 		if(added){
 			SharedPreferences.Editor editor = registeredPref.edit();
@@ -110,7 +114,7 @@ public class WalkThroughApplication extends Application {
 	}
 	
 	public void removeUser(String user){
-		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
 		if(registeredUsers != null){
 			boolean removed = registeredUsers.remove(user);
@@ -126,6 +130,7 @@ public class WalkThroughApplication extends Application {
 	}	
 	
 	private void removeUserDatabase(String user) {
+		closeDataSource();
 		String databaseName = DataSource.buildDatabaseName(user);
 		super.deleteDatabase(databaseName);
 	}
@@ -169,7 +174,7 @@ public class WalkThroughApplication extends Application {
 	
 	//XXX DEBUGING
 	public void logUsers(){
-		SharedPreferences registeredPref = getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE);
+		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
 		if(registeredUsers != null){
 			for(String username : registeredUsers)
@@ -181,9 +186,9 @@ public class WalkThroughApplication extends Application {
 	
 	//XXX DEBUGING
 	public void logActiveUser(){
-		Log.v("XXXXXXX user", getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		Log.v("XXXXXXX user", getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 		.getString("activeUserName", "NONE"));
-		Log.v("XXXXXXX pass", getSharedPreferences("WalkThroughPreferences", MODE_PRIVATE)
+		Log.v("XXXXXXX pass", getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 		.getString("activeUserPassword", "NONE"));
 	}
 }
