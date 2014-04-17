@@ -3,20 +3,39 @@ package org.emud.walkthrough;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 
 import org.emud.content.DataSubject;
 import org.emud.content.ObserverCursorLoader;
 import org.emud.content.observer.Subject;
 import org.emud.walkthrough.adapter.ActivitiesCursorAdapter;
+import org.emud.walkthrough.analysis.AnalysisService;
+import org.emud.walkthrough.analysis.AnalysisStation;
+import org.emud.walkthrough.analysis.AnalysisStationBuilder;
+import org.emud.walkthrough.analysis.Analyst;
+import org.emud.walkthrough.analysis.DataReceiverBuilder;
+import org.emud.walkthrough.analysis.LinearAccelerometerReceiver;
+import org.emud.walkthrough.analysis.WalkData;
+import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ActivitiesQuery;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
+import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.stub.MaxMoveAnalyst;
 
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -57,6 +76,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
+		if(serviceState != WalkThroughApplication.SERVICE_NONE){
+			Intent intent = new Intent(this, CurrentActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+		
 		setContentView(R.layout.activity_main);
 		
 		drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
@@ -307,7 +335,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			break;
 		case FALLING_DETECTION_CONTENT:
 			newTitle = R.string.fallingdetection_title;
-			contentFragment = new DummyFragment();
+			contentFragment = new DummyFragmentCS();
 			break;
 		case MY_ACTIVITIES_CONTENT:
 			newTitle = R.string.myactivities_title;
@@ -348,16 +376,65 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		}
 	}
 	
-	public static class DummyFragmentNA extends Fragment implements OnClickListener{		
+	public static class DummyFragmentNA extends Fragment implements OnClickListener, WalkDataReceiver.OnDataReceivedListener{
+		private TextView textX, textY, textZ;
+		private WalkDataReceiver receiver;
+		private boolean started = false;
+		private AnalysisStation station;
+		private Analyst analyst;
+		
 		@Override
 		public android.view.View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle savedInstanceState){
 			View view = inflater.inflate(R.layout.test_newactivity, container, false);
 			((android.widget.Button)view.findViewById(R.id.button1)).setOnClickListener(this);
+			((android.widget.Button)view.findViewById(R.id.button2)).setOnClickListener(this);
+			textX = (TextView) view.findViewById(R.id.textViewX);
+			textY = (TextView) view.findViewById(R.id.textViewY);
+			textZ = (TextView) view.findViewById(R.id.textViewZ);
 			return view;
 		}
 
 		@Override
 		public void onClick(View arg0) {
+			
+				/*if(started){
+					station.pauseAnalysis();
+					Result result = station.collectResults().get(0);
+					Double max = (Double) result.get();
+					textX.setText(max.toString());
+
+				}else{
+					
+					if(station == null){
+						HashSet<Result.ResultType> resultTypes = new HashSet<Result.ResultType>();
+						resultTypes.add(Result.ResultType.MAX_MOVE);
+						station = AnalysisStationBuilder.buildStation(getActivity(), DataReceiverBuilder.ReceiverType.SINGLE_ACCELEROMETER, resultTypes);
+						station.startAnalysis();
+					}else{
+						station.resumeAnalysis();
+					}
+				}
+				started = !started;*/
+			
+			if(arg0.getId() == R.id.button2){
+				Result result = analyst.getResult();
+				Double max = (Double) result.get();
+				textX.setText(max.toString());
+			}
+			
+			
+			if(started){
+				receiver.stopReceiving();
+			}else{
+				analyst = new MaxMoveAnalyst();
+				receiver = new LinearAccelerometerReceiver(getActivity());
+				receiver.addOnDataReceveidListener(this);
+				
+				receiver.startReceiving();
+				
+			}
+			started = !started;
+			/*
 			android.widget.DatePicker date = ((android.widget.DatePicker)this.getView().findViewById(R.id.datePicker1));
 			
 			GregorianCalendar thisdate = new GregorianCalendar();
@@ -370,7 +447,127 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			
 			ActivitiesDataSource source = ((WalkThroughApplication) getActivity().getApplicationContext()).getActivitiesDataSource();
 			
-			source.createNewActivity(act);
+			source.createNewActivity(act);*/
+		}
+
+		@Override
+		public void onDataReceveid(WalkData walkData) {
+			analyst.analyzeNewData(walkData);
+			double[] data = walkData.getData();
+			
+			textX.setText("" + data[0]);
+			textY.setText("" + data[1]);
+			textZ.setText("" + data[2]);
+		}
+	}
+	
+	public static class DummyFragmentCS extends Fragment implements OnClickListener{
+		private boolean bound = false;
+		private Messenger service = null;
+		private boolean started = false;
+		
+		private ServiceConnection mConnection = new ServiceConnection() {
+	        public void onServiceConnected(ComponentName className, IBinder binder) {
+	            // This is called when the connection with the service has been
+	            // established, giving us the object we can use to
+	            // interact with the service.  We are communicating with the
+	            // service using a Messenger, so here we get a client-side
+	            // representation of that from the raw IBinder object.
+	            service = new Messenger(binder);
+	            bound = true;
+	        }
+
+	        public void onServiceDisconnected(ComponentName className) {
+	            // This is called when the connection with the service has been
+	            // unexpectedly disconnected -- that is, its process crashed.
+	            service = null;
+	            bound = false;
+	        }
+	    };
+		
+		
+		@Override
+		public android.view.View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle savedInstanceState){
+			View view = inflater.inflate(R.layout.test_service, container, false);
+			((android.widget.Button)view.findViewById(R.id.buttonService)).setOnClickListener(this);
+			//((android.widget.Button)view.findViewById(R.id.buttonBind)).setOnClickListener(this);
+			//((android.widget.Button)view.findViewById(R.id.buttonStart)).setOnClickListener(this);
+			//((android.widget.Button)view.findViewById(R.id.buttonPause)).setOnClickListener(this);
+			//((android.widget.Button)view.findViewById(R.id.buttonResume)).setOnClickListener(this);
+			//((android.widget.Button)view.findViewById(R.id.buttonStop)).setOnClickListener(this);
+			
+			return view;
+		}
+
+		@Override
+		public void onClick(View view) {
+			Activity activity = getActivity();
+			int receiverType = WalkDataReceiver.SINGLE_ACCELEROMETER;
+			int[] resultsTypes = new int[]{Result.RT_MAX_MOVE};
+			
+			Intent intentService = new Intent(activity, AnalysisService.class);
+			intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiverType);
+			intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultsTypes);
+			activity.startService(intentService);
+			
+			((WalkThroughApplication) activity.getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
+			
+			Intent intentCurrentActivity = new Intent(activity, CurrentActivity.class);
+			startActivity(intentCurrentActivity);
+			/*
+			int what = 0;
+			switch(view.getId()){
+			case R.id.buttonService:
+				if(started){
+		            getActivity().unbindService(mConnection);
+		            bound = false;
+					Intent intent = new Intent(getActivity(), AnalysisService.class);
+					getActivity().stopService(intent);
+					
+				}else{
+					Intent intent = new Intent(getActivity(), AnalysisService.class);
+					intent.putExtra(AnalysisService.RECEIVER_TYPE_KEY, WalkDataReceiver.SINGLE_ACCELEROMETER);
+					intent.putExtra(AnalysisService.RESULTS_TYPES_KEY, new int[]{Result.RT_MAX_MOVE});
+					
+					getActivity().startService(intent);
+				}
+				started = !started;
+				return;
+			case R.id.buttonBind:
+				if(!bound){
+					getActivity().bindService(new Intent(getActivity(), AnalysisService.class), mConnection, 0);
+				}else{
+		            getActivity().unbindService(mConnection);
+		            bound = false;
+				}
+				return;
+			case R.id.buttonStart:
+				what = AnalysisService.MSG_START;
+				break;
+			case R.id.buttonPause:
+				what = AnalysisService.MSG_PAUSE;
+				break;
+			case R.id.buttonResume:
+				what = AnalysisService.MSG_RESUME;
+				break;
+			case R.id.buttonStop:
+				what = AnalysisService.MSG_STOP;
+				break;
+			}
+			
+			Message msg = Message.obtain(null, what, 0, 0);
+	        try {
+	            service.send(msg);
+	        } catch (RemoteException e) {
+	            e.printStackTrace();
+	        }*/
+		}
+		
+		@Override
+		public void onDestroy(){
+			if(bound)
+				getActivity().unbindService(mConnection);
+			super.onDestroy();
 		}
 	}
 

@@ -1,7 +1,5 @@
 package org.emud.walkthrough.stub;
 
-import java.util.ArrayList;
-
 import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.analysis.WalkData;
 import org.emud.walkthrough.model.Result;
@@ -26,7 +24,7 @@ public class MaxMoveAnalyst implements Analyst {
 	public Result getResult() {
 		double maxMove = getAbsoluteValue(max.getData());
 		
-		return new Result(Double.valueOf(maxMove));
+		return new ResultMaxMove(Double.valueOf(maxMove));
 	}
 
 	private double getAbsoluteValue(double[] ds) {

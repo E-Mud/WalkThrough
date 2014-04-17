@@ -5,22 +5,10 @@ import java.util.ArrayList;
 import org.emud.walkthrough.analysis.WalkData;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 
-public class FalseReceiver implements WalkDataReceiver {
-	private ArrayList<OnDataReceivedListener> listeners;
+public class FalseReceiver extends WalkDataReceiver {
 	
 	public FalseReceiver(){
-		listeners = new ArrayList<OnDataReceivedListener>();
-	}
-
-	@Override
-	public void addOnDataReceveidListener(OnDataReceivedListener listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void removeOnDataReceivedListener(OnDataReceivedListener listener) {
-		// TODO Auto-generated method stub
-
+		super(null);
 	}
 
 	@Override

@@ -198,7 +198,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		getActivitiesSubject().notifyObservers();
 		
 		return id;
-		
 	}
 
 	

@@ -37,8 +37,6 @@
     <string name="cdd_message">Si esta seguro de borrar este usuario introduzca su nombre de usuario y presione Aceptar.</string>
     <string name="icd_title">Contacto invalido</string>
     <string name="icd_message">El contacto de emergencia debe tener número de teléfono.</string>
-    
-    
     <string name="login_username_hint">Nombre de usuario</string>
     <string name="login_password_hint">Contraseña</string>
     <string name="login_login_text">Log In</string>
@@ -63,4 +61,7 @@
     <string name="mainactivity_to_label">HASTA:</string>
     <string name="mainactivity_today_label">Hoy</string>
     <string name="mainactivity_beginning_label">...</string>
+    <string name="title_activity_current">CurrentActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

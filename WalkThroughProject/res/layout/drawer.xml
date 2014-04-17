@@ -19,7 +19,7 @@
         android:padding="@dimen/draweritem_padding" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/iconPauseResume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_newactivity_icon" />
@@ -43,7 +43,7 @@
         android:padding="@dimen/draweritem_padding" >
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/iconStop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_fallingdetection_icon" />

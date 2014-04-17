@@ -1,18 +1,37 @@
 package org.emud.walkthrough.analysis;
 
-public interface WalkDataReceiver {
+import java.util.ArrayList;
+
+import android.content.Context;
+
+public abstract class WalkDataReceiver {
+	protected ArrayList<OnDataReceivedListener> listeners;
+	private Context context;
 	
-	public void addOnDataReceveidListener(OnDataReceivedListener listener);
+	public WalkDataReceiver(Context context){
+		this.context = context;
+		listeners = new ArrayList<OnDataReceivedListener>();
+	}
+
+	public void addOnDataReceveidListener(OnDataReceivedListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeOnDataReceivedListener(OnDataReceivedListener listener) {
+		listeners.remove(listener);
+	}
 	
-	public void removeOnDataReceivedListener(OnDataReceivedListener listener);
+	public Context getContext(){
+		return context;
+	}
 	
-	public void startReceiving();
+	public abstract void startReceiving();
 	
-	public void pauseReceiving();
+	public abstract void pauseReceiving();
 	
-	public void resumeReceiving();
+	public abstract void resumeReceiving();
 	
-	public void stopReceiving();
+	public abstract void stopReceiving();
 	
 	public static interface OnDataReceivedListener{
 		public void onDataReceveid(WalkData walkData);
@@ -21,4 +40,10 @@ public interface WalkDataReceiver {
 	public static interface OnErrorReceivingListener{
 		
 	}
+	
+
+	public static final int
+		SINGLE_ACCELEROMETER = 0,
+		TWO_ACCELEROMETERS = 1,
+		GUI_RECEIVER = -1;
 }

@@ -40,6 +40,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="org.emud.walkthrough.analysis.AnalysisService"
+            android:icon="@drawable/ic_launcher"
+            android:label="Analysis Service"
+            android:process=":analysis_service_process" >
+        </service>
+
+        <activity
+            android:name="org.emud.walkthrough.CurrentActivity"
+            android:label="@string/title_activity_current"
+            android:theme="@style/NoActionBar">
+        </activity>
     </application>
 
 </manifest>

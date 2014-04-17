@@ -2,20 +2,23 @@ package org.emud.walkthrough.analysis;
 
 import org.emud.walkthrough.stub.FalseReceiver;
 
+import android.content.Context;
+
 public class DataReceiverBuilder {
 	
 	private DataReceiverBuilder(){
 	}
 	
-	public static WalkDataReceiver buildReceiver(ReceiverType type){
+	public static WalkDataReceiver buildReceiver(Context context, int type){
 		WalkDataReceiver receiver = null;
 		//TODO
 		switch(type){
-		case SINGLE_ACCELEROMETER:
+		case WalkDataReceiver.SINGLE_ACCELEROMETER:
+			receiver = new LinearAccelerometerReceiver(context);
 			break;
-		case TWO_ACCELEROMETERS:
+		case WalkDataReceiver.TWO_ACCELEROMETERS:
 			break;
-		case GUI_RECEIVER:
+		case WalkDataReceiver.GUI_RECEIVER:
 			receiver = new FalseReceiver();
 			break;
 		default:
@@ -23,11 +26,5 @@ public class DataReceiverBuilder {
 		}
 		
 		return receiver;
-	}
-	
-	public enum ReceiverType{
-		SINGLE_ACCELEROMETER,
-		TWO_ACCELEROMETERS,
-		GUI_RECEIVER
 	}
 }

@@ -21,6 +21,14 @@ public class WalkThroughApplication extends Application {
 	private static final String APP_PREFERENCES = "WalkThroughPreferences",
 			USER_PREFERENCES_SUFIX = "Preferences";
 	
+
+	public static final int
+		SERVICE_PREPARED = 0,
+		SERVICE_RUNNING = 1,
+		SERVICE_PAUSED = 2,
+		SERVICE_STOPPED = 3,
+		SERVICE_NONE = 4;
+	
 	@Override
 	public void onCreate(){
 		super.onCreate();
@@ -153,7 +161,7 @@ public class WalkThroughApplication extends Application {
 	
 	public long getEmergencyContact(){
 		if(activeUser != null){
-			SharedPreferences userPrefs = getSharedPreferences(activeUser + "Preferences", MODE_PRIVATE);
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
 			
 			return userPrefs.getLong("emergencyContactID", -1);
 		}else{
@@ -163,10 +171,29 @@ public class WalkThroughApplication extends Application {
 	
 	public void setEmergencyContact(long contactID) {
 		if(activeUser != null){
-			SharedPreferences userPrefs = getSharedPreferences(activeUser + "Preferences", MODE_PRIVATE);
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
 			SharedPreferences.Editor editor = userPrefs.edit();
 			
 			editor.putLong("emergencyContactID", contactID);
+			editor.commit();			
+		}
+	}
+	
+	public int getServiceState(){
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
+			return userPrefs.getInt("serviceState", SERVICE_NONE);		
+		}else{
+			return -1;
+		}
+	}
+	
+	public void setServiceState(int state){
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
+			SharedPreferences.Editor editor = userPrefs.edit();
+			
+			editor.putInt("serviceState", state);
 			editor.commit();			
 		}
 	}
