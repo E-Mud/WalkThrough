@@ -2,6 +2,7 @@ package org.emud.walkthrough.model;
 
 import org.emud.walkthrough.stub.ResultMaxMove;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 
 public class ResultBuilder {
@@ -34,5 +35,9 @@ public class ResultBuilder {
 		bundle.putInt(RESULT_TYPE_KEY, result.getType());
 		
 		return bundle;
+	}
+
+	public static ContentValues buildContentValuesFromResult(Result result) {
+		return result.toContentValues();
 	}
 }

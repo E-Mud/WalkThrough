@@ -27,7 +27,7 @@ public class WalkActivity {
 		this.date = date;
 	}
 	
-	public List<Result> gerResults(){
+	public List<Result> getResults(){
 		return results;
 	}
 

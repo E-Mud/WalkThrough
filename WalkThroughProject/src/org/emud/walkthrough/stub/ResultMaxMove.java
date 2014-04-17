@@ -2,6 +2,7 @@ package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.model.Result;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 
 public class ResultMaxMove extends Result {
@@ -28,6 +29,15 @@ public class ResultMaxMove extends Result {
 		double maxValue = bundle.getDouble("maxValue");
 		
 		set(Double.valueOf(maxValue));
+	}
+
+	@Override
+	public ContentValues toContentValues() {
+		ContentValues values = new ContentValues();
+		
+		values.put("maxValue", (Double) get());
+		
+		return values;
 	}
 
 }

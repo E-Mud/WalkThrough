@@ -1,9 +1,12 @@
 package org.emud.walkthrough.database;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
+import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.model.ResultBuilder;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
 
@@ -14,7 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	
@@ -27,8 +30,12 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static final String[] ACTIVITY_COLS = new String[]{
 		"date"
 	};
+	private static final String[] RESULT_COLS = new String[]{
+		"activity_id", "resultType"
+	};
 	private static final String PROFILE_NAME = "profile",
-			ACTIVITY_NAME = "activity";
+			ACTIVITY_NAME = "activity",
+			RESULT_NAME = "result";
 
 	public DataSource(Context context, String userName){
 		String database_name = buildDatabaseName(userName);
@@ -70,6 +77,16 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
                 "_id LONG PRIMARY KEY, " +
 				ACTIVITY_COLS[0] + " LONG NOT NULL);";
 
+		private static final String DB_RESULT_CREATE = "CREATE TABLE " + RESULT_NAME + " (" +
+                "_id LONG PRIMARY KEY, " +
+				RESULT_COLS[0] + " LONG NOT NULL REFERENCES " + ACTIVITY_NAME + "(_id) ON DELETE CASCADE, " + 
+				RESULT_COLS[1] + " INTEGER NOT NULL);";
+		
+		private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
+                "_id LONG PRIMARY KEY, " +
+				"result_id LONG NOT NULL REFERENCES " + RESULT_NAME + "(_id) ON DELETE CASCADE, " + 
+				"maxValue REAL NOT NULL);";
+
 		public SQLiteHelper(Context context, String name, int version) {
 			super(context, name, null, version);
 		}
@@ -78,12 +95,16 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(DB_PROFILE_CREATE);
 			db.execSQL(DB_ACTIVITY_CREATE);
+			db.execSQL(DB_RESULT_CREATE);
+			db.execSQL(DB_RESULT_MAX_MOVE_CREATE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "+ RESULT_NAME);
+			db.execSQL("DROP TABLE IF EXISTS result_mm");
             onCreate(db);
 		}
 	}
@@ -190,14 +211,26 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 
 	@Override
 	public long createNewActivity(WalkActivity act) {
-		ContentValues values = new ContentValues();
+		ContentValues values = new ContentValues(), valuesResult = new ContentValues(), valuesSubResult;
+		long activity_id, result_id;
+		List<Result> results = act.getResults();
 		
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
-		long id = db.insert(ACTIVITY_NAME, null, values);
+		activity_id = db.insert(ACTIVITY_NAME, null, values);
+		
+		for(Result result : results){
+			valuesResult.put(RESULT_COLS[0], activity_id);
+			valuesResult.put(RESULT_COLS[1], result.getType());
+			result_id = db.insert(RESULT_NAME, null, valuesResult);
+			
+			valuesSubResult = ResultBuilder.buildContentValuesFromResult(result);
+			valuesSubResult.put("result_id", result_id);
+			db.insert("result_mm", null, valuesSubResult);
+		}
 		
 		getActivitiesSubject().notifyObservers();
 		
-		return id;
+		return activity_id;
 	}
 
 	
