@@ -19,12 +19,13 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="org.emud.walkthrough.RegisterActivity"
-            android:label="@string/title_activity_register" >
+            android:label="@string/title_activity_register"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="org.emud.walkthrough.LogInActivity"
             android:label="@string/title_activity_log_in"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
             android:name="org.emud.walkthrough.SettingsActivity"
@@ -50,7 +51,7 @@
 
         <activity
             android:name="org.emud.walkthrough.CurrentActivity"
-            android:label="@string/title_activity_current"
+            android:label="currentActivity"
             android:theme="@style/NoActionBar">
         </activity>
     </application>

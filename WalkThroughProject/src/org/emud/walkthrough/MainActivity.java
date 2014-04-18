@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.ObserverCursorLoader;
@@ -22,6 +23,8 @@ import org.emud.walkthrough.database.ActivitiesQuery;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
+import org.emud.walkthrough.fragment.NewActivityFragment;
+import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
@@ -51,7 +54,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener {
+public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, OnAcceptButtonClickedListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
 			FALLING_DETECTION_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
@@ -331,7 +334,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		switch(newContent){
 		case NEW_ACTIVITY_CONTENT:
 			newTitle = R.string.newactivity_title;
-			contentFragment = new DummyFragmentNA();
+			contentFragment = new NewActivityFragment();
+			((NewActivityFragment) contentFragment).setListener(this);
 			break;
 		case FALLING_DETECTION_CONTENT:
 			newTitle = R.string.fallingdetection_title;
@@ -569,6 +573,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				getActivity().unbindService(mConnection);
 			super.onDestroy();
 		}
+	}
+
+	@Override
+	public void acceptButtonClicked(int receiver, List<Integer> analystList) {
+		int n = analystList.size();
+		int[] resultTypes = new int[n];
+		
+		for(int i=0; i<n; i++)
+			resultTypes[i] = analystList.get(i).intValue();
+		
+		Intent intentService = new Intent(this, AnalysisService.class);
+		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiver);
+		intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultTypes);
+		startService(intentService);
+		
+		((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
+		
+		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
+		startActivity(intentCurrentActivity);
+		finish();
 	}
 
 }

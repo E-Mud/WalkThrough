@@ -9,7 +9,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -116,12 +115,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="@dimen/draweritem_padding"
         android:gravity="bottom"
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView5"
             style="@style/DrawerHeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,7 +141,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/drawer_textView6"
+            android:id="@+id/textView6"
             style="@style/DrawerHeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -154,7 +153,7 @@
         <View style="@style/Divider" />
 
         <TextView
-            android:id="@+id/drawer_textView6"
+            android:id="@+id/drawer_toDate"
             style="@style/DrawerDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

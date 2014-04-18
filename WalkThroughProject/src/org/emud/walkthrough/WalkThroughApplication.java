@@ -184,7 +184,7 @@ public class WalkThroughApplication extends Application {
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
 			return userPrefs.getInt("serviceState", SERVICE_NONE);		
 		}else{
-			return -1;
+			return SERVICE_NONE;
 		}
 	}
 	

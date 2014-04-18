@@ -5,25 +5,31 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#DDDDDD" >
+        android:layout_marginBottom="50dp" >
 
         <ImageView
             android:id="@+id/iconPauseResume"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1.00"
+            android:background="#DDDDDD"
             android:src="@drawable/ic_resume_icon" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#FFFFFFFF" />
 
         <ImageView
             android:id="@+id/iconStop"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1.00"
+            android:background="#DDDDDD"
             android:src="@drawable/ic_stop_icon" />
-
     </LinearLayout>
 
 </RelativeLayout>

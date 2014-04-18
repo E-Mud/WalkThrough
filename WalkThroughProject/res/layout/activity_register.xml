@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/register_nickname_hint" >
+        android:hint="@string/register_nickname_hint"
+        android:imeOptions="actionNext" >
 
-        <requestFocus />
     </EditText>
 
     <EditText
@@ -32,7 +32,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_password1_hint"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:id="@+id/register_password2"
@@ -40,7 +41,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_password2_hint"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:id="@+id/register_name"
@@ -48,7 +50,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_name_hint"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:id="@+id/register_lastname"
@@ -56,7 +59,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_lastname_hint"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,7 +108,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_height_hint"
-        android:inputType="number" />
+        android:inputType="number"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:id="@+id/register_weight"
@@ -112,7 +117,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/register_weight_hint"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:imeOptions="actionDone" />
 
 </LinearLayout>
 

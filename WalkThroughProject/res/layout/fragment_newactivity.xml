@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="6dp"
+    android:paddingLeft="@dimen/draweritem_padding"
+    android:paddingRight="@dimen/draweritem_padding" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/DrawerHeaderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/draweritem_padding"
+            android:text="@string/newactivity_receiver_title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider2" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/receiver_radio0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/newactivity_singleacc_title" />
+
+            <RadioButton
+                android:id="@+id/receiver_radio1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/newactivity_twoacc_title" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/DrawerHeaderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/draweritem_padding"
+            android:text="@string/newactivity_analysis_title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider2" />
+
+        <CheckBox
+            android:id="@+id/analyst_checkBox0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/newactivity_maxmove_title" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/newactivity_acceptbutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/accept_label" />
+
+    </LinearLayout>
+
+</RelativeLayout>

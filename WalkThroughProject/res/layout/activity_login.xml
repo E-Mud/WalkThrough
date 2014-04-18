@@ -20,7 +20,8 @@
             android:id="@+id/login_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_username_hint" >
+            android:hint="@string/login_username_hint"
+            android:imeOptions="actionNext" >
 
             <requestFocus />
         </EditText>
@@ -31,7 +32,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/login_password_hint"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:imeOptions="actionDone" />
 
         <Button
             android:id="@+id/login_login"

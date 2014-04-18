@@ -4,4 +4,9 @@
         <item>Hombre</item>
         <item>Mujer</item>
     </string-array>
+    
+    <string-array name="receiverpicker_stringarray">
+        <item>Movil</item>
+        <item>Acelerómetros en los tobillos</item>
+    </string-array>
 </resources>
