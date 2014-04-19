@@ -1,7 +1,5 @@
 package org.emud.walkthrough.adapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.R;
@@ -35,6 +33,7 @@ public class ActivitiesCursorAdapter extends CursorAdapter {
 	}
 
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		date.setTimeInMillis(cursor.getLong(1));

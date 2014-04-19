@@ -39,7 +39,7 @@
     <string name="icd_message">El contacto de emergencia debe tener número de teléfono.</string>
     <string name="nrpd_title">Lista de analisis incorrecta</string>
     <string name="nrpd_message">Debe escoger al menos un tipo de análisis.</string>
-    
+
     <!-- LogIN -->
     <string name="login_username_hint">Nombre de usuario</string>
     <string name="login_password_hint">Contraseña</string>
@@ -54,8 +54,6 @@
     <string name="settings_logout_title">Cerrar sesión</string>
     <string name="settings_emergencycontact_title">Contacto de emergencia</string>
     <string name="settings_emergencycontact_summary">Ninguno seleccionado</string>
-    
-    
     <string name="newactivity_title">Nueva actividad</string>
     <string name="fallingdetection_title">Deteccion de caidas</string>
     <string name="myactivities_title">Mis actividades</string>
@@ -67,12 +65,21 @@
     <string name="mainactivity_to_label">HASTA:</string>
     <string name="mainactivity_today_label">Hoy</string>
     <string name="mainactivity_beginning_label">...</string>
-    
+
     <!-- New Activity -->
     <string name="newactivity_receiver_title">RECEPTOR</string>
     <string name="newactivity_analysis_title">ANALISIS</string>
     <string name="newactivity_singleacc_title">Movil</string>
     <string name="newactivity_twoacc_title">Acelerometros en tobillos</string>
     <string name="newactivity_maxmove_title">Aceleracion maxima</string>
+    
+    
+    <!-- Detail Activity -->
+    <string name="title_activity_detail">Actividad</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <!-- Result -->
+    <string name="rt_max_move_title">Maxima aceleración.</string>
+    <string name="rt_max_move_unit">m/s2</string>
 
 </resources>

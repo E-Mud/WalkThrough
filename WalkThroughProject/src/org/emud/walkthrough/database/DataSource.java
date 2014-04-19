@@ -1,5 +1,6 @@
 package org.emud.walkthrough.database;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 2;
+	private static final int VERSION = 6;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	
@@ -64,7 +65,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static class SQLiteHelper extends SQLiteOpenHelper{
 		private static final String DB_PROFILE_CREATE="CREATE TABLE " + PROFILE_NAME +
                 " ("+
-                "_id LONG PRIMARY KEY, " +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PROFILE_COLS[0] + " LONG NOT NULL, " +
                 PROFILE_COLS[1] + " TEXT NOT NULL , " + 
                 PROFILE_COLS[2] + " TEXT NOT NULL, " +
@@ -74,16 +75,16 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
                 PROFILE_COLS[6] + " INTEGER NOT NULL, " +
                 PROFILE_COLS[7] + " REAL );";
 		private static final String DB_ACTIVITY_CREATE = "CREATE TABLE " + ACTIVITY_NAME + " (" +
-                "_id LONG PRIMARY KEY, " +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				ACTIVITY_COLS[0] + " LONG NOT NULL);";
 
 		private static final String DB_RESULT_CREATE = "CREATE TABLE " + RESULT_NAME + " (" +
-                "_id LONG PRIMARY KEY, " +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				RESULT_COLS[0] + " LONG NOT NULL REFERENCES " + ACTIVITY_NAME + "(_id) ON DELETE CASCADE, " + 
 				RESULT_COLS[1] + " INTEGER NOT NULL);";
 		
 		private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
-                "_id LONG PRIMARY KEY, " +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				"result_id LONG NOT NULL REFERENCES " + RESULT_NAME + "(_id) ON DELETE CASCADE, " + 
 				"maxValue REAL NOT NULL);";
 
@@ -175,24 +176,19 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 
 	@Override
 	public Cursor getActivities(GregorianCalendar startDate, GregorianCalendar endDate) {
-		StringBuilder builder = new StringBuilder();
 		Cursor cursor;
 		
-		if(startDate != null)
-			builder.append(ACTIVITY_COLS[0] + " >= " + startDate.getTimeInMillis());
-		
-		if(endDate != null){
-			if(startDate != null)
-				builder.append(" AND ");
-			
-			builder.append(ACTIVITY_COLS[0] + " <= " + endDate.getTimeInMillis());
-		}
-		
-		if(builder.length() > 0){
-			cursor = db.query(ACTIVITY_NAME, null, builder.toString(), null, null, null, ACTIVITY_COLS[0] + " DESC");
-		}else{
+		if(startDate == null && endDate == null){
 			cursor = db.query(ACTIVITY_NAME, null, null, null, null, null, ACTIVITY_COLS[0] + " DESC");
+		}else{
+			cursor = db.query(ACTIVITY_NAME, null, buildFilter(startDate, endDate), null, null, null, ACTIVITY_COLS[0] + " DESC");
 		}
+		
+		cursor.moveToFirst();
+		
+		do{
+			android.util.Log.d("DATA SOURCE GA", "" + cursor.getLong(cursor.getColumnIndex("_id")));
+		}while(cursor.moveToNext());
 		
 		cursor.moveToFirst();
 		
@@ -218,6 +214,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
 		
+		android.util.Log.d("DATA SOURCE CA", "" + results.size());
+		android.util.Log.d("DATA SOURCE CA AID", "" + activity_id);
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
 			valuesResult.put(RESULT_COLS[1], result.getType());
@@ -225,12 +223,97 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			
 			valuesSubResult = ResultBuilder.buildContentValuesFromResult(result);
 			valuesSubResult.put("result_id", result_id);
-			db.insert("result_mm", null, valuesSubResult);
+			db.insert(ResultBuilder.getTableName(result.getType()), null, valuesSubResult);
 		}
 		
 		getActivitiesSubject().notifyObservers();
 		
 		return activity_id;
+	}
+
+	@Override
+	public List<Result> getActivityResults(long activity_id) {
+		Cursor cursorResult, cursorSubResult;
+		ArrayList<Result> results = new ArrayList<Result>();
+		
+		android.util.Log.d("DATA SOURCE GAR", "" + activity_id);
+		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
+		
+		if(!cursorResult.moveToFirst()){
+			android.util.Log.d("DATA SOURCE", "no results");
+			cursorResult.close();
+			return results;
+		}
+		
+		do{
+			int type = cursorResult.getInt(cursorResult.getColumnIndex(RESULT_COLS[1]));
+			String table;
+			Result result;
+			
+			android.util.Log.d("DATA SOURCE", "" + type);
+			
+			table = ResultBuilder.getTableName(type);
+			
+			cursorSubResult = db.query(table, null, "result_id = " + cursorResult.getLong(0), null, null, null, null);
+			
+
+			android.util.Log.d("DATA SOURCE", "" + cursorSubResult.moveToFirst());
+			
+			result = ResultBuilder.buildResultFromCursor(cursorSubResult, type);
+			results.add(result);
+			
+			cursorSubResult.close();
+		}while(cursorResult.moveToNext());
+		
+		cursorResult.close();
+		
+		return results;
+	}
+
+	@Override
+	public Cursor getResults(int type, GregorianCalendar startDate,
+			GregorianCalendar endDate) {
+		Cursor cursor;
+		String table = ResultBuilder.getTableName(type);
+		String sqlQuery = "SELECT " + ACTIVITY_COLS[0] + ", resultTable.* FROM " +
+						ACTIVITY_NAME + ", " + RESULT_NAME + ", " + table + " AS resultTable";
+		String whereClause;
+		
+		if(startDate == null && endDate == null){
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND" +
+						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
+						"resultTable.result_id = " + RESULT_NAME + "._id";
+		}else{
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND" +
+						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
+						"resultTable.result_id = " + RESULT_NAME + "._id AND " + buildFilter(startDate, endDate);
+		}
+						
+		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);
+		
+		
+		return cursor;
+	}
+
+	@Override
+	public Cursor getResults(int type) {
+		return getResults(type, null, null);
+	}
+	
+	private String buildFilter(GregorianCalendar startDate, GregorianCalendar endDate){
+		StringBuilder builder = new StringBuilder();
+		
+		if(startDate != null)
+			builder.append(ACTIVITY_COLS[0] + " >= " + startDate.getTimeInMillis());
+		
+		if(endDate != null){
+			if(startDate != null)
+				builder.append(" AND ");
+			
+			builder.append(ACTIVITY_COLS[0] + " <= " + endDate.getTimeInMillis());
+		}
+		
+		return builder.toString();
 	}
 
 	

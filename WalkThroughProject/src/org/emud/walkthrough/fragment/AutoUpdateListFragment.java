@@ -9,13 +9,19 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.widget.AdapterView.OnItemClickListener;
+
 public class AutoUpdateListFragment extends ListFragment implements LoaderCallbacks<Cursor>{
 	private ObserverCursorLoader loader;
+	private OnItemClickListener listener;
 
 	public AutoUpdateListFragment(){
 		
 	}
 	
+	public void setOnItemClickListener(OnItemClickListener listener){
+		this.listener = listener;
+	}
 	
 	public ObserverCursorLoader getLoader() {
 		return loader;
@@ -45,6 +51,7 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 		super.onStart();
 		
 		setEmptyText(getArguments().getString("emptytext"));
+		getListView().setOnItemClickListener(listener);
 		
 		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
@@ -64,6 +71,7 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		
 		CursorAdapter adapter = (CursorAdapter) getListAdapter();
 		if(adapter != null){
 			adapter.swapCursor(cursor);

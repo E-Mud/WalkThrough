@@ -173,6 +173,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
         for(int i=0; i<size; i++)
         	results.add(ResultBuilder.buildResultFromBundle(msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i)));
 
+		android.util.Log.d("Current ACT", "" + results.size());
         activity = new WalkActivity((GregorianCalendar) GregorianCalendar.getInstance(), results);
         dataSource.createNewActivity(activity);
         

@@ -52,7 +52,11 @@
         <activity
             android:name="org.emud.walkthrough.CurrentActivity"
             android:label="currentActivity"
-            android:theme="@style/NoActionBar">
+            android:theme="@style/NoActionBar" >
+        </activity>
+        <activity
+            android:name="org.emud.walkthrough.DetailActivity"
+            android:label="@string/title_activity_detail" >
         </activity>
     </application>
 

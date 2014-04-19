@@ -108,6 +108,12 @@
     <View
         style="@style/Divider"/>
 
+    <ExpandableListView
+        android:id="@+id/drawer_expandableListView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ExpandableListView>
+
 </LinearLayout>
 
     <LinearLayout

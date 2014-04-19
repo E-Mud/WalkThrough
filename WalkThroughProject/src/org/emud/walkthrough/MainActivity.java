@@ -52,9 +52,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, OnAcceptButtonClickedListener {
+public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, OnAcceptButtonClickedListener, OnItemClickListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
 			FALLING_DETECTION_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
@@ -79,7 +81,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		//((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_NONE);
 		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
 		if(serviceState != WalkThroughApplication.SERVICE_NONE){
 			Intent intent = new Intent(this, CurrentActivity.class);
@@ -350,6 +353,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				myActivitiesListFragment = AutoUpdateListFragment.newInstance(getResources().getString(R.string.myactivitieslist_empty));
 				myActivitiesListFragment.setListAdapter(new ActivitiesCursorAdapter(this));
 				((AutoUpdateListFragment)myActivitiesListFragment).setLoader(loader);
+				((AutoUpdateListFragment) myActivitiesListFragment).setOnItemClickListener(this);
 			}
 			contentFragment = myActivitiesListFragment;
 			break;
@@ -593,6 +597,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
 		startActivity(intentCurrentActivity);
 		finish();
+	}
+
+
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+		Intent intent = new Intent(this, DetailActivity.class);
+		intent.putExtra("activity_id", id);
+		startActivity(intent);
 	}
 
 }

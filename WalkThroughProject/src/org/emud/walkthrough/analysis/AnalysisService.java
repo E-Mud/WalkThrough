@@ -83,7 +83,6 @@ public class AnalysisService extends Service {
 		Message msg = Message.obtain(null, MSG_STOP, 0, 0);
 		int size = list.size();
 		Bundle resultListBundle = new Bundle(), resultBundle;
-		Bundle firstBundle=null;
 		
 		resultListBundle.putInt(LIST_SIZE_KEY, size);
 		android.util.Log.e("SERVICE","sendingResponse " + (replyTo==null));
@@ -91,8 +90,6 @@ public class AnalysisService extends Service {
 		for(int i=0; i<size; i++){
 			resultBundle = ResultBuilder.buildBundleFromResult(list.get(i));
 			android.util.Log.e("SERVICE","building bundle " + i + " type " + list.get(i).getType());
-			if(i==0)
-				firstBundle = resultBundle;
 			resultListBundle.putBundle(LIST_ITEM_KEY + i, resultBundle);
 		}
 		
