@@ -13,6 +13,14 @@ public class AnalysisStationBuilder {
 	private AnalysisStationBuilder(){
 	}
 	
+	
+	/**
+	 * Construye un nuevo AnalysisStationBuilder según las especificaciones. 
+	 * @param context Context en el que se ejecutará el análisis.
+	 * @param receiverType Tipo del receptor de datos.
+	 * @param resultsTypes Lista de tipos de resultados a obtener.
+	 * @return AnalysisStation inicializado.
+	 */
 	public static AnalysisStation buildStation(Context context, int receiverType, Set<Integer> resultsTypes){
 		WalkDataReceiver dataReceiver;
 		AnalysisStation analysisStation;

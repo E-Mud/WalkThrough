@@ -9,6 +9,12 @@ public class DataReceiverBuilder {
 	private DataReceiverBuilder(){
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param type
+	 * @return
+	 */
 	public static WalkDataReceiver buildReceiver(Context context, int type){
 		WalkDataReceiver receiver = null;
 		//TODO

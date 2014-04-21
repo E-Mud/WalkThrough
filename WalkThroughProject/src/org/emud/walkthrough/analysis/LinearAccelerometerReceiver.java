@@ -7,6 +7,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 
+/**
+ * Receptor de datos para el acelerómetro del teléfono movil.
+ * @author alberto
+ *
+ */
 public class LinearAccelerometerReceiver extends WalkDataReceiver implements SensorEventListener{
 	private SensorManager sensorManager;
 	private Sensor accelerometer;

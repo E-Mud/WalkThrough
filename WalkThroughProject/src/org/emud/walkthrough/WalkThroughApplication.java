@@ -29,6 +29,9 @@ public class WalkThroughApplication extends Application {
 		SERVICE_STOPPED = 3,
 		SERVICE_NONE = 4;
 	
+	/** (non-Javadoc)
+	 * @see android.app.Application#onCreate()
+	 */
 	@Override
 	public void onCreate(){
 		super.onCreate();
@@ -36,6 +39,13 @@ public class WalkThroughApplication extends Application {
 				.getString("activeUserName", null);
 	}
 	
+	/**
+	 * Especifica el usuario que esta usando la aplicación como usuario activo.
+	 * 
+	 * @param user Nombre de usuario.
+	 * @param password Contraseña.
+	 * @return True si el usuario se encuentra entre los usuarios registrados en la aplicación y ha pasado a ser usuario activo. False en caso contrario.
+	 */
 	public boolean setActiveUser(String user, String password){
 		Set<String> registeredUsers = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getStringSet("registeredUsers", null);
@@ -51,6 +61,9 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Retira al usuario activo. Si no habia ningun usuario activo este método no hace nada.
+	 */
 	public void unsetActiveUser(){
 		if(activeUser != null){
 			activeUser = null;
@@ -62,24 +75,44 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 
+	/**
+	 * Devuelve el nombre de usuario del usuario activo.
+	 * @return Nombre de usuario del usuario activo o null si no hay usuario activo.
+	 */
 	public String getActiveUserName(){
 		return activeUser;
 	}
 	
+	/**
+	 * Devuelve la contraseña del usuario activo.
+	 * @return Contraseña del usuario activo o null si no hay usuario activo.
+	 */
 	public String getActiveUserPassword(){
 		return getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 		.getString("activeUserPassword", null);
 	}
 	
+	/**
+	 * Devuelve la fuente de datos de usuario del usuario activo.
+	 * @return Fuente de datos del usuario activo o null si no hay usuario activo.
+	 */
 	public UserDataSource getUserDataSource(){
 		return getDataSource();
 		
 	}
 	
+	/**
+	 * Devuelve la fuente de datos de actividades del usuario activo.
+	 * @return Fuente de datos de actividades del usuario activo o null si no hay usuario activo.
+	 */
 	public ActivitiesDataSource getActivitiesDataSource(){
 		return getDataSource();
 	}
 	
+	/**
+	 * Devuelve la fuente de datos del usuario activo
+	 * @return Fuente de datos del usuario activo o null si no hay usuario activo.
+	 */
 	private DataSource getDataSource(){
 		if(activeUser != null){
 			if(dataSource == null)
@@ -90,6 +123,11 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Comprueba si cierto usuario aparece como usuario registrado.
+	 * @param username Nombre de usuario
+	 * @return True si es un usuario registrado. False en caso contrario.
+	 */
 	public boolean containsRegisteredUser(String username) {
 		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
@@ -101,6 +139,11 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Añade un usuario como usuario registrado en la aplicación.
+	 * @param user Nombre de usuario.
+	 * @return True si ha sido añadido satisfactoriamente. False en caso contrario.
+	 */
 	public boolean addUser(String user){
 		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
@@ -121,6 +164,11 @@ public class WalkThroughApplication extends Application {
 		return added;
 	}
 	
+	/**
+	 * Elimina a un usuario como usuario registrado. Esto conlleva también la eliminación de sus fuentes de datos.
+	 * Si user era el usuario activo se retirará. 
+	 * @param user Nombre de usuario.
+	 */
 	public void removeUser(String user){
 		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
@@ -137,17 +185,27 @@ public class WalkThroughApplication extends Application {
 		}
 	}	
 	
+	/**
+	 * Elimina la base de datos y las fuentes de datos de un usuario.
+	 * @param user Nombre de usuario
+	 */
 	private void removeUserDatabase(String user) {
 		closeDataSource();
 		String databaseName = DataSource.buildDatabaseName(user);
 		super.deleteDatabase(databaseName);
 	}
 	
-
+	/**
+	 * Cierra la aplicación. Se recomienda llamar a esta función antes de cerrar la aplicación para que se cierre la conexión de las fuentes de datos.
+	 * 
+	 */
 	public void close() {
 		closeDataSource();
 	}
 	
+	/**
+	 * Cierra la conexión de la fuente de datos activa.
+	 */
 	private void closeDataSource() {
 		if(dataSource != null){
 			dataSource.closeDatabase();
@@ -155,10 +213,18 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 
+	/**
+	 * Devuelve el cliente web asociado a la aplicación.
+	 * @return Cliente web.
+	 */
 	public WebClient getDefaultWebClient(){
 		return defaultWebClient == null ? defaultWebClient = new StubWebClient() : defaultWebClient;
 	}
 	
+	/**
+	 * Devuelve el contacto de emergencia del usuario activo.
+	 * @return Identificador único del contacto o -1 en caso de no encontrarse o no haber usuario activo.
+	 */
 	public long getEmergencyContact(){
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
@@ -169,6 +235,10 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Especifica el contacto de emergencia del usuario activo.
+	 * @param contactID Identificador único del usuario activo.
+	 */
 	public void setEmergencyContact(long contactID) {
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
@@ -179,6 +249,10 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Devuelve el estado del servicio de análisis del usuario activo.
+	 * @return Estado del servicio de análisis. Si no hay usuario activo se devolverá SERVICE_NONE.
+	 */
 	public int getServiceState(){
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
@@ -188,6 +262,10 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Especifica el estado del servicio de análisis del usuario activo.
+	 * @param state Estado del servicio de análisis.
+	 */
 	public void setServiceState(int state){
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
