@@ -1,7 +1,10 @@
 package org.emud.walkthrough.database;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import org.emud.content.DataSubject;
@@ -271,7 +274,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 	@Override
-	public Cursor getResults(int type, GregorianCalendar startDate,
+	public Cursor getResultsCursor(int type, GregorianCalendar startDate,
 			GregorianCalendar endDate) {
 		Cursor cursor;
 		String table = ResultBuilder.getTableName(type);
@@ -280,11 +283,11 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		String whereClause;
 		
 		if(startDate == null && endDate == null){
-			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND" +
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
 						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
 						"resultTable.result_id = " + RESULT_NAME + "._id";
 		}else{
-			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND" +
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
 						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
 						"resultTable.result_id = " + RESULT_NAME + "._id AND " + buildFilter(startDate, endDate);
 		}
@@ -296,10 +299,76 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 	@Override
-	public Cursor getResults(int type) {
+	public Cursor getResultsCursor(int type) {
+		return getResultsCursor(type, null, null);
+	}
+
+	@Override
+	public List<Result> getResults(int type, GregorianCalendar startDate,
+			GregorianCalendar endDate) {
+		Cursor cursor;
+		GregorianCalendar date;
+		HashMap<Long,Long> dateMap = new HashMap<Long,Long>();
+		ArrayList<Result> results = new ArrayList<Result>();
+		String sqlQuery = "SELECT " + ACTIVITY_COLS[0] + " AS activityDate, " + RESULT_NAME + "._id AS ID FROM " +
+						ACTIVITY_NAME + ", " + RESULT_NAME;
+		String whereClause;
+		
+		if(startDate == null && endDate == null){
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
+						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id";
+		}else{
+			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
+						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " 
+						+ buildFilter(startDate, endDate);
+		}
+						
+		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);
+		
+		
+		StringBuilder builder = new StringBuilder();
+		if(cursor.moveToFirst()){
+			int dateIndex = cursor.getColumnIndex("activityDate");
+			do{
+				long result_id = cursor.getLong(cursor.getColumnIndex("ID"));
+				dateMap.put(Long.valueOf(result_id), Long.valueOf(cursor.getLong(dateIndex)));
+				builder.append("" + result_id + ", ");
+			}while(cursor.moveToNext());
+			builder.delete(builder.length()-2, builder.length());
+			cursor.close();
+		}else{
+			return results;
+		}
+		
+		cursor = db.query(ResultBuilder.getTableName(type), null, "result_id IN("+builder.toString()+")", null, null, null, null);
+		
+		cursor.moveToFirst();
+		
+		do{
+			Result result = ResultBuilder.buildResultFromCursor(cursor, type);
+			date = new GregorianCalendar();
+			date.setTimeInMillis(dateMap.get(cursor.getLong(cursor.getColumnIndex("result_id"))).longValue());
+			result.setDate(date);
+			results.add(result);
+		}while(cursor.moveToNext());
+		
+		cursor.close();
+		
+		Collections.sort(results, new Comparator<Result>(){
+			@Override
+			public int compare(Result res1, Result res2) {
+				return res2.getDate().compareTo(res1.getDate());
+			}
+		});
+		
+		return results;
+	}
+
+	@Override
+	public List<Result> getResults(int type) {
 		return getResults(type, null, null);
 	}
-	
+
 	private String buildFilter(GregorianCalendar startDate, GregorianCalendar endDate){
 		StringBuilder builder = new StringBuilder();
 		
@@ -315,6 +384,4 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		return builder.toString();
 	}
-
-	
 }

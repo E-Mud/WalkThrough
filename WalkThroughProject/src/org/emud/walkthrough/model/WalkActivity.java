@@ -11,6 +11,8 @@ public class WalkActivity {
 	public WalkActivity(GregorianCalendar adate, List<Result> resultsList){
 		date = adate;
 		results = new ArrayList<Result>(resultsList);
+		for(Result result : results)
+			result.setDate(date);
 	}
 
 	/**

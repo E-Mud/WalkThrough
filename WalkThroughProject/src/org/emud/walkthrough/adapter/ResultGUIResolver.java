@@ -1,10 +1,14 @@
 package org.emud.walkthrough.adapter;
 
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.stub.MaxMoveListAdapter;
 
 import org.emud.walkthrough.R;
+
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -44,6 +48,12 @@ public class ResultGUIResolver {
 		return view;
 	}
 	
-	
+	public static ListAdapter getListAdapter(Context context, int resultType){
+		switch(resultType){
+		case Result.RT_MAX_MOVE:
+			return new MaxMoveListAdapter(context);
+		}
+		return null;
+	}
 
 }

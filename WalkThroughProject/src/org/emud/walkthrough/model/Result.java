@@ -1,10 +1,15 @@
 package org.emud.walkthrough.model;
 
+import java.util.GregorianCalendar;
+
 import android.content.ContentValues;
 import android.os.Bundle;
 
 //TODO
 public abstract class Result {
+	private GregorianCalendar date;
+	
+
 	private Object result;
 	private int type;
 	
@@ -27,6 +32,20 @@ public abstract class Result {
 	
 	public int getType() {
 		return type;
+	}
+	
+	/**
+	 * @return the date
+	 */
+	public GregorianCalendar getDate() {
+		return date;
+	}
+
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(GregorianCalendar date) {
+		this.date = date;
 	}
 	
 	public abstract Bundle toBundle();

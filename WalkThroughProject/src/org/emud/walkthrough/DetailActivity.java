@@ -45,7 +45,6 @@ public class DetailActivity extends FragmentActivity implements LoaderCallbacks<
 
 	@Override
 	public void onLoadFinished(Loader<List<Result>> loader, List<Result> resultList) {
-		android.util.Log.d("DETAIL ACT", "" + resultList.size());
 		resultsListView.setAdapter(new ActivityDetailListAdapter(this, resultList));
 	}
 

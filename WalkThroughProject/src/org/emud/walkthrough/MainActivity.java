@@ -3,43 +3,37 @@ package org.emud.walkthrough;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.ObserverCursorLoader;
+import org.emud.content.ObserverLoader;
 import org.emud.content.observer.Subject;
 import org.emud.walkthrough.adapter.ActivitiesCursorAdapter;
 import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.analysis.AnalysisStation;
-import org.emud.walkthrough.analysis.AnalysisStationBuilder;
 import org.emud.walkthrough.analysis.Analyst;
-import org.emud.walkthrough.analysis.DataReceiverBuilder;
 import org.emud.walkthrough.analysis.LinearAccelerometerReceiver;
 import org.emud.walkthrough.analysis.WalkData;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ActivitiesQuery;
+import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
+import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
 
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -65,7 +59,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private int currentContent;
 	private ActionBarDrawerToggle drawerToggle;
 	private DrawerLayout drawerLayout;
-	private ListFragment myActivitiesListFragment;
+	private ListFragment myActivitiesListFragment, myResultsListFragment;
 	
 	private GregorianCalendar fromDate, toDate;
 	private TextView fromText, toText;
@@ -74,6 +68,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private int dateDialogShowing;
 
 	private ActivitiesQuery activitiesQuery;
+	private ResultsQuery resultsQuery;
 	
 	private DateFormat filterDateFormat; 
 	
@@ -112,11 +107,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				toDate.setTimeInMillis(dateMillis);
 			}
 
-	        currentContent = savedInstanceState.getInt("currentContent", NEW_ACTIVITY_CONTENT);
+	        currentContent = savedInstanceState.getInt("currentContent", MY_ACTIVITIES_CONTENT);
 		}else{
 			fromDate = null;
 			toDate = null;
-			currentContent = NEW_ACTIVITY_CONTENT;
+			currentContent = MY_ACTIVITIES_CONTENT;
 		}
 		
 		
@@ -219,8 +214,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			startActivity(intent);
 
 			return true;
-		case R.id.action_filter:
-			return true;
 		default: return super.onOptionsItemSelected(item);
 		}
 	}
@@ -283,8 +276,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private void onDateFilterClick(int id){
 		DatePickerDialogFragment dialogFragment;
 		GregorianCalendar date;
-		
-		android.util.Log.d("MAINACT", "" + (id == R.id.drawer_toDate));
 		
 		if(id == R.id.drawer_fromDate){
 			date = fromDate;
@@ -352,14 +343,23 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				ObserverCursorLoader loader = new ObserverCursorLoader(this, activitiesQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
 				myActivitiesListFragment = AutoUpdateListFragment.newInstance(getResources().getString(R.string.myactivitieslist_empty));
 				myActivitiesListFragment.setListAdapter(new ActivitiesCursorAdapter(this));
-				((AutoUpdateListFragment)myActivitiesListFragment).setLoader(loader);
+				((AutoUpdateListFragment) myActivitiesListFragment).setLoader(loader);
 				((AutoUpdateListFragment) myActivitiesListFragment).setOnItemClickListener(this);
 			}
 			contentFragment = myActivitiesListFragment;
 			break;
 		case MY_RESULTS_CONTENT:
 			newTitle = R.string.myresults_title;
-			contentFragment = new DummyFragment();
+			//TODO
+			if(myResultsListFragment == null){
+				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
+				resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, fromDate, toDate);
+				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
+				myResultsListFragment = ResultsListFragment.newInstance(getResources().getString(R.string.myresultslist_empty));
+				((ResultsListFragment) myResultsListFragment).setLoader(loader);
+				((ResultsListFragment) myResultsListFragment).setResultType(this, Result.RT_MAX_MOVE);
+			}
+			contentFragment = myResultsListFragment;
 			break;
 		default: return;
 		}
@@ -373,7 +373,35 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		
 	}
 	
-	
+	@Override
+	public void acceptButtonClicked(int receiver, List<Integer> analystList) {
+		int n = analystList.size();
+		int[] resultTypes = new int[n];
+		
+		for(int i=0; i<n; i++)
+			resultTypes[i] = analystList.get(i).intValue();
+		
+		Intent intentService = new Intent(this, AnalysisService.class);
+		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiver);
+		intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultTypes);
+		startService(intentService);
+		
+		((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
+		
+		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
+		startActivity(intentCurrentActivity);
+		finish();
+	}
+
+
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+		Intent intent = new Intent(this, DetailActivity.class);
+		intent.putExtra("activity_id", id);
+		startActivity(intent);
+	}
+
 	
 	
 	
@@ -509,6 +537,16 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 
 		@Override
 		public void onClick(View view) {
+			List<Result> results = ((WalkThroughApplication) getActivity().getApplicationContext()).getActivitiesDataSource().getResults(Result.RT_MAX_MOVE);
+			DateFormat dateFormat = new DateFormat();
+			
+			for(Result res : results){
+				android.util.Log.d("RESULTL t:", ""+res.getType());
+				android.util.Log.d("RESULTL d:", res.get().toString());
+				android.util.Log.d("RESULTL f:", dateFormat.format("EEE d/M/yyyy h:m a", res.getDate()).toString());
+				
+			}
+			/*
 			Activity activity = getActivity();
 			int receiverType = WalkDataReceiver.SINGLE_ACCELEROMETER;
 			int[] resultsTypes = new int[]{Result.RT_MAX_MOVE};
@@ -521,7 +559,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			((WalkThroughApplication) activity.getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
 			
 			Intent intentCurrentActivity = new Intent(activity, CurrentActivity.class);
-			startActivity(intentCurrentActivity);
+			startActivity(intentCurrentActivity);*/
 			/*
 			int what = 0;
 			switch(view.getId()){
@@ -579,33 +617,5 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		}
 	}
 
-	@Override
-	public void acceptButtonClicked(int receiver, List<Integer> analystList) {
-		int n = analystList.size();
-		int[] resultTypes = new int[n];
-		
-		for(int i=0; i<n; i++)
-			resultTypes[i] = analystList.get(i).intValue();
-		
-		Intent intentService = new Intent(this, AnalysisService.class);
-		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiver);
-		intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultTypes);
-		startService(intentService);
-		
-		((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
-		
-		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
-		startActivity(intentCurrentActivity);
-		finish();
-	}
-
-
-
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-		Intent intent = new Intent(this, DetailActivity.class);
-		intent.putExtra("activity_id", id);
-		startActivity(intent);
-	}
-
+	
 }

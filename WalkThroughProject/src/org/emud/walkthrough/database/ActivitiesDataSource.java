@@ -56,12 +56,26 @@ public interface ActivitiesDataSource {
 	 * @param endDate
 	 * @return
 	 */
-	public Cursor getResults(int type, GregorianCalendar startDate, GregorianCalendar endDate);
+	public Cursor getResultsCursor(int type, GregorianCalendar startDate, GregorianCalendar endDate);
+	
+	/**
+	 * @param type
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<Result> getResults(int type, GregorianCalendar startDate, GregorianCalendar endDate);
 	
 	/**
 	 * @param type
 	 * @return
 	 */
-	public Cursor getResults(int type);
+	public List<Result> getResults(int type);
+	
+	/**
+	 * @param type
+	 * @return
+	 */
+	public Cursor getResultsCursor(int type);
 
 }
