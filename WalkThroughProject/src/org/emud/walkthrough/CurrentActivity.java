@@ -10,11 +10,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +20,7 @@ import android.widget.Toast;
 
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.AnalysisService;
+import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.ResultBuilder;
@@ -35,7 +33,6 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	private Messenger service;
 	private ServiceConnection connection;
 	private Messenger responseMessenger;
-	private BroadcastReceiver receiver;
 	private boolean bound;
 	
 
@@ -62,27 +59,28 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	            bound = false;
 	        }
 	    };
-	    
-	    receiver = new MyReceiver(this);
 	}
 
 	@Override
 	public void onClick(View view) {
+		if(!bound)
+			return;
+		
 		int what;
 		
 		if(view.getId() == R.id.iconPauseResume){
 			switch(serviceState){
 			case WalkThroughApplication.SERVICE_PREPARED:
 				serviceState = WalkThroughApplication.SERVICE_RUNNING;
-				what = AnalysisService.MSG_START;
+				what = ServiceMessageHandler.MSG_START;
 				break;
 			case WalkThroughApplication.SERVICE_RUNNING:
 				serviceState = WalkThroughApplication.SERVICE_PAUSED;
-				what = AnalysisService.MSG_PAUSE;
+				what = ServiceMessageHandler.MSG_PAUSE;
 				break;
 			case WalkThroughApplication.SERVICE_PAUSED:
 				serviceState = WalkThroughApplication.SERVICE_RUNNING;
-				what = AnalysisService.MSG_RESUME;
+				what = ServiceMessageHandler.MSG_RESUME;
 				break;
 			default: return;
 			}
@@ -93,7 +91,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
 				return;
 
 			serviceState = WalkThroughApplication.SERVICE_STOPPED;
-			what = AnalysisService.MSG_STOP;
+			what = ServiceMessageHandler.MSG_STOP;
 		}
 		
 		sendMessageToService(what);
@@ -102,10 +100,6 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	@Override
 	public void onStart(){
 		super.onStart();
-		
-		Intent stickyIntent = registerReceiver(receiver, new IntentFilter(INTENT_ACTION));
-		if(stickyIntent != null)
-			onServiceStopped(stickyIntent.getBundleExtra(AnalysisService.BUNDLE_KEY));
 		
 		bindService(new Intent(this, AnalysisService.class), connection, 0);
 		
@@ -119,7 +113,6 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	public void onPause(){
 		super.onPause();
 		
-		unregisterReceiver(receiver);
 		((WalkThroughApplication) getApplicationContext()).setServiceState(serviceState);
 		
 		if(bound){
@@ -143,7 +136,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	private void sendMessageToService(int what) {
 		Message msg = Message.obtain(null, what, 0, 0);
 		
-		if(what == AnalysisService.MSG_STOP){
+		if(what == ServiceMessageHandler.MSG_STOP){
 			responseMessenger = new Messenger(new ResponseHandler(this));
 			msg.replyTo = responseMessenger;
 			android.util.Log.d("ACTIVITY", "SENDING STOP");
@@ -201,25 +194,9 @@ public class CurrentActivity extends Activity implements OnClickListener {
         @Override
         public void handleMessage(Message msg) {
     		android.util.Log.e("ACTIVITY","msg " + msg.what);
-            if(msg.what == AnalysisService.MSG_STOP){
+            if(msg.what == ServiceMessageHandler.MSG_STOP){
             	currentActivity.onServiceStopped(msg.getData());
             }
         }
     }
-	
-	
-	public static class MyReceiver extends BroadcastReceiver{
-		private CurrentActivity currentActivity;
-		
-		public MyReceiver(CurrentActivity ca){
-			currentActivity = ca;
-		}
-
-		@Override
-		public void onReceive(Context arg0, Intent intent) {
-			android.util.Log.d("ACTIVITY", "Intent received");
-			currentActivity.onServiceStopped(intent.getBundleExtra(AnalysisService.BUNDLE_KEY));
-		}
-		
-	}
 }

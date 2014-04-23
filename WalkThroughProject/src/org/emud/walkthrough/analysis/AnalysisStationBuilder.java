@@ -44,4 +44,15 @@ public class AnalysisStationBuilder {
 		return analysisStation;
 	}
 
+	public static AnalysisStation buildFallingDetector(Context context, OnFallDetectedListener listener){
+		WalkDataReceiver dataReceiver;
+		AnalysisStation analysisStation;
+		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
+		
+		dataReceiver = DataReceiverBuilder.buildReceiver(context, WalkDataReceiver.SINGLE_ACCELEROMETER);
+		analystList.add(new FallingAnalyst(listener));
+		analysisStation = new AnalysisStation(dataReceiver, analystList);
+		
+		return analysisStation;
+	}
 }

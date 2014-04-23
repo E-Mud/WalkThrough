@@ -36,7 +36,7 @@
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT"/>
+                <!-- category android:name="android.intent.category.DEFAULT"/-->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,6 +46,13 @@
             android:icon="@drawable/ic_launcher"
             android:label="Analysis Service"
             android:process=":analysis_service_process" >
+        </service>
+        
+        <service
+            android:name="org.emud.walkthrough.analysis.FallingDetectionService"
+            android:icon="@drawable/ic_launcher"
+            android:label="Falling Detection Service"
+            android:process=":fallingdetection_service_process" >
         </service>
 
         <activity

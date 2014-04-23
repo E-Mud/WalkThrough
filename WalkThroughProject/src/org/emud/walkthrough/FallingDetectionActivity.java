@@ -1,10 +1,19 @@
 package org.emud.walkthrough;
 
+import org.emud.walkthrough.analysis.FallingDetectionService;
+import org.emud.walkthrough.analysis.ServiceMessageHandler;
+
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.Contacts;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -18,6 +27,9 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 	public static final String DEFAULT_CONTACT_ID = null;
 	private Button onButton;
 	private boolean on;
+	private boolean bound;
+	private ServiceConnection connection;
+    private Messenger service;
 	
 	private static final String SERVICE_ON_KEY = "on";
 
@@ -45,22 +57,100 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
             
             cursor.close();
         }
+		
+		if(savedInstanceState != null){
+			on = savedInstanceState.getBoolean(SERVICE_ON_KEY, false); 
+		}else{
+			on = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SERVICE_ON_KEY, false);
+		}
+		
+		setOnOffButtonAttrs();
+		
+		if(!on){
+			Intent intentService = new Intent(this, FallingDetectionService.class);
+			startService(intentService);
+		}
+		
+		bound = false;
+		
+		connection = new ServiceConnection() {
+			public void onServiceConnected(ComponentName className, IBinder binder) {
+	            service = new Messenger(binder);
+	            bound = true;
+	        }
+	        public void onServiceDisconnected(ComponentName className) {
+	            service = null;
+	            bound = false;
+	        }
+	    };
+	}
+	
+	private void setOnOffButtonAttrs() {
+		if(on){
+			onButton.setBackgroundColor(Color.rgb(170, 0, 0));
+			onButton.setText(R.string.fallingdetection_turnoff);
+		}else{
+			onButton.setBackgroundColor(Color.rgb(0, 170, 0));
+			onButton.setText(R.string.fallingdetection_turnon);
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle saveInstanceState){
+		super.onSaveInstanceState(saveInstanceState);
+		
+		saveInstanceState.putBoolean(SERVICE_ON_KEY, on);
+	}
+	
+	@Override
+	public void onStart(){
+		super.onStart();
+		
+		//bindService(new Intent(this, FallingDetectionService.class), connection, 0);
+	}
+	
+
+	@Override
+	public void onPause(){
+		super.onPause();
+		
+		if(bound){
+			unbindService(connection);
+			bound = false;
+		}
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(bound)
+			unbindService(connection);
+		
+		if(!on){
+			Intent stopServiceIntent = new Intent(this, FallingDetectionService.class);
+	        stopService(stopServiceIntent);
+		}
+		
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		edit.putBoolean(SERVICE_ON_KEY, on);
+		edit.commit();
+		
+		super.onDestroy();
 	}
 
 	@Override
 	public void onClick(View view) {
 		if(view.getId() == onButton.getId()){
+			if(!bound){
+				bindService(new Intent(this, FallingDetectionService.class), connection, 0);
+				return;
+			}
 			if(on){
 				turnServiceOff();
-				onButton.setBackgroundColor(Color.rgb(0, 170, 0));
-				onButton.setText(R.string.fallingdetection_turnon);
 			}else{
 				turnServiceOn();
-				onButton.setBackgroundColor(Color.rgb(170, 0, 0));
-				onButton.setText(R.string.fallingdetection_turnoff);
 			}
-			
 			on = !on;
+			setOnOffButtonAttrs();
 		}else{
 			Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 			startActivityForResult(intent, 0);
@@ -95,13 +185,19 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 	}
 
 	private void turnServiceOn() {
-		// TODO Auto-generated method stub
-		
+		try {
+			service.send(Message.obtain(null, ServiceMessageHandler.MSG_START, null));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void turnServiceOff() {
-		// TODO Auto-generated method stub
-		
+		try {
+			service.send(Message.obtain(null, ServiceMessageHandler.MSG_STOP, null));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
