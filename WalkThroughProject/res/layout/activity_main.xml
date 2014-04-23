@@ -26,10 +26,11 @@
     android:orientation="vertical" >
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="start"
-    android:orientation="vertical" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:paddingTop="6dp" >
 
     <LinearLayout
         android:id="@+id/drawer_newactivity_item"
@@ -52,81 +53,114 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textView8"
+        style="@style/DrawerHeaderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/mainactivity_mydata_label"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <View
         style="@style/Divider"/>
-    
+
     <LinearLayout
-        android:id="@+id/drawer_fallingdetection_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/draweritem_padding" >
+        android:orientation="vertical"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp" >
 
-        <ImageView
-            android:id="@+id/iconStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_fallingdetection_icon" />
-
-        <TextView
-            android:id="@+id/textView2"
-            style="@style/DrawerItemText"
+        <!-- LinearLayout
+            android:id="@+id/drawer_fallingdetection_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/fallingdetection_title" />
+            android:padding="@dimen/draweritem_padding" >
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/iconStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_fallingdetection_icon" />
 
-    <View
-        style="@style/Divider"/>
-    
-    <LinearLayout
-        android:id="@+id/drawer_myactivities_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/draweritem_padding" >
+            <TextView
+                android:id="@+id/textView2"
+                style="@style/DrawerItemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fallingdetection_title" />
+        </LinearLayout >
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_myobjects_icon" />
+        <View style="@style/Divider" />-->
 
-        <TextView
-            android:id="@+id/textView3"
-            style="@style/DrawerItemText"
+        <LinearLayout
+            android:id="@+id/drawer_myactivities_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/myactivities_title" />
+            android:padding="@dimen/draweritem_padding" >
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_myobjects_icon" />
 
-    <View
-        style="@style/Divider"/>
-    
-    <LinearLayout
-        android:id="@+id/drawer_myresults_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/draweritem_padding" >
+            <TextView
+                android:id="@+id/textView3"
+                style="@style/DrawerItemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/myactivities_title" />
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_myobjects_icon" />
+        <View style="@style/Divider" />
 
-        <TextView
-            android:id="@+id/textView4"
+        <LinearLayout
+            android:id="@+id/drawer_myresults_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/myresults_title"
-            style="@style/DrawerItemText"/>
+            android:padding="@dimen/draweritem_padding" >
 
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_myobjects_icon" />
+
+            <TextView
+                android:id="@+id/textView4"
+                style="@style/DrawerItemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/myresults_title" />
+        </LinearLayout>
+        
+        <View style="@style/Divider" />
+
+        <LinearLayout
+            android:id="@+id/drawer_graph_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/draweritem_padding" >
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_statistics_icon" />
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/DrawerItemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/graph_title" />
+        </LinearLayout>
     </LinearLayout>
-
-    <View
-        style="@style/Divider"/>
 
 </LinearLayout>
 
@@ -138,7 +172,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textView7"
             style="@style/DrawerHeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

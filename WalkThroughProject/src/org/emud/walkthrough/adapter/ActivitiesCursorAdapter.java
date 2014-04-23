@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class ActivitiesCursorAdapter extends CursorAdapter {
-	private DateFormat dateFormat;
 	private GregorianCalendar date;
 
 	/**
@@ -23,8 +22,6 @@ public class ActivitiesCursorAdapter extends CursorAdapter {
 	 */
 	public ActivitiesCursorAdapter(Context context) {
 		super(context, null, 0);
-		
-		dateFormat = new DateFormat();
 		date = new GregorianCalendar();
 	}
 
@@ -36,18 +33,18 @@ public class ActivitiesCursorAdapter extends CursorAdapter {
 	public View newView(Context context, Cursor cursor, ViewGroup parent){
 		LayoutInflater inflater = LayoutInflater.from(context);
 		
-		return inflater.inflate(R.layout.item_activity, parent, false);
+		return inflater.inflate(R.layout.listitem_activity, parent, false);
 	}
 
 
 	/**
 	 * @see android.support.v4.widget.CursorAdapter#bindView(android.view.View, android.content.Context, android.database.Cursor)
 	 */
-	@SuppressWarnings("static-access")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		date.setTimeInMillis(cursor.getLong(1));
-		((TextView) view.findViewById(R.id.item_activity_datetext)).setText(dateFormat.format("EEE d/M/yyyy h:m a", date));
+		((TextView) view.findViewById(R.id.item_activity_dateday)).setText(DateFormat.format("EEE d/M/yyyy", date));
+		((TextView) view.findViewById(R.id.item_activity_datehour)).setText(DateFormat.format("h:m a", date));
 	}
 
 }

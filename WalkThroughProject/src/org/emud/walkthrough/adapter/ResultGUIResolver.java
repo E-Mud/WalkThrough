@@ -1,5 +1,10 @@
 package org.emud.walkthrough.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.stub.MaxMoveListAdapter;
 
@@ -54,6 +59,25 @@ public class ResultGUIResolver {
 			return new MaxMoveListAdapter(context);
 		}
 		return null;
+	}
+
+	public static GraphViewSeries[] getGraphSeries(List<Result> listResults) {
+		GraphViewSeries[] seriesArray;
+		GraphViewSeries maxValueSeries;
+		GraphViewData[] resultData;
+		int n = listResults.size();
+		
+		resultData = new GraphViewData[n];
+		
+		for(int i=0; i<n; i++){
+			Result result = listResults.get(n-1-i);
+			resultData[i] = new GraphViewData(result.getDate().getTimeInMillis(), ((Double) result.get()).doubleValue());
+		}
+		
+		maxValueSeries = new GraphViewSeries(resultData);
+		seriesArray = new GraphViewSeries[]{maxValueSeries};
+		
+		return seriesArray;
 	}
 
 }

@@ -17,20 +17,6 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 	private ObserverLoader<List<Result> > loader;
 	private int resultType = -1;
 
-	public ResultsListFragment(){
-	}
-	
-	public ObserverLoader<List<Result> > getLoader() {
-		return loader;
-	}
-
-	public void setLoader(ObserverLoader<List<Result> > loader) {
-		this.loader = loader;
-	}
-
-	public void update(){
-		getLoaderManager().restartLoader(0, null, this);
-	}
 	
 	public static ResultsListFragment newInstance(String emptytext){
 		ResultsListFragment result = new ResultsListFragment();
@@ -41,6 +27,19 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 		result.setArguments(args);
 		
 		return result;
+	}
+	
+
+	public void update(){
+		getLoaderManager().restartLoader(0, null, this);
+	}
+	
+	public ObserverLoader<List<Result> > getLoader() {
+		return loader;
+	}
+
+	public void setLoader(ObserverLoader<List<Result> > loader) {
+		this.loader = loader;
 	}
 	
 	//TODO refactoring
@@ -57,7 +56,7 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 		
 		setEmptyText(getArguments().getString("emptytext"));
 		
-		getLoaderManager().initLoader(0, null, this).forceLoad();
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override

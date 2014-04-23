@@ -20,7 +20,7 @@ public class MaxMoveListAdapter extends ArrayAdapter<Result> {
 
 	public MaxMoveListAdapter(Context context) {
 		super(context, R.layout.listitem_maxmove_result);
-		df = new DecimalFormat("#,###,###,##0.00");
+		df = new DecimalFormat("#.00");
 	}
 
 	@Override
@@ -44,8 +44,9 @@ public class MaxMoveListAdapter extends ArrayAdapter<Result> {
 	    label.setText(DateFormat.format("h:m a", cal));
 	    
 	    label = (TextView) convertView.findViewById(R.id.listitem_maxmove_value);
-	    double value = ((Double) result.get()).doubleValue();
-	    label.setText(Double.valueOf(df.format(value)).toString());
+	    //double value = ((Double) result.get()).doubleValue();
+	    //label.setText(Double.valueOf(df.format(value)).toString());
+	    label.setText(String.format("%.2f", result.get()));
 	    
 	    return convertView;
 	}

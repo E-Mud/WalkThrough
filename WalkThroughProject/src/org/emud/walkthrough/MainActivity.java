@@ -24,6 +24,7 @@ import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePicked
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
+import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
@@ -52,7 +53,7 @@ import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, OnAcceptButtonClickedListener, OnItemClickListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
-			FALLING_DETECTION_CONTENT = 1,
+			STATISTICS_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
 			MY_RESULTS_CONTENT = 3;
 	
@@ -60,6 +61,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private ActionBarDrawerToggle drawerToggle;
 	private DrawerLayout drawerLayout;
 	private ListFragment myActivitiesListFragment, myResultsListFragment;
+	private ResultsGraphFragment myResultsGraphFragment;
 	
 	private GregorianCalendar fromDate, toDate;
 	private TextView fromText, toText;
@@ -128,9 +130,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		toText.setOnClickListener(this);
 		
 		findViewById(R.id.drawer_newactivity_item).setOnClickListener(this);
-		findViewById(R.id.drawer_fallingdetection_item).setOnClickListener(this);
 		findViewById(R.id.drawer_myactivities_item).setOnClickListener(this);
 		findViewById(R.id.drawer_myresults_item).setOnClickListener(this);
+		findViewById(R.id.drawer_graph_item).setOnClickListener(this);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
         //getActionBar().setHomeButtonEnabled(true);
@@ -264,9 +266,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			onDateFilterClick(id);
 			break;
 		case R.id.drawer_newactivity_item:
-		case R.id.drawer_fallingdetection_item:
 		case R.id.drawer_myactivities_item:
 		case R.id.drawer_myresults_item:
+		case R.id.drawer_graph_item:
 			onDrawerItemClick(id);
 			break;
 		default: break;
@@ -300,14 +302,14 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		case R.id.drawer_newactivity_item:
 			newContent = NEW_ACTIVITY_CONTENT;
 			break;
-		case R.id.drawer_fallingdetection_item:
-			newContent = FALLING_DETECTION_CONTENT;
-			break;
 		case R.id.drawer_myactivities_item:
 			newContent = MY_ACTIVITIES_CONTENT;
 			break;
 		case R.id.drawer_myresults_item:
 			newContent = MY_RESULTS_CONTENT;
+			break;
+		case R.id.drawer_graph_item:
+			newContent = STATISTICS_CONTENT;
 			break;
 		default: return;
 		}
@@ -331,9 +333,17 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			contentFragment = new NewActivityFragment();
 			((NewActivityFragment) contentFragment).setListener(this);
 			break;
-		case FALLING_DETECTION_CONTENT:
-			newTitle = R.string.fallingdetection_title;
-			contentFragment = new DummyFragmentCS();
+		case STATISTICS_CONTENT:
+			newTitle = R.string.graph_title;
+			if(myResultsGraphFragment == null){
+				myResultsGraphFragment = new ResultsGraphFragment();
+				myResultsGraphFragment.setResultType(Result.RT_MAX_MOVE);
+				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
+				resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, fromDate, toDate);
+				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
+				myResultsGraphFragment.setLoader(loader);
+			}
+			contentFragment = myResultsGraphFragment;
 			break;
 		case MY_ACTIVITIES_CONTENT:
 			newTitle = R.string.myactivities_title;
@@ -350,7 +360,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			break;
 		case MY_RESULTS_CONTENT:
 			newTitle = R.string.myresults_title;
-			//TODO
 			if(myResultsListFragment == null){
 				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
 				resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, fromDate, toDate);

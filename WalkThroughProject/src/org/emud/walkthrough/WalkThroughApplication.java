@@ -1,23 +1,28 @@
 package org.emud.walkthrough;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
+import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.stub.ResultMaxMoveFactory;
 import org.emud.walkthrough.stub.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.SparseArray;
 
 public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
 	private DataSource dataSource;
 	private String activeUser;
+	private SparseArray<ResultFactory> resultFactories;
 	private static final String APP_PREFERENCES = "WalkThroughPreferences",
 			USER_PREFERENCES_SUFIX = "Preferences";
 	
@@ -37,6 +42,7 @@ public class WalkThroughApplication extends Application {
 		super.onCreate();
 		activeUser = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getString("activeUserName", null);
+		resultFactories = new SparseArray<ResultFactory>();
 	}
 	
 	/**
@@ -276,7 +282,35 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
+	/**
+	 * Devuelve el ResultFactory apropiado para resultados de un tipo determinado.
+	 * @param resultType Tipo del resultado
+	 * @return ResultFactory para el tipo indicado o null si el tipo es incorrecto.
+	 */
+	public ResultFactory getResultFactory(int resultType){
+		ResultFactory factory = resultFactories.get(resultType);
+		
+		if(factory == null){
+			factory = buildResultFactory(resultType);
+			if(factory == null){
+				return null;
+			}else{
+				resultFactories.put(resultType, factory);
+			}
+		}
+		
+		return factory;
+	}
 	
+	
+	private ResultFactory buildResultFactory(int resultType) {
+		switch(resultType){
+		case Result.RT_MAX_MOVE:
+			return new ResultMaxMoveFactory();
+		default: return null;
+		}
+	}
+
 	//XXX DEBUGING
 	public void logUsers(){
 		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);

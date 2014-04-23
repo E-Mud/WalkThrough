@@ -9,10 +9,17 @@
     android:paddingTop="@dimen/draweritem_padding" >
 
     <TextView
-        android:id="@+id/item_activity_datetext"
+        android:id="@+id/item_activity_dateday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/item_activity_datehour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>
