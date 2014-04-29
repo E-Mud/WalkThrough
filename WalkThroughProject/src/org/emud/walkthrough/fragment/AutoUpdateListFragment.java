@@ -53,7 +53,7 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 		setEmptyText(getArguments().getString("emptytext"));
 		getListView().setOnItemClickListener(listener);
 		
-		getLoaderManager().initLoader(0, null, this).forceLoad();
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override

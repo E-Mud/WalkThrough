@@ -13,7 +13,6 @@ import org.emud.walkthrough.webclient.WebClient;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
@@ -22,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.DatePicker;
 import android.widget.TextView;
 
 public class RegisterActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, DialogInterface.OnClickListener {

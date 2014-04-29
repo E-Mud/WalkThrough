@@ -10,11 +10,9 @@ import org.emud.walkthrough.webclient.WebClient;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.content.Intent;
 
 public class LogInActivity extends FragmentActivity implements OnClickListener {
@@ -124,18 +122,5 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		
 		userDataSource = app.getUserDataSource();
 		userDataSource.createProfile(user);
-		
 	}
-	
-	//XXX DEBUGGING
-	private void logUser(User user){
-		Log.v("XXXXX un", user.getUsername());
-		Log.v("XXXXX n", user.getName());
-		Log.v("XXXXX ln", user.getLastname());
-		Log.v("XXXXX g", ""+ user.getGender());
-		Log.v("XXXXX h", ""+user.getHeight());
-		Log.v("XXXXX w", ""+user.getWeight());
-		Log.v("XXXXX b", ""+user.getBorndate());
-	}
-
 }

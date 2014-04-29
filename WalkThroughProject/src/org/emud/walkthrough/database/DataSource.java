@@ -189,12 +189,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		cursor.moveToFirst();
 		
-		do{
-			android.util.Log.d("DATA SOURCE GA", "" + cursor.getLong(cursor.getColumnIndex("_id")));
-		}while(cursor.moveToNext());
-		
-		cursor.moveToFirst();
-		
 		return cursor;
 	}
 

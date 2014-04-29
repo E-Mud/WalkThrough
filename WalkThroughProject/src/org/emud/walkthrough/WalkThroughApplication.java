@@ -1,7 +1,5 @@
 package org.emud.walkthrough;
 
-
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +20,7 @@ public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
 	private DataSource dataSource;
 	private String activeUser;
-	private SparseArray<ResultFactory> resultFactories;
+	private ResultToolsProvider resultToolsProvider;
 	private static final String APP_PREFERENCES = "WalkThroughPreferences",
 			USER_PREFERENCES_SUFIX = "Preferences";
 	
@@ -42,7 +40,7 @@ public class WalkThroughApplication extends Application {
 		super.onCreate();
 		activeUser = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getString("activeUserName", null);
-		resultFactories = new SparseArray<ResultFactory>();
+		resultToolsProvider = new ResultToolsProvider();
 	}
 	
 	/**
@@ -288,46 +286,6 @@ public class WalkThroughApplication extends Application {
 	 * @return ResultFactory para el tipo indicado o null si el tipo es incorrecto.
 	 */
 	public ResultFactory getResultFactory(int resultType){
-		ResultFactory factory = resultFactories.get(resultType);
-		
-		if(factory == null){
-			factory = buildResultFactory(resultType);
-			if(factory == null){
-				return null;
-			}else{
-				resultFactories.put(resultType, factory);
-			}
-		}
-		
-		return factory;
-	}
-	
-	
-	private ResultFactory buildResultFactory(int resultType) {
-		switch(resultType){
-		case Result.RT_MAX_MOVE:
-			return new ResultMaxMoveFactory();
-		default: return null;
-		}
-	}
-
-	//XXX DEBUGING
-	public void logUsers(){
-		SharedPreferences registeredPref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
-		Set<String> registeredUsers = registeredPref.getStringSet("registeredUsers", null);
-		if(registeredUsers != null){
-			for(String username : registeredUsers)
-				Log.v("XXXXXXXXXXXXXXXXXXXXXX", username);
-		}else{
-			Log.v("XXXXXXXXXXXXXXXXXXXXXX", "Vacio");
-		}
-	}
-	
-	//XXX DEBUGING
-	public void logActiveUser(){
-		Log.v("XXXXXXX user", getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
-		.getString("activeUserName", "NONE"));
-		Log.v("XXXXXXX pass", getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
-		.getString("activeUserPassword", "NONE"));
+		return resultToolsProvider.getResultFactory(resultType);
 	}
 }

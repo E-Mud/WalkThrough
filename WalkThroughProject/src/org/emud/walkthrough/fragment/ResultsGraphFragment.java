@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 
 public class ResultsGraphFragment extends Fragment implements LoaderCallbacks<List<Result> >{
 	private ObserverLoader<List<Result> > loader;
-	private int resultType = -1;
 	private ViewGroup container;
 	private GraphView graphView;
 
@@ -51,12 +50,6 @@ public class ResultsGraphFragment extends Fragment implements LoaderCallbacks<Li
 
 	public void setLoader(ObserverLoader<List<Result> > loader) {
 		this.loader = loader;
-	}
-	
-	//TODO refactoring
-	public void setResultType(int type){
-		resultType = type;
-		//TODO
 	}
 
 	@Override
