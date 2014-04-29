@@ -16,18 +16,17 @@ import android.content.ServiceConnection;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.model.ResultBuilder;
 import org.emud.walkthrough.model.WalkActivity;
 
 public class CurrentActivity extends Activity implements OnClickListener {
 	public static final String INTENT_ACTION = "org.emud.walkthrough.saveresult";
+	private static final String RESULT_TYPE_KEY = "resultType";
 	private ImageView pauseResumeIcon, stopIcon;
 	private int serviceState;
 	private Messenger service;
@@ -149,13 +148,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		}
 	}
 	
-	private void onServiceStopped(Bundle msgData){
-		//TODO
-		android.util.Log.d("ACTIVITY", "ON STOP");
-		Result result = ResultBuilder.buildResultFromBundle(msgData.getBundle(AnalysisService.LIST_ITEM_KEY+0));
-        double maxvalue = ((Double)result.get()).doubleValue();
-        Toast.makeText(this, "Result " + maxvalue, Toast.LENGTH_SHORT).show();
-        
+	private void onServiceStopped(Bundle msgData){        
         WalkActivity activity;
         ArrayList<Result> results = new ArrayList<Result>();
         int size = msgData.getInt(AnalysisService.LIST_SIZE_KEY);
@@ -163,10 +156,13 @@ public class CurrentActivity extends Activity implements OnClickListener {
         WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
         ActivitiesDataSource dataSource = app.getActivitiesDataSource();
         
-        for(int i=0; i<size; i++)
-        	results.add(ResultBuilder.buildResultFromBundle(msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i)));
+        for(int i=0; i<size; i++){
+        	Bundle bundle = msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i);
+    		int type = bundle.getInt(RESULT_TYPE_KEY, -1);
+    		ResultFactory factory = app.getResultFactory(type);
+        	results.add(factory.buildResultFromBundle(bundle));
+        }
 
-		android.util.Log.d("Current ACT", "" + results.size());
         activity = new WalkActivity((GregorianCalendar) GregorianCalendar.getInstance(), results);
         dataSource.createNewActivity(activity);
         

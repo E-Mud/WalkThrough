@@ -3,9 +3,10 @@ package org.emud.walkthrough.analysis;
 import java.util.HashSet;
 import java.util.List;
 
+import org.emud.walkthrough.ResultFactory;
+import org.emud.walkthrough.ResultToolsProvider;
 import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.model.ResultBuilder;
 
 import android.app.Service;
 import android.content.Intent;
@@ -82,11 +83,14 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		Message msg = Message.obtain(null, ServiceMessageHandler.MSG_STOP, 0, 0);
 		int size = list.size();
 		Bundle resultListBundle = new Bundle(), resultBundle;
+		ResultToolsProvider provider = new ResultToolsProvider();
 		
 		resultListBundle.putInt(LIST_SIZE_KEY, size);
 		
 		for(int i=0; i<size; i++){
-			resultBundle = ResultBuilder.buildBundleFromResult(list.get(i));
+			Result result = list.get(i);
+			ResultFactory factory = provider.getResultFactory(result.getType());
+			resultBundle = factory.buildBundleFromResult(result);
 			resultListBundle.putBundle(LIST_ITEM_KEY + i, resultBundle);
 		}
 		

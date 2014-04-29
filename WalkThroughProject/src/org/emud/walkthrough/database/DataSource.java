@@ -9,8 +9,9 @@ import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
+import org.emud.walkthrough.ResultFactory;
+import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.model.ResultBuilder;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
 
@@ -24,6 +25,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static final int VERSION = 6;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
+	private Context context;
 	
 	private DataSubject userSubject, activitiesSubject;
 	
@@ -41,8 +43,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			ACTIVITY_NAME = "activity",
 			RESULT_NAME = "result";
 
-	public DataSource(Context context, String userName){
+	public DataSource(Context cont, String userName){
 		String database_name = buildDatabaseName(userName);
+		context = cont;
 		helper = new SQLiteHelper(context, database_name, VERSION);
 		userSubject = new DataSubject();
 		activitiesSubject = new DataSubject();
@@ -206,21 +209,21 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public long createNewActivity(WalkActivity act) {
 		ContentValues values = new ContentValues(), valuesResult = new ContentValues(), valuesSubResult;
 		long activity_id, result_id;
+		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		List<Result> results = act.getResults();
 		
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
 		
-		android.util.Log.d("DATA SOURCE CA", "" + results.size());
-		android.util.Log.d("DATA SOURCE CA AID", "" + activity_id);
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
 			valuesResult.put(RESULT_COLS[1], result.getType());
 			result_id = db.insert(RESULT_NAME, null, valuesResult);
 			
-			valuesSubResult = ResultBuilder.buildContentValuesFromResult(result);
+			ResultFactory factory = app.getResultFactory(result.getType());
+			valuesSubResult = factory.buildContentValuesFromResult(result);
 			valuesSubResult.put("result_id", result_id);
-			db.insert(ResultBuilder.getTableName(result.getType()), null, valuesSubResult);
+			db.insert(factory.getTableName(), null, valuesSubResult);
 		}
 		
 		getActivitiesSubject().notifyObservers();
@@ -232,6 +235,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public List<Result> getActivityResults(long activity_id) {
 		Cursor cursorResult, cursorSubResult;
 		ArrayList<Result> results = new ArrayList<Result>();
+		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		
 		android.util.Log.d("DATA SOURCE GAR", "" + activity_id);
 		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
@@ -246,17 +250,15 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			int type = cursorResult.getInt(cursorResult.getColumnIndex(RESULT_COLS[1]));
 			String table;
 			Result result;
+			ResultFactory factory;
 			
-			android.util.Log.d("DATA SOURCE", "" + type);
-			
-			table = ResultBuilder.getTableName(type);
+			factory = app.getResultFactory(type);
+			table = factory.getTableName();
 			
 			cursorSubResult = db.query(table, null, "result_id = " + cursorResult.getLong(0), null, null, null, null);
+			cursorSubResult.moveToFirst();
 			
-
-			android.util.Log.d("DATA SOURCE", "" + cursorSubResult.moveToFirst());
-			
-			result = ResultBuilder.buildResultFromCursor(cursorSubResult, type);
+			result = factory.buildResultFromCursor(cursorSubResult);
 			results.add(result);
 			
 			cursorSubResult.close();
@@ -267,35 +269,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		return results;
 	}
 
-	@Override
-	public Cursor getResultsCursor(int type, GregorianCalendar startDate,
-			GregorianCalendar endDate) {
-		Cursor cursor;
-		String table = ResultBuilder.getTableName(type);
-		String sqlQuery = "SELECT " + ACTIVITY_COLS[0] + ", resultTable.* FROM " +
-						ACTIVITY_NAME + ", " + RESULT_NAME + ", " + table + " AS resultTable";
-		String whereClause;
-		
-		if(startDate == null && endDate == null){
-			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
-						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
-						"resultTable.result_id = " + RESULT_NAME + "._id";
-		}else{
-			whereClause = RESULT_NAME + "." + RESULT_COLS[1] + " = " + type + " AND " +
-						RESULT_NAME + "." + RESULT_COLS[0] + " = " + ACTIVITY_NAME + "._id AND " + 
-						"resultTable.result_id = " + RESULT_NAME + "._id AND " + buildFilter(startDate, endDate);
-		}
-						
-		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);
-		
-		
-		return cursor;
-	}
 
-	@Override
-	public Cursor getResultsCursor(int type) {
-		return getResultsCursor(type, null, null);
-	}
 
 	@Override
 	public List<Result> getResults(int type, GregorianCalendar startDate,
@@ -334,12 +308,13 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			return results;
 		}
 		
-		cursor = db.query(ResultBuilder.getTableName(type), null, "result_id IN("+builder.toString()+")", null, null, null, null);
+		ResultFactory factory = ((WalkThroughApplication) context.getApplicationContext()).getResultFactory(type);
+		cursor = db.query(factory.getTableName(), null, "result_id IN("+builder.toString()+")", null, null, null, null);
 		
 		cursor.moveToFirst();
 		
 		do{
-			Result result = ResultBuilder.buildResultFromCursor(cursor, type);
+			Result result = factory.buildResultFromCursor(cursor);
 			date = new GregorianCalendar();
 			date.setTimeInMillis(dateMap.get(cursor.getLong(cursor.getColumnIndex("result_id"))).longValue());
 			result.setDate(date);

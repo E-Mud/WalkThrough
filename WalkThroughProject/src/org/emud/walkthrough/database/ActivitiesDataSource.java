@@ -49,14 +49,6 @@ public interface ActivitiesDataSource {
 	 */
 	public List<Result> getActivityResults(long activity_id);
 	
-	/**
-	 * 
-	 * @param type
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 */
-	public Cursor getResultsCursor(int type, GregorianCalendar startDate, GregorianCalendar endDate);
 	
 	/**
 	 * @param type
@@ -71,11 +63,4 @@ public interface ActivitiesDataSource {
 	 * @return
 	 */
 	public List<Result> getResults(int type);
-	
-	/**
-	 * @param type
-	 * @return
-	 */
-	public Cursor getResultsCursor(int type);
-
 }
