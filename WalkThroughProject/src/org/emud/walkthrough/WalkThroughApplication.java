@@ -288,4 +288,13 @@ public class WalkThroughApplication extends Application {
 	public ResultFactory getResultFactory(int resultType){
 		return resultToolsProvider.getResultFactory(resultType);
 	}
+	
+	/**
+	 * Devuelve el ResultGUIResolver apropiado para resultados de un tipo determinado.
+	 * @param resultType Tipo del resultado
+	 * @return ResultGUIResolver para el tipo indicado o null si el tipo es incorrecto.
+	 */
+	public ResultGUIResolver getGUIResolver(int resultType){
+		return resultToolsProvider.getGUIResolver(resultType);
+	}
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.emud.content.ObserverLoader;
 import org.emud.content.Query;
-import org.emud.walkthrough.adapter.ResultGUIResolver;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 
@@ -67,7 +66,8 @@ public class DetailActivity extends FragmentActivity implements LoaderCallbacks<
 		public View getView(int position, View convertView, ViewGroup parent){
 		    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		    
-		    View view = ResultGUIResolver.getDetailView(inflater, resultsList.get(position));
+		    Result result = resultsList.get(position);
+		    View view = ((WalkThroughApplication) getContext().getApplicationContext()).getGUIResolver(result.getType()).getDetailView(inflater, result);
 		    
 		    return view;
 		}

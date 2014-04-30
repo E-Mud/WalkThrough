@@ -3,7 +3,8 @@ package org.emud.walkthrough.fragment;
 import java.util.List;
 
 import org.emud.content.ObserverLoader;
-import org.emud.walkthrough.adapter.ResultGUIResolver;
+import org.emud.walkthrough.ResultGUIResolver;
+import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.model.Result;
 
 import android.content.Context;
@@ -46,7 +47,8 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 	public void setResultType(Context context, int type){
 		if(resultType != type){
 			resultType = type;
-			setListAdapter(ResultGUIResolver.getListAdapter(context, resultType));
+			ResultGUIResolver resolver = ((WalkThroughApplication) context.getApplicationContext()).getGUIResolver(resultType);
+			setListAdapter(resolver.getListAdapter(context));
 		}
 	}
 	
@@ -84,6 +86,4 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 			adapter.notifyDataSetChanged();
 		}
 	}
-
-	
 }

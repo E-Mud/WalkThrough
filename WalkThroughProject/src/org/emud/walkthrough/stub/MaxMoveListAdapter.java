@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.adapter.ResultGUIResolver;
 import org.emud.walkthrough.model.Result;
 
 import android.content.Context;

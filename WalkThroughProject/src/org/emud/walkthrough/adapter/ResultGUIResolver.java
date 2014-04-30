@@ -1,6 +1,5 @@
 package org.emud.walkthrough.adapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.jjoe64.graphview.GraphView.GraphViewData;
@@ -21,7 +20,7 @@ public class ResultGUIResolver {
 	private ResultGUIResolver(){
 		
 	}
-
+/*
 	public static View getDetailView(LayoutInflater inflater, Result result) {
 		int type = result.getType();
 		View view = null;
@@ -60,7 +59,7 @@ public class ResultGUIResolver {
 		}
 		return null;
 	}
-
+*/
 	public static GraphViewSeries[] getGraphSeries(List<Result> listResults) {
 		GraphViewSeries[] seriesArray;
 		GraphViewSeries maxValueSeries;
