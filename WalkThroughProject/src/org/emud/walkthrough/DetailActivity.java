@@ -2,7 +2,7 @@ package org.emud.walkthrough;
 
 import java.util.List;
 
-import org.emud.content.ObserverLoader;
+import org.emud.support.v4.content.ObserverLoader;
 import org.emud.content.Query;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;

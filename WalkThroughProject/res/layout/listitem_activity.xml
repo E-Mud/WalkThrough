@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/draweritem_padding"
+    android:paddingBottom="12dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
-    android:paddingTop="@dimen/draweritem_padding" >
+    android:paddingTop="12dp" >
 
     <TextView
         android:id="@+id/item_activity_dateday"

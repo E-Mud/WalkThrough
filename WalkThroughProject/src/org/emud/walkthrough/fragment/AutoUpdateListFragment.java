@@ -1,6 +1,6 @@
 package org.emud.walkthrough.fragment;
 
-import org.emud.content.ObserverCursorLoader;
+import org.emud.support.v4.content.ObserverCursorLoader;
 import org.emud.content.Query;
 
 import android.database.Cursor;

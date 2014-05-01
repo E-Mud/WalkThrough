@@ -3,7 +3,7 @@ package org.emud.walkthrough.fragment;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.emud.content.ObserverLoader;
+import org.emud.support.v4.content.ObserverLoader;
 import org.emud.walkthrough.R;
 import org.emud.walkthrough.adapter.ResultGUIResolver;
 import org.emud.walkthrough.model.Result;

@@ -2,7 +2,7 @@ package org.emud.walkthrough.fragment;
 
 import java.util.List;
 
-import org.emud.content.ObserverLoader;
+import org.emud.support.v4.content.ObserverLoader;
 import org.emud.walkthrough.ResultGUIResolver;
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.model.Result;

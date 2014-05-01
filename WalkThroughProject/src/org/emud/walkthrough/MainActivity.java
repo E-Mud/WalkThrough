@@ -1,21 +1,16 @@
 package org.emud.walkthrough;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.emud.content.DataSubject;
-import org.emud.content.ObserverCursorLoader;
-import org.emud.content.ObserverLoader;
+import org.emud.support.v4.content.ObserverCursorLoader;
+import org.emud.support.v4.content.ObserverLoader;
 import org.emud.content.observer.Subject;
 import org.emud.walkthrough.adapter.ActivitiesCursorAdapter;
 import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ActivitiesQuery;
 import org.emud.walkthrough.database.ResultsQuery;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
 import org.emud.walkthrough.fragment.DateFilterFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment;
@@ -24,8 +19,8 @@ import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
 
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -33,14 +28,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnItemClickListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
@@ -60,8 +53,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//((WalkThroughApplication) getApplicationContext()).unsetActiveUser();
-		//((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_NONE);
 		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
 		if(serviceState != WalkThroughApplication.SERVICE_NONE){
 			Intent intent = new Intent(this, CurrentActivity.class);
@@ -87,8 +78,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		findViewById(R.id.drawer_graph_item).setOnClickListener(this);
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-        //getActionBar().setHomeButtonEnabled(true);
-
         
         drawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host WalkActivity */
@@ -122,7 +111,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	public void onStart(){
 		super.onStart();
-        android.util.Log.d("MAINACT", "onStart");
         
         String activeUserName = ((WalkThroughApplication) getApplicationContext()).getActiveUserName();
         
