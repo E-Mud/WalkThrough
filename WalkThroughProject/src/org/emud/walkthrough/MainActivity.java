@@ -17,6 +17,7 @@ import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
 import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 import org.emud.walkthrough.fragment.AutoUpdateListFragment;
+import org.emud.walkthrough.fragment.DateFilterFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
 import org.emud.walkthrough.fragment.ResultsGraphFragment;
@@ -41,7 +42,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, OnAcceptButtonClickedListener, OnItemClickListener {
+public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnItemClickListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
 			STATISTICS_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
@@ -53,15 +54,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private ListFragment myActivitiesListFragment, myResultsListFragment;
 	private ResultsGraphFragment myResultsGraphFragment;
 	
-	private GregorianCalendar fromDate, toDate;
-	private TextView fromText, toText;
-	private DataSubject filterSubject;
-	
-	private int dateDialogShowing;
-
-	private ActivitiesQuery activitiesQuery;
-	private ResultsQuery resultsQuery;
-	
+	private DateFilterFragment dateFilterFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,40 +75,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
 		
 		if(savedInstanceState != null){
-			long dateMillis;
-			dateMillis = savedInstanceState.getLong("fromDate", -1);
-			if(dateMillis == -1){
-				fromDate = null;
-			}else{
-				fromDate = new GregorianCalendar();
-				fromDate.setTimeInMillis(dateMillis);
-			}
-			dateMillis = savedInstanceState.getLong("toDate", -1);
-			if(dateMillis == -1){
-				toDate = null;
-			}else{
-				toDate = new GregorianCalendar();
-				toDate.setTimeInMillis(dateMillis);
-			}
-
 	        currentContent = savedInstanceState.getInt("currentContent", MY_ACTIVITIES_CONTENT);
 		}else{
-			fromDate = null;
-			toDate = null;
 			currentContent = MY_ACTIVITIES_CONTENT;
 		}
 		
-		
-		fromText = (TextView) findViewById(R.id.drawer_fromDate);
-		toText = (TextView) findViewById(R.id.drawer_toDate);
-
-		setFromDateText();
-		setToDateText();
-		
-		filterSubject = new DataSubject();
-		
-		fromText.setOnClickListener(this);
-		toText.setOnClickListener(this);
 		
 		findViewById(R.id.drawer_newactivity_item).setOnClickListener(this);
 		findViewById(R.id.drawer_myactivities_item).setOnClickListener(this);
@@ -146,8 +110,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
         
         drawerLayout.setDrawerListener(drawerToggle);
         
+        dateFilterFragment = new DateFilterFragment();
         
-        android.util.Log.d("MAINACT", "onCreated");
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		fragmentTransaction.replace(R.id.main_datefilter_frame, dateFilterFragment);
+		fragmentTransaction.commit();
 	}
 
 	
@@ -172,11 +139,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	public void onSaveInstanceState(Bundle saveInstanceState){
 		super.onSaveInstanceState(saveInstanceState);
-		
-		if(fromDate != null)
-			saveInstanceState.putLong("fromDate", fromDate.getTimeInMillis());
-		if(toDate != null)
-			saveInstanceState.putLong("toDate", toDate.getTimeInMillis());
 		
 		saveInstanceState.putInt("currentContent", currentContent);
 	}
@@ -207,83 +169,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		default: return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	@Override
-	public void datePicked(int year, int month, int day) {
-		if(dateDialogShowing == R.id.drawer_fromDate){
-			if(fromDate == null)
-				fromDate = (GregorianCalendar) GregorianCalendar.getInstance();
-			fromDate.set(Calendar.YEAR, year);
-			fromDate.set(Calendar.MONTH, month);
-			fromDate.set(Calendar.DAY_OF_MONTH, day);
-			setFromDateText();
-			if(activitiesQuery != null)
-				activitiesQuery.setFromDate(fromDate);
-		}else{
-			if(toDate == null)
-				toDate = (GregorianCalendar) GregorianCalendar.getInstance();
-			toDate.set(Calendar.YEAR, year);
-			toDate.set(Calendar.MONTH, month);
-			toDate.set(Calendar.DAY_OF_MONTH, day);
-			setToDateText();
-			if(activitiesQuery != null)
-				activitiesQuery.setToDate(toDate);
-		}
-		
-		filterSubject.notifyObservers();
-		
-	}
-	
-	private void setFromDateText() {
-		if(fromDate != null)
-			fromText.setText(DateFormat.format("EEE d/M/yyyy", fromDate));
-	}
-	
-	private void setToDateText() {
-		if(toDate != null)
-			toText.setText(DateFormat.format("EEE d/M/yyyy", toDate));
-	}
 
 	@Override
 	public void onClick(View view) {
 		int id = view.getId();
-		
-		switch(id){
-		case R.id.drawer_fromDate:
-		case R.id.drawer_toDate:
-			onDateFilterClick(id);
-			break;
-		case R.id.drawer_newactivity_item:
-		case R.id.drawer_myactivities_item:
-		case R.id.drawer_myresults_item:
-		case R.id.drawer_graph_item:
-			onDrawerItemClick(id);
-			break;
-		default: break;
-		}
-	}
-	
-	private void onDateFilterClick(int id){
-		DatePickerDialogFragment dialogFragment;
-		GregorianCalendar date;
-		
-		if(id == R.id.drawer_fromDate){
-			date = fromDate;
-		}else{
-			date = toDate;
-		}
-		
-		if(date == null)
-			date = (GregorianCalendar) GregorianCalendar.getInstance();
-		
-		dateDialogShowing = id;
-
-		dialogFragment = DatePickerDialogFragment.newInstance(date.get(Calendar.DAY_OF_MONTH), date.get(Calendar.MONTH), date.get(Calendar.YEAR));
-		dialogFragment.setOnDatePickedListener(this);
-		dialogFragment.show(getSupportFragmentManager(), "datePickerDialog" + id);
-	}
-	
-	private void onDrawerItemClick(int id){
 		int newContent = -1;
 				
 		switch(id){
@@ -309,7 +198,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	}
 	
 	
-	
 	private void setNewContent(int newContent){
 		int newTitle;
 		Fragment contentFragment;
@@ -326,8 +214,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			if(myResultsGraphFragment == null){
 				myResultsGraphFragment = new ResultsGraphFragment();
 				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, fromDate, toDate);
-				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
+				DateFilter dateFilter = dateFilterFragment.getDateFilter();
+				ResultsQuery resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, dateFilter);
+				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
 				myResultsGraphFragment.setLoader(loader);
 			}
 			contentFragment = myResultsGraphFragment;
@@ -336,8 +225,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			newTitle = R.string.myactivities_title;
 			if(myActivitiesListFragment == null){
 				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				activitiesQuery = new ActivitiesQuery(actDataSource, fromDate, toDate);
-				ObserverCursorLoader loader = new ObserverCursorLoader(this, activitiesQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
+				DateFilter dateFilter = dateFilterFragment.getDateFilter();
+				ActivitiesQuery activitiesQuery = new ActivitiesQuery(actDataSource, dateFilter);
+				ObserverCursorLoader loader = new ObserverCursorLoader(this, activitiesQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
 				myActivitiesListFragment = AutoUpdateListFragment.newInstance(getResources().getString(R.string.myactivitieslist_empty));
 				myActivitiesListFragment.setListAdapter(new ActivitiesCursorAdapter(this));
 				((AutoUpdateListFragment) myActivitiesListFragment).setLoader(loader);
@@ -349,8 +239,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			newTitle = R.string.myresults_title;
 			if(myResultsListFragment == null){
 				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, fromDate, toDate);
-				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{filterSubject, actDataSource.getActivitiesSubject()}));
+				DateFilter dateFilter = dateFilterFragment.getDateFilter();
+				ResultsQuery resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, dateFilter);
+				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
 				myResultsListFragment = ResultsListFragment.newInstance(getResources().getString(R.string.myresultslist_empty));
 				((ResultsListFragment) myResultsListFragment).setLoader(loader);
 				((ResultsListFragment) myResultsListFragment).setResultType(this, Result.RT_MAX_MOVE);

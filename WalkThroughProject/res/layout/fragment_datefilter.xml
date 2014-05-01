@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    	xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="bottom"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:text="@string/mainactivity_from_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_fromDate"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_beginning_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView6"
+            style="@style/DrawerHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/mainactivity_to_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/drawer_toDate"
+            style="@style/DrawerDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="18dp"
+            android:text="@string/mainactivity_today_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
