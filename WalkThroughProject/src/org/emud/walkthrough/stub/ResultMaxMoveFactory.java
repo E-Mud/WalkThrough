@@ -10,6 +10,11 @@ import android.os.Bundle;
 public class ResultMaxMoveFactory implements ResultFactory {
 	private static final String RESULT_TYPE_KEY = "resultType",
 					MAX_VALUE_KEY = "maxValue";
+	
+	private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
+            "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+			RESULT_ID_COLUMN + " LONG NOT NULL REFERENCES result(_id) ON DELETE CASCADE, " + 
+			MAX_VALUE_KEY + " REAL NOT NULL);";
 
 	@Override
 	public Result buildResultFromBundle(Bundle bundle) {
@@ -55,6 +60,11 @@ public class ResultMaxMoveFactory implements ResultFactory {
 	@Override
 	public String getTableName() {
 		return "result_mm";
+	}
+
+	@Override
+	public String getSQLCreateTableStatement() {
+		return DB_RESULT_MAX_MOVE_CREATE;
 	}
 
 }

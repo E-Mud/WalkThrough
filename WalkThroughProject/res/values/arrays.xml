@@ -9,4 +9,8 @@
         <item>Movil</item>
         <item>Acelerómetros en los tobillos</item>
     </string-array>
+    
+    <integer-array name="result_types">
+        <item>1</item>
+    </integer-array>
 </resources>

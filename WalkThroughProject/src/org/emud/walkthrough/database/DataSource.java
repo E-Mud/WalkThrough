@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
+import org.emud.walkthrough.R;
 import org.emud.walkthrough.ResultFactory;
+import org.emud.walkthrough.ResultToolsProvider;
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.User;
@@ -22,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 6;
+	private static final int VERSION = 7;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -69,6 +71,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 	private static class SQLiteHelper extends SQLiteOpenHelper{
+		private int[] resultTypes;
+		
 		private static final String DB_PROFILE_CREATE="CREATE TABLE " + PROFILE_NAME +
                 " ("+
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -88,14 +92,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				RESULT_COLS[0] + " LONG NOT NULL REFERENCES " + ACTIVITY_NAME + "(_id) ON DELETE CASCADE, " + 
 				RESULT_COLS[1] + " INTEGER NOT NULL);";
-		
-		private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
-                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				"result_id LONG NOT NULL REFERENCES " + RESULT_NAME + "(_id) ON DELETE CASCADE, " + 
-				"maxValue REAL NOT NULL);";
 
 		public SQLiteHelper(Context context, String name, int version) {
 			super(context, name, null, version);
+			resultTypes = context.getResources().getIntArray(R.array.result_types);
 		}
 
 		@Override
@@ -103,7 +103,14 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			db.execSQL(DB_PROFILE_CREATE);
 			db.execSQL(DB_ACTIVITY_CREATE);
 			db.execSQL(DB_RESULT_CREATE);
-			db.execSQL(DB_RESULT_MAX_MOVE_CREATE);
+			
+			ResultToolsProvider toolsProvider = new ResultToolsProvider();
+			int n = resultTypes.length;
+			
+			for(int i=0; i<n; i++){
+				ResultFactory factory = toolsProvider.getResultFactory(resultTypes[i]);
+				db.execSQL(factory.getSQLCreateTableStatement());
+			}
 		}
 
 		@Override
@@ -111,7 +118,15 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ RESULT_NAME);
-			db.execSQL("DROP TABLE IF EXISTS result_mm");
+			
+			ResultToolsProvider toolsProvider = new ResultToolsProvider();
+			int n = resultTypes.length;
+			
+			for(int i=0; i<n; i++){
+				ResultFactory factory = toolsProvider.getResultFactory(resultTypes[i]);
+				db.execSQL("DROP TABLE IF EXISTS "+ factory.getTableName());
+			}
+			
             onCreate(db);
 		}
 	}
@@ -223,15 +238,20 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
 		
+		log("activity created _id: " + activity_id);
+		
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
 			valuesResult.put(RESULT_COLS[1], result.getType());
 			result_id = db.insert(RESULT_NAME, null, valuesResult);
 			
+			log("result_id: " + result_id);
+			
 			ResultFactory factory = app.getResultFactory(result.getType());
 			valuesSubResult = factory.buildContentValuesFromResult(result);
-			valuesSubResult.put("result_id", result_id);
-			db.insert(factory.getTableName(), null, valuesSubResult);
+			valuesSubResult.put(ResultFactory.RESULT_ID_COLUMN, result_id);
+			long res_id = db.insert(factory.getTableName(), null, valuesSubResult);
+			log(factory.getTableName() + "._id: " + res_id);
 		}
 		
 		getActivitiesSubject().notifyObservers();
@@ -247,11 +267,12 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		ArrayList<Result> results = new ArrayList<Result>();
 		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		
-		android.util.Log.d("DATA SOURCE GAR", "" + activity_id);
+		log("getActivityResults: " + activity_id);
+		
 		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
 		
 		if(!cursorResult.moveToFirst()){
-			android.util.Log.d("DATA SOURCE", "no results");
+			log("no results");
 			cursorResult.close();
 			return results;
 		}
@@ -262,14 +283,18 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			Result result;
 			ResultFactory factory;
 			
+			log("result type: " + type);
+			
 			factory = app.getResultFactory(type);
 			table = factory.getTableName();
 			
-			cursorSubResult = db.query(table, null, "result_id = " + cursorResult.getLong(0), null, null, null, null);
+			cursorSubResult = db.query(table, null, ResultFactory.RESULT_ID_COLUMN + " = " + cursorResult.getLong(0), null, null, null, null);
 			cursorSubResult.moveToFirst();
 			
 			result = factory.buildResultFromCursor(cursorSubResult);
 			results.add(result);
+			
+			log("pojo result type: " + result.getType());
 			
 			cursorSubResult.close();
 		}while(cursorResult.moveToNext());
@@ -280,6 +305,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 
+	//XXX DEBUG
+	private void log(String string) {
+		android.util.Log.d(DataSource.class.getName(), string);
+	}
 
 	@Override
 	public List<Result> getResults(int type, GregorianCalendar startDate,

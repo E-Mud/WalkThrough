@@ -274,7 +274,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		Intent intent = new Intent(this, DetailActivity.class);
-		intent.putExtra("activity_id", id);
+		long real_id = ((WalkActivity)myActivitiesListFragment.getListAdapter().getItem(position)).getId();
+		intent.putExtra("activity_id", real_id);
 		startActivity(intent);
 	}
 	

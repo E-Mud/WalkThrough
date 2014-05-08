@@ -9,6 +9,8 @@ import android.widget.ListAdapter;
 
 public interface ResultGUIResolver {
 	
+	public String getTitle();
+	
 	public View getDetailView(LayoutInflater inflater, Result result);
 	
 	public ListAdapter getListAdapter(Context context);

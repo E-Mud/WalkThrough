@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 public interface ResultFactory {
+	public final String RESULT_ID_COLUMN = "result_id";
 	
 	public Result buildResultFromBundle(Bundle bundle);
 	
@@ -17,4 +18,6 @@ public interface ResultFactory {
 	public Result buildResultFromCursor(Cursor cursor);
 	
 	public String getTableName();
+	
+	public String getSQLCreateTableStatement();
 }

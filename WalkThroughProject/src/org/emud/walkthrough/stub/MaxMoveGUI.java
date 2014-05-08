@@ -33,4 +33,9 @@ public class MaxMoveGUI implements ResultGUIResolver {
 		return new MaxMoveListAdapter(context);
 	}
 
+	@Override
+	public String getTitle() {
+		return "Máxima aceleración";
+	}
+
 }
