@@ -26,7 +26,6 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 	public void startReceiving() {
 		sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 	    accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-	    android.util.Log.e("WTF???", "" + (accelerometer == null));
 	    resumeReceiving();
 	}
 

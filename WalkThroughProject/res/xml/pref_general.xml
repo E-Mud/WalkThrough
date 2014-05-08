@@ -22,5 +22,15 @@
         	android:key="delete_pref"
         	android:title="@string/settings_delete_title" />
     </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/settings_analysis_title">
+    	<CheckBoxPreference
+        	android:key="screen_pref"
+        	android:title="@string/settings_screen_title"
+        	android:summaryOn="@string/settings_screen_summaryOn"
+        	android:summaryOff="@string/settings_screen_summaryOff"
+        	android:defaultValue="true" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

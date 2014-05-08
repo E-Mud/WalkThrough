@@ -3,18 +3,15 @@ package org.emud.walkthrough;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
-import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.stub.ResultMaxMoveFactory;
 import org.emud.walkthrough.stub.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.util.SparseArray;
 
 public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
@@ -23,14 +20,6 @@ public class WalkThroughApplication extends Application {
 	private ResultToolsProvider resultToolsProvider;
 	private static final String APP_PREFERENCES = "WalkThroughPreferences",
 			USER_PREFERENCES_SUFIX = "Preferences";
-	
-
-	public static final int
-		SERVICE_PREPARED = 0,
-		SERVICE_RUNNING = 1,
-		SERVICE_PAUSED = 2,
-		SERVICE_STOPPED = 3,
-		SERVICE_NONE = 4;
 	
 	/** (non-Javadoc)
 	 * @see android.app.Application#onCreate()
@@ -260,9 +249,9 @@ public class WalkThroughApplication extends Application {
 	public int getServiceState(){
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
-			return userPrefs.getInt("serviceState", SERVICE_NONE);		
+			return userPrefs.getInt("serviceState", AnalysisService.SERVICE_NONE);		
 		}else{
-			return SERVICE_NONE;
+			return AnalysisService.SERVICE_NONE;
 		}
 	}
 	
@@ -296,5 +285,24 @@ public class WalkThroughApplication extends Application {
 	 */
 	public ResultGUIResolver getGUIResolver(int resultType){
 		return resultToolsProvider.getGUIResolver(resultType);
+	}
+
+	public void setScreenPref(boolean screen) {
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
+			SharedPreferences.Editor editor = userPrefs.edit();
+			
+			editor.putBoolean("screenPref", screen);
+			editor.commit();			
+		}
+	}
+	
+	public boolean getScreenPref() {
+		if(activeUser != null){
+			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
+			return userPrefs.getBoolean("screenPref", false);		
+		}else{
+			return false;
+		}
 	}
 }

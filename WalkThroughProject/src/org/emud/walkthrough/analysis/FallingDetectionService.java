@@ -64,4 +64,11 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 		
 	}
 
+
+	@Override
+	public void onStateMessage(Message msg) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -54,7 +54,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		super.onCreate(savedInstanceState);
 
 		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
-		if(serviceState != WalkThroughApplication.SERVICE_NONE){
+		if(serviceState != AnalysisService.SERVICE_NONE){
 			Intent intent = new Intent(this, CurrentActivity.class);
 			startActivity(intent);
 			finish();
@@ -259,9 +259,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		Intent intentService = new Intent(this, AnalysisService.class);
 		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiver);
 		intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultTypes);
+		intentService.putExtra(AnalysisService.SCREEN_KEY, ((WalkThroughApplication) getApplicationContext()).getScreenPref());
 		startService(intentService);
 		
-		((WalkThroughApplication) getApplicationContext()).setServiceState(WalkThroughApplication.SERVICE_PREPARED);
+		((WalkThroughApplication) getApplicationContext()).setServiceState(AnalysisService.SERVICE_PREPARED);
 		
 		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
 		startActivity(intentCurrentActivity);

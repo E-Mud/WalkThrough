@@ -69,14 +69,4 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 		for(Analyst analyst : analysts)
 			analyst.analyzeNewData(accelerometerData);
 	}
-	
-	//XXX TESTING
-	public WalkDataReceiver getDataReceiver(){
-		return walkDataReceiver;
-	}
-	
-	//XXX TESTING
-	public List<Analyst> getAnalystList(){
-		return analysts;
-	}
 }

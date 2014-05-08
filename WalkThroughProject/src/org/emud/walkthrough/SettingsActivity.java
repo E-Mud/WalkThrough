@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
@@ -60,6 +61,7 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			findPreference("logout_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
 			findPreference("delete_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
 			findPreference("emergencycontact_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
+			findPreference("screen_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
 		}
 		
 		@Override
@@ -107,6 +109,11 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 			startActivityForResult(intent, 0);
 		    return true;
+		}
+		
+		if(key.equals("screen_pref")){
+			((WalkThroughApplication) getApplicationContext()).setScreenPref(((CheckBoxPreference) pref).isChecked());
+			return true;
 		}
 		
 		return false;

@@ -50,8 +50,11 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		
 		connection = new ServiceConnection() {
 	        public void onServiceConnected(ComponentName className, IBinder binder) {
-	            service = new Messenger(binder);
-	            bound = true;
+	        	if(binder != null){
+	        		service = new Messenger(binder);
+	        		bound = true;
+	        		sendMessageToService(ServiceMessageHandler.MSG_STATE);
+	        	}
 	        }
 	        public void onServiceDisconnected(ComponentName className) {
 	            service = null;
@@ -69,16 +72,16 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		
 		if(view.getId() == R.id.iconPauseResume){
 			switch(serviceState){
-			case WalkThroughApplication.SERVICE_PREPARED:
-				serviceState = WalkThroughApplication.SERVICE_RUNNING;
+			case AnalysisService.SERVICE_PREPARED:
+				serviceState = AnalysisService.SERVICE_RUNNING;
 				what = ServiceMessageHandler.MSG_START;
 				break;
-			case WalkThroughApplication.SERVICE_RUNNING:
-				serviceState = WalkThroughApplication.SERVICE_PAUSED;
+			case AnalysisService.SERVICE_RUNNING:
+				serviceState = AnalysisService.SERVICE_PAUSED;
 				what = ServiceMessageHandler.MSG_PAUSE;
 				break;
-			case WalkThroughApplication.SERVICE_PAUSED:
-				serviceState = WalkThroughApplication.SERVICE_RUNNING;
+			case AnalysisService.SERVICE_PAUSED:
+				serviceState = AnalysisService.SERVICE_RUNNING;
 				what = ServiceMessageHandler.MSG_RESUME;
 				break;
 			default: return;
@@ -86,10 +89,10 @@ public class CurrentActivity extends Activity implements OnClickListener {
 			
 			setPauseResumeIconSrc();
 		}else{
-			if(serviceState == WalkThroughApplication.SERVICE_PREPARED)
+			if(serviceState == AnalysisService.SERVICE_PREPARED)
 				return;
 
-			serviceState = WalkThroughApplication.SERVICE_STOPPED;
+			serviceState = AnalysisService.SERVICE_STOPPED;
 			what = ServiceMessageHandler.MSG_STOP;
 		}
 		
@@ -122,7 +125,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
 
 	private void setPauseResumeIconSrc() {
 		int src;
-		if(serviceState == WalkThroughApplication.SERVICE_RUNNING){
+		if(serviceState == AnalysisService.SERVICE_RUNNING){
 			src = R.drawable.ic_pause_icon;
 		}else{
 			src = R.drawable.ic_resume_icon;
@@ -135,10 +138,9 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	private void sendMessageToService(int what) {
 		Message msg = Message.obtain(null, what, 0, 0);
 		
-		if(what == ServiceMessageHandler.MSG_STOP){
+		if(what == ServiceMessageHandler.MSG_STOP || what == ServiceMessageHandler.MSG_STATE){
 			responseMessenger = new Messenger(new ResponseHandler(this));
 			msg.replyTo = responseMessenger;
-			android.util.Log.d("ACTIVITY", "SENDING STOP");
 		}
 		
 		try {
@@ -172,12 +174,18 @@ public class CurrentActivity extends Activity implements OnClickListener {
         stopServiceIntent = new Intent(this, AnalysisService.class);
         stopService(stopServiceIntent);
         
-        serviceState = WalkThroughApplication.SERVICE_NONE;
+        serviceState = AnalysisService.SERVICE_NONE;
         app.setServiceState(serviceState);
         
         backToMainIntent = new Intent(this, MainActivity.class);
         startActivity(backToMainIntent);
         finish();
+	}
+	
+
+	private void onStateAnswer(Bundle data) {
+		serviceState = data.getInt(ServiceMessageHandler.STATE_KEY);
+		setPauseResumeIconSrc();
 	}
 	
 	public static class ResponseHandler extends Handler {
@@ -189,10 +197,12 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		
         @Override
         public void handleMessage(Message msg) {
-    		android.util.Log.e("ACTIVITY","msg " + msg.what);
             if(msg.what == ServiceMessageHandler.MSG_STOP){
             	currentActivity.onServiceStopped(msg.getData());
+            }else{
+            	currentActivity.onStateAnswer(msg.getData());
             }
         }
     }
+
 }

@@ -50,10 +50,14 @@
     <string name="settings_session_title">Sesion</string>
     <string name="settings_useraccount_title">Cuenta de usuario</string>
     <string name="settings_falling_title">Detección de caidas</string>
+    <string name="settings_analysis_title">Análisis</string>
     <string name="settings_delete_title">Borrar usuario</string>
     <string name="settings_logout_title">Cerrar sesión</string>
     <string name="settings_emergencycontact_title">Contacto de emergencia</string>
     <string name="settings_emergencycontact_summary">Ninguno seleccionado</string>
+    <string name="settings_screen_title">Inicio/Pausa automático</string>
+    <string name="settings_screen_summaryOn">El análisis se iniciará automáticamente al apagarse la pantalla y se pausará al encenderse.</string>
+    <string name="settings_screen_summaryOff">El análisis se iniciará o pausará cuando el usuario lo indique.</string>
 
     <!-- MainActivity -->
     <string name="myactivitieslist_empty">No hay actividades.</string>
