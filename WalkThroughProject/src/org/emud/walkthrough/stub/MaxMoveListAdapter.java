@@ -1,6 +1,5 @@
 package org.emud.walkthrough.stub;
 
-import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.R;
@@ -15,11 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class MaxMoveListAdapter extends ArrayAdapter<Result> {
-	private DecimalFormat df;
 
 	public MaxMoveListAdapter(Context context) {
 		super(context, R.layout.listitem_maxmove_result);
-		df = new DecimalFormat("#.00");
 	}
 
 	@Override

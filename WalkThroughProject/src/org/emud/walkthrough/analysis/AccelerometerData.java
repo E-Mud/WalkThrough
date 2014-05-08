@@ -1,10 +1,10 @@
 package org.emud.walkthrough.analysis;
 
-public class WalkData {
+public class AccelerometerData {
 	private long timeStamp;
 	private double[] data;
 	
-	public WalkData(double[] data, long timeStamp){
+	public AccelerometerData(double[] data, long timeStamp){
 		this.timeStamp = timeStamp;
 		this.data = data;
 	}

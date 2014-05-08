@@ -181,8 +181,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 	@Override
-	public Cursor getActivities(GregorianCalendar startDate, GregorianCalendar endDate) {
+	public List<WalkActivity> getActivities(GregorianCalendar startDate, GregorianCalendar endDate) {
 		Cursor cursor;
+		ArrayList<WalkActivity> list = new ArrayList<WalkActivity>();
 		
 		if(startDate == null && endDate == null){
 			cursor = db.query(ACTIVITY_NAME, null, null, null, null, null, ACTIVITY_COLS[0] + " DESC");
@@ -190,14 +191,21 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			cursor = db.query(ACTIVITY_NAME, null, buildFilter(startDate, endDate), null, null, null, ACTIVITY_COLS[0] + " DESC");
 		}
 		
-		cursor.moveToFirst();
+		if(cursor.moveToFirst()){
+			do{
+				GregorianCalendar cal = new GregorianCalendar();
+				WalkActivity act;
+				
+				cal.setTimeInMillis(cursor.getLong(1));
+				act = new WalkActivity(cal);
+				act.setId(cursor.getLong(0));
+				list.add(act);
+			}while(cursor.moveToNext());
+		}
 		
-		return cursor;
-	}
-
-	@Override
-	public Cursor getAllActivities() {
-		return getActivities(null, null);
+		cursor.close();
+		
+		return list;
 	}
 
 	@Override
@@ -227,6 +235,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		}
 		
 		getActivitiesSubject().notifyObservers();
+		
+		act.setId(activity_id);
 		
 		return activity_id;
 	}

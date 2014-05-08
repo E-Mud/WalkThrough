@@ -1,23 +1,23 @@
 package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.analysis.Analyst;
-import org.emud.walkthrough.analysis.WalkData;
+import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.model.Result;
 
 public class MaxMoveAnalyst implements Analyst {
-	private WalkData max;
+	private AccelerometerData max;
 	
 	public MaxMoveAnalyst(){
-		max = new WalkData(new double[]{0,0,0}, 0);
+		max = new AccelerometerData(new double[]{0,0,0}, 0);
 	}
 
 	@Override
-	public void analyzeNewData(WalkData walkData) {
+	public void analyzeNewData(AccelerometerData accelerometerData) {
 		double absValueMax = getAbsoluteValue(max.getData());
-		double absValueNew = getAbsoluteValue(walkData.getData());
+		double absValueNew = getAbsoluteValue(accelerometerData.getData());
 		
 		if(absValueNew > absValueMax)
-			max = walkData;
+			max = accelerometerData;
 	}
 
 	@Override

@@ -68,10 +68,10 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 		/*for(int i=0; i<n; i++)
 			data[i] = event.values[i];*/
 		
-		WalkData walkData = new WalkData(data, event.timestamp);
+		AccelerometerData accelerometerData = new AccelerometerData(data, event.timestamp);
 		
 		for(OnDataReceivedListener listener : listeners)
-			listener.onDataReceveid(walkData);
+			listener.onDataReceveid(accelerometerData);
 	}
 
 }

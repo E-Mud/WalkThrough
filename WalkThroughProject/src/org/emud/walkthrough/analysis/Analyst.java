@@ -7,9 +7,9 @@ public interface Analyst {
 	//TODO
 	/**
 	 * Realiza un análisis sobre un nuevo conjunto de datos recibidos.
-	 * @param walkData Datos recibidos.
+	 * @param accelerometerData Datos recibidos.
 	 */
-	public void analyzeNewData(WalkData walkData);
+	public void analyzeNewData(AccelerometerData accelerometerData);
 	
 	//TODO
 	/**

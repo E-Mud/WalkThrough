@@ -2,7 +2,7 @@ package org.emud.walkthrough.stub;
 
 import java.util.ArrayList;
 
-import org.emud.walkthrough.analysis.WalkData;
+import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 
 public class FalseReceiver extends WalkDataReceiver {
@@ -36,10 +36,10 @@ public class FalseReceiver extends WalkDataReceiver {
 	}
 	
 	public void getData(long timestamp, double[] data){
-		WalkData walkData = new WalkData(data, timestamp);
+		AccelerometerData accelerometerData = new AccelerometerData(data, timestamp);
 		
 		for(OnDataReceivedListener listener : listeners)
-			listener.onDataReceveid(walkData);
+			listener.onDataReceveid(accelerometerData);
 	}
 
 }

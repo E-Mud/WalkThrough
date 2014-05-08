@@ -1,12 +1,13 @@
 package org.emud.walkthrough.database;
 
+import java.util.List;
 
 import org.emud.content.Query;
 import org.emud.walkthrough.DateFilter;
+import org.emud.walkthrough.model.WalkActivity;
 
-import android.database.Cursor;
 
-public class ActivitiesQuery implements Query<Cursor> {
+public class ActivitiesQuery implements Query<List<WalkActivity> > {
 	private DateFilter dateFilter;
 	private ActivitiesDataSource dataSource;
 	
@@ -16,10 +17,8 @@ public class ActivitiesQuery implements Query<Cursor> {
 		dateFilter = filter;
 	}
 	
-	
-	
 	@Override
-	public Cursor execute() {
+	public List<WalkActivity> execute() {
 		return dataSource.getActivities(dateFilter.getFromDate(), dateFilter.getToDate());
 	}
 

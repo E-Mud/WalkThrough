@@ -3,10 +3,9 @@ package org.emud.walkthrough;
 import java.util.Arrays;
 import java.util.List;
 
-import org.emud.support.v4.content.ObserverCursorLoader;
 import org.emud.support.v4.content.ObserverLoader;
 import org.emud.content.observer.Subject;
-import org.emud.walkthrough.adapter.ActivitiesCursorAdapter;
+import org.emud.walkthrough.adapter.ActivitiesAdapter;
 import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ActivitiesQuery;
@@ -18,6 +17,7 @@ import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedLi
 import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.model.WalkActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -215,9 +215,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
 				DateFilter dateFilter = dateFilterFragment.getDateFilter();
 				ActivitiesQuery activitiesQuery = new ActivitiesQuery(actDataSource, dateFilter);
-				ObserverCursorLoader loader = new ObserverCursorLoader(this, activitiesQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
+				ObserverLoader<List<WalkActivity> > loader = new ObserverLoader<List<WalkActivity> >(this, activitiesQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
 				myActivitiesListFragment = AutoUpdateListFragment.newInstance(getResources().getString(R.string.myactivitieslist_empty));
-				myActivitiesListFragment.setListAdapter(new ActivitiesCursorAdapter(this));
+				myActivitiesListFragment.setListAdapter(new ActivitiesAdapter(this));
 				((AutoUpdateListFragment) myActivitiesListFragment).setLoader(loader);
 				((AutoUpdateListFragment) myActivitiesListFragment).setOnItemClickListener(this);
 			}

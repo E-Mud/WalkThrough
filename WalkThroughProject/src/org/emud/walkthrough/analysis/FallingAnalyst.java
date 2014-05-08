@@ -10,7 +10,7 @@ public class FallingAnalyst implements Analyst {
 	}
 
 	@Override
-	public void analyzeNewData(WalkData walkData) {
+	public void analyzeNewData(AccelerometerData accelerometerData) {
 		// TODO Auto-generated method stub
 	}
 

@@ -7,8 +7,6 @@ import org.emud.content.observer.Subject;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.model.Result;
 
-import android.database.Cursor;
-
 /**
  * @author alberto
  *
@@ -28,12 +26,8 @@ public interface ActivitiesDataSource {
 	 * @param endDate
 	 * @return
 	 */
-	public Cursor getActivities(GregorianCalendar startDate, GregorianCalendar endDate);
-	
-	/**
-	 * @return
-	 */
-	public Cursor getAllActivities();
+	public List<WalkActivity> getActivities(GregorianCalendar startDate, GregorianCalendar endDate);
+
 
 	/**
 	 * Crea una nueva actividad en la fuente de datos.

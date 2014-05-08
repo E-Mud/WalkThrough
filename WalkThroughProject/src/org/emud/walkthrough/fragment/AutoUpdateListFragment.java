@@ -1,18 +1,20 @@
 package org.emud.walkthrough.fragment;
 
-import org.emud.support.v4.content.ObserverCursorLoader;
+import java.util.List;
+
+import org.emud.support.v4.content.ObserverLoader;
+import org.emud.walkthrough.model.WalkActivity;
 import org.emud.content.Query;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AutoUpdateListFragment extends ListFragment implements LoaderCallbacks<Cursor>{
-	private ObserverCursorLoader loader;
+public class AutoUpdateListFragment extends ListFragment implements LoaderCallbacks<List<WalkActivity> >{
+	private ObserverLoader<List<WalkActivity>> loader;
 	private OnItemClickListener listener;
 
 	public AutoUpdateListFragment(){
@@ -23,12 +25,12 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 		this.listener = listener;
 	}
 	
-	public ObserverCursorLoader getLoader() {
+	public ObserverLoader<List<WalkActivity>> getLoader() {
 		return loader;
 	}
 
-	public void setLoader(ObserverCursorLoader loader) {
-		this.loader = loader;
+	public void setLoader(ObserverLoader<List<WalkActivity>> aloader) {
+		this.loader = aloader;
 	}
 
 	public void update(){
@@ -57,11 +59,11 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+	public Loader<List<WalkActivity> > onCreateLoader(int arg0, Bundle arg1) {
 		if(loader == null)
-			loader = new ObserverCursorLoader(getActivity(), new Query<Cursor>(){
+			loader = new ObserverLoader<List<WalkActivity> >(getActivity(), new Query<List<WalkActivity> >(){
 				@Override
-				public Cursor execute() {
+				public List<WalkActivity> execute() {
 					return null;
 				}
 			});
@@ -69,20 +71,24 @@ public class AutoUpdateListFragment extends ListFragment implements LoaderCallba
 		return loader;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		
-		CursorAdapter adapter = (CursorAdapter) getListAdapter();
+	public void onLoadFinished(Loader<List<WalkActivity> > loader, List<WalkActivity> list) {
+		ArrayAdapter<WalkActivity> adapter = (ArrayAdapter<WalkActivity>) getListAdapter();
 		if(adapter != null){
-			adapter.swapCursor(cursor);
+			adapter.clear();
+			adapter.addAll(list);
+			adapter.notifyDataSetChanged();
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		CursorAdapter adapter = (CursorAdapter) getListAdapter();
+	public void onLoaderReset(Loader<List<WalkActivity> >  arg0) {
+		ArrayAdapter<WalkActivity> adapter = (ArrayAdapter<WalkActivity>) getListAdapter();
 		if(adapter != null){
-			adapter.swapCursor(null);
+			adapter.clear();
+			adapter.notifyDataSetChanged();
 		}
 	}
 }

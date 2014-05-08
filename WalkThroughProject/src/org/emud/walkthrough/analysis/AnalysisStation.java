@@ -62,12 +62,12 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	}
 
 	/**
-	 * @see org.emud.walkthrough.analysis.WalkDataReceiver.OnDataReceivedListener#onDataReceveid(org.emud.walkthrough.analysis.WalkData)
+	 * @see org.emud.walkthrough.analysis.WalkDataReceiver.OnDataReceivedListener#onDataReceveid(org.emud.walkthrough.analysis.AccelerometerData)
 	 */
 	@Override
-	public void onDataReceveid(WalkData walkData) {
+	public void onDataReceveid(AccelerometerData accelerometerData) {
 		for(Analyst analyst : analysts)
-			analyst.analyzeNewData(walkData);
+			analyst.analyzeNewData(accelerometerData);
 	}
 	
 	//XXX TESTING

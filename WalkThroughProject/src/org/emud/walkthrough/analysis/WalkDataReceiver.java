@@ -67,7 +67,7 @@ public abstract class WalkDataReceiver {
 	 * @author alberto
 	 */
 	public static interface OnDataReceivedListener{
-		public void onDataReceveid(WalkData walkData);
+		public void onDataReceveid(AccelerometerData accelerometerData);
 	}
 	
 	/**
