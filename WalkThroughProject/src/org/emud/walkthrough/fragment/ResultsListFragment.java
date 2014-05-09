@@ -1,13 +1,18 @@
 package org.emud.walkthrough.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
+import org.emud.walkthrough.DateFilter;
+import org.emud.walkthrough.R;
 import org.emud.walkthrough.ResultGUIResolver;
 import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.database.ActivitiesDataSource;
+import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.model.Result;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -17,22 +22,30 @@ import android.widget.ArrayAdapter;
 public class ResultsListFragment extends ListFragment  implements LoaderCallbacks<List<Result> >{
 	private ObserverLoader<List<Result> > loader;
 	private int resultType = -1;
+	private ActivitiesDataSource activitiesDataSource;
+	private DateFilter dateFilter;
 
 	
-	public static ResultsListFragment newInstance(String emptytext){
+	public static ResultsListFragment newInstance(int type){
 		ResultsListFragment result = new ResultsListFragment();
 		Bundle args = new Bundle();
 		
-		args.putString("emptytext", emptytext);
+		args.putInt("resultType", type);
 		
 		result.setArguments(args);
 		
 		return result;
 	}
 	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState){
+		super.onActivityCreated(savedInstanceState);
+		
+		setEmptyText(getActivity().getResources().getString(R.string.myresultslist_empty));
+		setResultType(getArguments().getInt("resultType"));
 
-	public void update(){
-		getLoaderManager().restartLoader(0, null, this);
+		if(activitiesDataSource != null && dateFilter != null)
+			getLoaderManager().initLoader(0, null, this);
 	}
 	
 	public ObserverLoader<List<Result> > getLoader() {
@@ -43,27 +56,38 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 		this.loader = loader;
 	}
 	
-	//TODO refactoring
-	public void setResultType(Context context, int type){
-		if(resultType != type){
-			resultType = type;
-			ResultGUIResolver resolver = ((WalkThroughApplication) context.getApplicationContext()).getGUIResolver(resultType);
-			setListAdapter(resolver.getListAdapter(context));
-		}
+	/**
+	 * @param activitiesDataSource the activitiesDataSource to set
+	 */
+	public void setActivitiesDataSource(ActivitiesDataSource activitiesDataSource) {
+		this.activitiesDataSource = activitiesDataSource;
 	}
-	
-	@Override
-	public void onStart(){
-		super.onStart();
-		
-		setEmptyText(getArguments().getString("emptytext"));
-		
-		getLoaderManager().initLoader(0, null, this);
+
+	/**
+	 * @param dateFilter the dateFilter to set
+	 */
+	public void setDateFilter(DateFilter dateFilter) {
+		this.dateFilter = dateFilter;
+	}
+
+	//TODO refactoring
+	public void setResultType(int type){
+		if(resultType != type && isAdded()){
+			resultType = type;
+			ResultGUIResolver resolver = ((WalkThroughApplication) getActivity().getApplicationContext()).getGUIResolver(resultType);
+			setListAdapter(resolver.getListAdapter(getActivity()));
+		}
 	}
 
 	@Override
 	public Loader<List<Result>> onCreateLoader(int arg0, Bundle arg1) {
-		return loader;
+		ResultsQuery query = new ResultsQuery(resultType, activitiesDataSource, dateFilter);
+		ArrayList<Subject> subjects = new ArrayList<Subject>();
+		
+		subjects.add(activitiesDataSource.getActivitiesSubject());
+		subjects.add(dateFilter.getDataSubject());
+		
+		return new ObserverLoader<List<Result> >(getActivity(), query, subjects);
 	}
 
 	@SuppressWarnings("unchecked")

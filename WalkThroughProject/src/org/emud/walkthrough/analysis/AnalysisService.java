@@ -158,7 +158,6 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		}
 	}
 
-
 	@Override
 	public void onScreenOff() {
 		if(currentState == SERVICE_PREPARED){

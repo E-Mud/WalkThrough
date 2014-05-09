@@ -3,14 +3,13 @@ package org.emud.walkthrough;
 import java.util.Arrays;
 import java.util.List;
 
-import org.emud.support.v4.content.ObserverLoader;
 import org.emud.content.observer.Subject;
-import org.emud.walkthrough.adapter.ActivitiesAdapter;
+import org.emud.support.v4.content.ObserverLoader;
 import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
-import org.emud.walkthrough.database.ActivitiesQuery;
 import org.emud.walkthrough.database.ResultsQuery;
-import org.emud.walkthrough.fragment.AutoUpdateListFragment;
+import org.emud.walkthrough.fragment.ActivitiesListFragment;
+import org.emud.walkthrough.fragment.ActivitiesListFragment.OnActivitySelectedListener;
 import org.emud.walkthrough.fragment.DateFilterFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
@@ -32,10 +31,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnItemClickListener {
+public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnActivitySelectedListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
 			STATISTICS_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
@@ -212,27 +209,21 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		case MY_ACTIVITIES_CONTENT:
 			newTitle = R.string.myactivities_title;
 			if(myActivitiesListFragment == null){
-				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				DateFilter dateFilter = dateFilterFragment.getDateFilter();
-				ActivitiesQuery activitiesQuery = new ActivitiesQuery(actDataSource, dateFilter);
-				ObserverLoader<List<WalkActivity> > loader = new ObserverLoader<List<WalkActivity> >(this, activitiesQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
-				myActivitiesListFragment = AutoUpdateListFragment.newInstance(getResources().getString(R.string.myactivitieslist_empty));
-				myActivitiesListFragment.setListAdapter(new ActivitiesAdapter(this));
-				((AutoUpdateListFragment) myActivitiesListFragment).setLoader(loader);
-				((AutoUpdateListFragment) myActivitiesListFragment).setOnItemClickListener(this);
+				ActivitiesListFragment actlf = new ActivitiesListFragment();
+				actlf.setListener(this);
+				actlf.setDateFilter(dateFilterFragment.getDateFilter());
+				actlf.setActivitiesDataSource(((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource());
+				myActivitiesListFragment = actlf;
 			}
 			contentFragment = myActivitiesListFragment;
 			break;
 		case MY_RESULTS_CONTENT:
 			newTitle = R.string.myresults_title;
 			if(myResultsListFragment == null){
-				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				DateFilter dateFilter = dateFilterFragment.getDateFilter();
-				ResultsQuery resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, dateFilter);
-				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
-				myResultsListFragment = ResultsListFragment.newInstance(getResources().getString(R.string.myresultslist_empty));
-				((ResultsListFragment) myResultsListFragment).setLoader(loader);
-				((ResultsListFragment) myResultsListFragment).setResultType(this, Result.RT_MAX_MOVE);
+				ResultsListFragment rlf = ResultsListFragment.newInstance(Result.RT_MAX_MOVE);
+				rlf.setDateFilter(dateFilterFragment.getDateFilter());
+				rlf.setActivitiesDataSource(((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource());
+				myResultsListFragment = rlf;
 			}
 			contentFragment = myResultsListFragment;
 			break;
@@ -269,13 +260,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		finish();
 	}
 
-
-
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+	public void activitySelected(WalkActivity act) {
 		Intent intent = new Intent(this, DetailActivity.class);
-		long real_id = ((WalkActivity)myActivitiesListFragment.getListAdapter().getItem(position)).getId();
-		intent.putExtra("activity_id", real_id);
+		intent.putExtra("activity_id", act.getId());
 		startActivity(intent);
 	}
 	

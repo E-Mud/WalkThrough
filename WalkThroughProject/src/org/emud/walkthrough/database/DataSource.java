@@ -332,6 +332,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 						
 		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);
 		
+		log(sqlQuery + " WHERE " + whereClause);
 		
 		StringBuilder builder = new StringBuilder();
 		if(cursor.moveToFirst()){
@@ -344,13 +345,16 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			builder.delete(builder.length()-2, builder.length());
 			cursor.close();
 		}else{
+			log("empty first query");
+			cursor.close();
 			return results;
 		}
 		
 		ResultFactory factory = ((WalkThroughApplication) context.getApplicationContext()).getResultFactory(type);
 		cursor = db.query(factory.getTableName(), null, "result_id IN("+builder.toString()+")", null, null, null, null);
 		
-		cursor.moveToFirst();
+		boolean empty = cursor.moveToFirst();
+		log("empty second query" + empty);
 		
 		do{
 			Result result = factory.buildResultFromCursor(cursor);
