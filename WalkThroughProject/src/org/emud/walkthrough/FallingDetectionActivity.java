@@ -5,12 +5,14 @@ import org.emud.walkthrough.analysis.ServiceMessageHandler;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.Contacts;
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -28,6 +30,7 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 	private Button onButton;
 	private boolean on;
 	private boolean bound;
+	private long contactId;
 	private ServiceConnection connection;
     private Messenger service;
 	
@@ -37,7 +40,6 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_falling_detection);
-		long contactId;
 		
 		onButton = (Button) findViewById(R.id.falling_detection_onoff);
 		onButton.setOnClickListener(this);
@@ -59,30 +61,50 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
         }
 		
 		if(savedInstanceState != null){
-			on = savedInstanceState.getBoolean(SERVICE_ON_KEY, false); 
-		}else{
-			on = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SERVICE_ON_KEY, false);
+			on = savedInstanceState.getBoolean(SERVICE_ON_KEY, false);
+			setOnOffButtonAttrs();
 		}
-		
-		setOnOffButtonAttrs();
-		
-		if(!on){
-			Intent intentService = new Intent(this, FallingDetectionService.class);
-			startService(intentService);
-		}
-		
+	
 		bound = false;
 		
 		connection = new ServiceConnection() {
 			public void onServiceConnected(ComponentName className, IBinder binder) {
-	            service = new Messenger(binder);
-	            bound = true;
+				if(binder == null){
+					startFallingService();
+				}else{
+		            service = new Messenger(binder);
+		            bound = true;
+		            on = true;
+		            setOnOffButtonAttrs();
+				}
 	        }
-	        public void onServiceDisconnected(ComponentName className) {
+			public void onServiceDisconnected(ComponentName className) {
 	            service = null;
 	            bound = false;
 	        }
 	    };
+	    
+	    bindFallingService();	    
+	}
+	
+	private void bindFallingService(){
+		bindService(new Intent(this, FallingDetectionService.class), connection, 0);
+	}
+	
+    @SuppressLint("HandlerLeak")
+	private void startFallingService() {
+    	Intent intentService = new Intent(this, FallingDetectionService.class);
+    	Handler handler = new Handler(){
+    		@Override
+            public void handleMessage(Message msg) {
+                if(msg.what == ServiceMessageHandler.MSG_STOP){
+                	bindFallingService();
+                }
+            }
+    	};
+    	Messenger messenger = new Messenger(handler);
+    	intentService.putExtra(FallingDetectionService.START_MESSENGER, messenger);
+		startService(intentService);
 	}
 	
 	private void setOnOffButtonAttrs() {
@@ -100,13 +122,6 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 		super.onSaveInstanceState(saveInstanceState);
 		
 		saveInstanceState.putBoolean(SERVICE_ON_KEY, on);
-	}
-	
-	@Override
-	public void onStart(){
-		super.onStart();
-		
-		//bindService(new Intent(this, FallingDetectionService.class), connection, 0);
 	}
 	
 
@@ -170,12 +185,12 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 			boolean hasNumber = cursor.getInt(cursor.getColumnIndex(Contacts.HAS_PHONE_NUMBER)) > 0;
 
 			if(hasNumber){
-				long contactID = cursor.getLong(cursor.getColumnIndex(Contacts._ID));
+				contactId = cursor.getLong(cursor.getColumnIndex(Contacts._ID));
 				Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
 				
 				((TextView) findViewById(R.id.falling_detection_emergencycontactname)).setText((cursor.getString(cursor.getColumnIndex(Contacts.DISPLAY_NAME))));
 				
-				edit.putLong(DEFAULT_CONTACT_ID, contactID);
+				edit.putLong(DEFAULT_CONTACT_ID, contactId);
 				edit.commit();
 			}
 			
@@ -186,7 +201,11 @@ public class FallingDetectionActivity extends FragmentActivity implements OnClic
 
 	private void turnServiceOn() {
 		try {
-			service.send(Message.obtain(null, ServiceMessageHandler.MSG_START, null));
+			Message msg = Message.obtain(null, ServiceMessageHandler.MSG_START, null);
+			Bundle bundle = new Bundle();
+			bundle.putLong(FallingDetectionService.CONTACT_ID_KEY, contactId);
+			msg.setData(bundle);
+			service.send(msg);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

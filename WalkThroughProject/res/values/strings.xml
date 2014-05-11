@@ -92,5 +92,10 @@
     <string name="fallingdetection_changecontact">Cambiar contacto</string>
     <string name="fallingdetection_turnon">Encender</string>
     <string name="fallingdetection_turnoff">Apagar</string>
+    
+    <!-- FallingDetection -->
+    <string name="falling_smstext">Se ha detectado una caída.</string>
+    <string name="falling_notificationtitle">Caída detectada.</string>
+    <string name="falling_notificationtext">Se ha detectado una caída y se ha notificado al contacto de emergencia.</string>
 
 </resources>

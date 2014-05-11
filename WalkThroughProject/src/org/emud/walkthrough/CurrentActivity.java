@@ -186,6 +186,8 @@ public class CurrentActivity extends Activity implements OnClickListener {
 	private void onStateAnswer(Bundle data) {
 		serviceState = data.getInt(ServiceMessageHandler.STATE_KEY);
 		setPauseResumeIconSrc();
+		if(serviceState != AnalysisService.SERVICE_PREPARED)
+			findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
 	}
 	
 	public static class ResponseHandler extends Handler {

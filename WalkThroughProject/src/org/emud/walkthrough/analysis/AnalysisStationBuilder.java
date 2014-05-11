@@ -52,6 +52,7 @@ public class AnalysisStationBuilder {
 		dataReceiver = DataReceiverBuilder.buildReceiver(context, WalkDataReceiver.SINGLE_ACCELEROMETER);
 		analystList.add(new FallingAnalyst(listener));
 		analysisStation = new AnalysisStation(dataReceiver, analystList);
+		dataReceiver.addOnDataReceveidListener(analysisStation);
 		
 		return analysisStation;
 	}

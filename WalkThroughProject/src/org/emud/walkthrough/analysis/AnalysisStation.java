@@ -66,7 +66,12 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	 */
 	@Override
 	public void onDataReceveid(AccelerometerData accelerometerData) {
+		log("data received");
 		for(Analyst analyst : analysts)
 			analyst.analyzeNewData(accelerometerData);
+	}
+	
+	private void log(String string) {
+		android.util.Log.d("AnalysisStation", string);
 	}
 }

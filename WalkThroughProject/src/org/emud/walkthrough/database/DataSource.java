@@ -154,7 +154,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		User result = new User();
 		
 		cursor = db.query(PROFILE_NAME, PROFILE_COLS, null, null, null, null, null);
-		cursor.moveToFirst(); //XXX Esta linea es un poco estupida
+		cursor.moveToFirst();
 		
 		result.setWebServiceId(cursor.getInt(0));
 		result.setUsername(cursor.getString(1));
@@ -238,20 +238,15 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
 		
-		log("activity created _id: " + activity_id);
-		
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
 			valuesResult.put(RESULT_COLS[1], result.getType());
 			result_id = db.insert(RESULT_NAME, null, valuesResult);
 			
-			log("result_id: " + result_id);
-			
 			ResultFactory factory = app.getResultFactory(result.getType());
 			valuesSubResult = factory.buildContentValuesFromResult(result);
 			valuesSubResult.put(ResultFactory.RESULT_ID_COLUMN, result_id);
-			long res_id = db.insert(factory.getTableName(), null, valuesSubResult);
-			log(factory.getTableName() + "._id: " + res_id);
+			db.insert(factory.getTableName(), null, valuesSubResult);
 		}
 		
 		getActivitiesSubject().notifyObservers();
@@ -267,12 +262,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		ArrayList<Result> results = new ArrayList<Result>();
 		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		
-		log("getActivityResults: " + activity_id);
-		
 		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
 		
 		if(!cursorResult.moveToFirst()){
-			log("no results");
 			cursorResult.close();
 			return results;
 		}
@@ -283,8 +275,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			Result result;
 			ResultFactory factory;
 			
-			log("result type: " + type);
-			
 			factory = app.getResultFactory(type);
 			table = factory.getTableName();
 			
@@ -294,8 +284,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			result = factory.buildResultFromCursor(cursorSubResult);
 			results.add(result);
 			
-			log("pojo result type: " + result.getType());
-			
 			cursorSubResult.close();
 		}while(cursorResult.moveToNext());
 		
@@ -304,11 +292,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		return results;
 	}
 
-
-	//XXX DEBUG
-	private void log(String string) {
-		android.util.Log.d(DataSource.class.getName(), string);
-	}
 
 	@Override
 	public List<Result> getResults(int type, GregorianCalendar startDate,
@@ -330,9 +313,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 						+ buildFilter(startDate, endDate);
 		}
 						
-		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);
-		
-		log(sqlQuery + " WHERE " + whereClause);
+		cursor = db.rawQuery(sqlQuery + " WHERE " + whereClause, null);		
 		
 		StringBuilder builder = new StringBuilder();
 		if(cursor.moveToFirst()){
@@ -345,7 +326,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			builder.delete(builder.length()-2, builder.length());
 			cursor.close();
 		}else{
-			log("empty first query");
 			cursor.close();
 			return results;
 		}
@@ -353,8 +333,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		ResultFactory factory = ((WalkThroughApplication) context.getApplicationContext()).getResultFactory(type);
 		cursor = db.query(factory.getTableName(), null, "result_id IN("+builder.toString()+")", null, null, null, null);
 		
-		boolean empty = cursor.moveToFirst();
-		log("empty second query" + empty);
+		cursor.moveToFirst();
 		
 		do{
 			Result result = factory.buildResultFromCursor(cursor);

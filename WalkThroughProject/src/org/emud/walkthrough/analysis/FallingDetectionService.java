@@ -1,28 +1,47 @@
 package org.emud.walkthrough.analysis;
 
-
+import org.emud.walkthrough.R;
 import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.RawContacts;
 import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.widget.Toast;
+import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
+import android.telephony.SmsManager;
 
 public class FallingDetectionService extends Service implements OnMessageReceivedListener, OnFallDetectedListener {
-	public static final String RECEIVER_TYPE_KEY = "receiverType", RESULTS_TYPES_KEY = "resultsTypes";
-	public static final String LIST_SIZE_KEY = "listSize",  LIST_ITEM_KEY = "resultBundle_";
-	public static final String BUNDLE_KEY = "bundle";
-	
+	public static final int SERVICE_OFF = 0, SERVICE_ON = 1;
+	public static final String CONTACT_ID_KEY = "emergencyContactID", START_MESSENGER = "startResponseMessenger";
 	private AnalysisStation station;
 	private Messenger messenger;
+	private long emergencyContactID;
+	private int currentState;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){		
 		station = AnalysisStationBuilder.buildFallingDetector(this, this);
-		
+
 		messenger = new Messenger(new ServiceMessageHandler(this));
+		
+		currentState = SERVICE_OFF;
+		
+		Messenger responseMessenger = intent.getParcelableExtra(START_MESSENGER);
+		Message msg = Message.obtain(null, ServiceMessageHandler.MSG_START, 0, 0);
+		try {
+			responseMessenger.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		return START_STICKY;
 	}
@@ -31,18 +50,23 @@ public class FallingDetectionService extends Service implements OnMessageReceive
     @Override
     public IBinder onBind(Intent intent) {
         if(messenger != null){
-            Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT).show();
         	return messenger.getBinder();
         }else{
-            Toast.makeText(getApplicationContext(), "binding not allowed", Toast.LENGTH_SHORT).show();
         	return null;
         }
     }
 
 	@Override
 	public void onStartMessage(Message msg) {
+		emergencyContactID = msg.getData().getLong(CONTACT_ID_KEY);
+		currentState = SERVICE_ON;
 		station.startAnalysis();
 	}
+
+	private void log(String string) {
+		android.util.Log.d("FlngService", string);
+	}
+
 
 	@Override
 	public void onPauseMessage(Message msg) {
@@ -54,21 +78,73 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 
 	@Override
 	public void onStopMessage(Message msg) {
+		currentState = SERVICE_OFF;
 		station.stopAnalysis();
 	}
 
-
+	@Override
+	public void onStateMessage(Message msg) {
+		Message msgResponse = Message.obtain(null, ServiceMessageHandler.MSG_STATE, 0, 0);
+		Bundle bundle = new Bundle();
+		
+		bundle.putInt(ServiceMessageHandler.STATE_KEY, currentState);
+		msgResponse.setData(bundle);
+		
+		try {
+			msg.replyTo.send(msgResponse);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}		
+	}
+	
 	@Override
 	public void fallDetected() {
-		// TODO Auto-generated method stub
-		
+		sendSMS();
+		notificateUser();
 	}
 
 
-	@Override
-	public void onStateMessage(Message msg) {
-		// TODO Auto-generated method stub
+	private void notificateUser() {
+		NotificationCompat.Builder mBuilder =
+		        new NotificationCompat.Builder(this)
+		        .setSmallIcon(R.drawable.ic_notification_icon)
+		        .setContentTitle(getResources().getString(R.string.falling_notificationtitle))
+		        .setContentText(getResources().getString(R.string.falling_notificationtext));
+
+		NotificationManager mNotificationManager =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
+		mNotificationManager.notify(0, mBuilder.build());
+	}
+
+	private void sendSMS(){
+		String phoneNumber = getPhoneNumber();
+		String fallingSmsText = getResources().getString(R.string.falling_smstext);
+		
+		SmsManager smsManager = SmsManager.getDefault();
+		log(phoneNumber);
+		smsManager.sendTextMessage(phoneNumber, null, fallingSmsText, null, null);
+	}
+
+	private String getPhoneNumber() {
+		String phone;
+
+	    Cursor cursor = getContentResolver().query(Data.CONTENT_URI,
+	            new String[] {Phone.NUMBER},
+	            RawContacts.CONTACT_ID + " = " + emergencyContactID  + " AND "
+	                    + Data.MIMETYPE + "='" + Phone.CONTENT_ITEM_TYPE + "'", null, null);
+
+	    boolean empty = cursor.moveToFirst(); 
+	    log("empty: " + !empty);
+	    phone = cursor.getString(cursor.getColumnIndex(Phone.NUMBER));
+	    log("phone number: " + (phone == null));
+	    
+	    do{
+	    	log("phone numbers: " + cursor.getString(cursor.getColumnIndex(Phone.NUMBER)));
+	    }while(cursor.moveToNext());
+	    cursor.close();
+	    
+	    return phone;
 	}
 
 }

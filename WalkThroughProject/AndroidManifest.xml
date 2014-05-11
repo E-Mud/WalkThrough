@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.READ_CONTACTS" >
     </uses-permission>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
 
     <application
         android:name="org.emud.walkthrough.WalkThroughApplication"

@@ -171,4 +171,9 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		}
 	}
 
+
+	/*private void logState() {
+		android.util.Log.d("ServiceAnalysis", "state: " + currentState);
+	}*/
+
 }
