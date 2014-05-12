@@ -1,13 +1,16 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough.service;
 
 import java.util.HashSet;
 import java.util.List;
 
 import org.emud.walkthrough.ResultFactory;
 import org.emud.walkthrough.ResultToolsProvider;
-import org.emud.walkthrough.analysis.ScreenBroadcastReceiver.ScreenOnOffListener;
+import org.emud.walkthrough.analysis.AnalysisStation;
+import org.emud.walkthrough.analysis.AnalysisStationBuilder;
+import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.service.ScreenBroadcastReceiver.ScreenOnOffListener;
 
 import android.app.Service;
 import android.content.Intent;
@@ -116,7 +119,9 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		ResultToolsProvider provider = new ResultToolsProvider();
 		
 		resultListBundle.putInt(LIST_SIZE_KEY, size);
-		
+
+        android.util.Log.d("AS", "results size: " + size);
+        
 		for(int i=0; i<size; i++){
 			Result result = list.get(i);
 			ResultFactory factory = provider.getResultFactory(result.getType());

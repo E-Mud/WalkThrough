@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.pedometer.StepsCounter;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
 
 import android.content.Context;
@@ -32,6 +33,9 @@ public class AnalysisStationBuilder {
 			switch(resultType.intValue()){
 			case Result.RT_MAX_MOVE:
 				analystList.add(new MaxMoveAnalyst()); 
+				break;
+			case Result.RT_STEPS:
+				analystList.add(new StepsCounter()); 
 				break;
 			default:
 				break;

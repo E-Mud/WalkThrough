@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
-import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.fragment.ActivitiesListFragment;
@@ -17,7 +16,10 @@ import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.service.AnalysisService;
 
+import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,25 +33,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 
-public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnActivitySelectedListener {
+public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnActivitySelectedListener, OnNavigationListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
 			STATISTICS_CONTENT = 1,
 			MY_ACTIVITIES_CONTENT = 2,
 			MY_RESULTS_CONTENT = 3;
 	
 	private int currentContent;
+	
+	private int[] resultTypes;
+	private String[] listTitles;
+	
 	private ActionBarDrawerToggle drawerToggle;
 	private DrawerLayout drawerLayout;
+	
 	private ListFragment myActivitiesListFragment, myResultsListFragment;
 	private ResultsGraphFragment myResultsGraphFragment;
 	
 	private DateFilterFragment dateFilterFragment;
+
+	private ResultTypeFilter resultTypeFilter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//((WalkThroughApplication) getApplicationContext()).setServiceState(AnalysisService.SERVICE_NONE);
 		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
 		if(serviceState != AnalysisService.SERVICE_NONE){
 			Intent intent = new Intent(this, CurrentActivity.class);
@@ -74,7 +85,17 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		findViewById(R.id.drawer_myresults_item).setOnClickListener(this);
 		findViewById(R.id.drawer_graph_item).setOnClickListener(this);
 		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getActionBar();
+		
+		resultTypes = getResources().getIntArray(R.array.result_types);
+		listTitles = getResources().getStringArray(R.array.result_titles);
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1, listTitles);
+		actionBar.setListNavigationCallbacks(aAdpt, this);
+		
+		resultTypeFilter = new ResultTypeFilter(resultTypes[0]);
+		
+		actionBar.setDisplayHomeAsUpEnabled(true);
         
         drawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host WalkActivity */
@@ -184,30 +205,21 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	
 	
 	private void setNewContent(int newContent){
-		int newTitle;
 		Fragment contentFragment;
 		FragmentTransaction fragmentTransaction;
 				
 		switch(newContent){
 		case NEW_ACTIVITY_CONTENT:
-			newTitle = R.string.newactivity_title;
+			if(currentContent != MY_ACTIVITIES_CONTENT)
+				disableResultTypeFilter();
+			setTitle(R.string.newactivity_title);
 			contentFragment = new NewActivityFragment();
 			((NewActivityFragment) contentFragment).setListener(this);
 			break;
-		case STATISTICS_CONTENT:
-			newTitle = R.string.graph_title;
-			if(myResultsGraphFragment == null){
-				myResultsGraphFragment = new ResultsGraphFragment();
-				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				DateFilter dateFilter = dateFilterFragment.getDateFilter();
-				ResultsQuery resultsQuery = new ResultsQuery(Result.RT_MAX_MOVE, actDataSource, dateFilter);
-				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
-				myResultsGraphFragment.setLoader(loader);
-			}
-			contentFragment = myResultsGraphFragment;
-			break;
 		case MY_ACTIVITIES_CONTENT:
-			newTitle = R.string.myactivities_title;
+			if(currentContent != NEW_ACTIVITY_CONTENT)
+				disableResultTypeFilter();
+			setTitle(R.string.myactivities_title);
 			if(myActivitiesListFragment == null){
 				ActivitiesListFragment actlf = new ActivitiesListFragment();
 				actlf.setListener(this);
@@ -218,14 +230,29 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			contentFragment = myActivitiesListFragment;
 			break;
 		case MY_RESULTS_CONTENT:
-			newTitle = R.string.myresults_title;
+			if(currentContent != STATISTICS_CONTENT)
+				enableResultTypeFilter();
 			if(myResultsListFragment == null){
-				ResultsListFragment rlf = ResultsListFragment.newInstance(Result.RT_MAX_MOVE);
+				ResultsListFragment rlf = new ResultsListFragment();
 				rlf.setDateFilter(dateFilterFragment.getDateFilter());
+				rlf.setResultTypeFilter(resultTypeFilter);
 				rlf.setActivitiesDataSource(((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource());
 				myResultsListFragment = rlf;
 			}
 			contentFragment = myResultsListFragment;
+			break;
+		case STATISTICS_CONTENT:
+			if(currentContent != MY_RESULTS_CONTENT)
+				enableResultTypeFilter();
+			if(myResultsGraphFragment == null){
+				myResultsGraphFragment = new ResultsGraphFragment();
+				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
+				DateFilter dateFilter = dateFilterFragment.getDateFilter();
+				ResultsQuery resultsQuery = new ResultsQuery(resultTypeFilter, actDataSource, dateFilter);
+				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
+				myResultsGraphFragment.setLoader(loader);
+			}
+			contentFragment = myResultsGraphFragment;
 			break;
 		default: return;
 		}
@@ -235,8 +262,19 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		fragmentTransaction.replace(R.id.main_content_frame, contentFragment);
 		fragmentTransaction.commit();
-		setTitle(newTitle);
 		
+	}
+	
+	private void enableResultTypeFilter(){
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+	}
+	
+	private void disableResultTypeFilter(){
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 	}
 	
 	@Override
@@ -265,6 +303,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		Intent intent = new Intent(this, DetailActivity.class);
 		intent.putExtra("activity_id", act.getId());
 		startActivity(intent);
+	}
+
+
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		switch(itemPosition){
+		case 0:
+			resultTypeFilter.setResultType(Result.RT_STEPS);
+			return true;
+		case 1:
+			resultTypeFilter.setResultType(Result.RT_MAX_MOVE);
+			return true;
+		default:
+			return false;
+		}
 	}
 	
 }

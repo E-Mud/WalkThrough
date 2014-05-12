@@ -40,6 +40,7 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.fragment_newactivity, null);
 		
 		view.findViewById(R.id.analyst_checkBox0).setOnClickListener(this);
+		view.findViewById(R.id.analyst_checkBox1).setOnClickListener(this);
 		view.findViewById(R.id.receiver_radio0).setOnClickListener(this);
 		view.findViewById(R.id.receiver_radio1).setOnClickListener(this);
 		view.findViewById(R.id.newactivity_acceptbutton).setOnClickListener(this);
@@ -54,6 +55,7 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 			onAcceptClicked();
 			break;
 		case R.id.analyst_checkBox0:
+		case R.id.analyst_checkBox1:
 			onAnalystCheckBoxClicked((CheckBox) view);
 			break;
 		case R.id.receiver_radio0:
@@ -68,7 +70,7 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 			listener.acceptButtonClicked(receiver, analystList);
 		}else{
 			DialogFragment dialogFragment = AlertDialogFragment.newInstance(R.string.nrpd_title, R.string.nrpd_message);
-			dialogFragment.show(getActivity().getSupportFragmentManager(), "connectionFailedDialog");
+			dialogFragment.show(getActivity().getSupportFragmentManager(), "noResultsdDialog");
 		}
 	}
 
@@ -88,6 +90,9 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 		switch(checkBox.getId()){
 		case R.id.analyst_checkBox0:
 			analyst = Result.RT_MAX_MOVE;
+			break;
+		case R.id.analyst_checkBox1:
+			analyst = Result.RT_STEPS;
 			break;
 		}
 		

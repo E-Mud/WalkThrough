@@ -7,7 +7,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 public interface ResultFactory {
-	public final String RESULT_ID_COLUMN = "result_id";
+	public static final String RESULT_TYPE_KEY = "resultType";
+	public static final String RESULT_ID_COLUMN = "result_id";
 	
 	public Result buildResultFromBundle(Bundle bundle);
 	

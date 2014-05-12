@@ -2,14 +2,11 @@ package org.emud.walkthrough.model;
 
 import java.util.GregorianCalendar;
 
-import android.content.ContentValues;
-import android.os.Bundle;
 
 //TODO
 public abstract class Result {
 	private GregorianCalendar date;
 	
-
 	private Object result;
 	private int type;
 	
@@ -48,13 +45,8 @@ public abstract class Result {
 		this.date = date;
 	}
 	
-	public abstract Bundle toBundle();
-	
-	public abstract void fromBundle(Bundle bundle);
-	
-	public abstract ContentValues toContentValues();
-	
 	public static final int
+		RT_STEPS = 0,
 		RT_MAX_MOVE = 1;
 
 }

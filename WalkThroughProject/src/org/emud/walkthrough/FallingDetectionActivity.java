@@ -1,7 +1,7 @@
 package org.emud.walkthrough;
 
-import org.emud.walkthrough.analysis.FallingDetectionService;
 import org.emud.walkthrough.analysis.ServiceMessageHandler;
+import org.emud.walkthrough.service.FallingDetectionService;
 
 import android.net.Uri;
 import android.os.Bundle;

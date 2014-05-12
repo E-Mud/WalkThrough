@@ -56,6 +56,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/newactivity_maxmove_title" />
+        <CheckBox
+            android:id="@+id/analyst_checkBox1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/newactivity_steps_title" />
     </LinearLayout>
 
     <LinearLayout

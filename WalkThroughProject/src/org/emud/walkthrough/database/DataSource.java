@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 7;
+	private static final int VERSION = 8;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -48,7 +48,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public DataSource(Context cont, String userName){
 		String database_name = buildDatabaseName(userName);
 		context = cont;
-		helper = new SQLiteHelper(context, database_name, VERSION);
+		int[] resultTypes = context.getResources().getIntArray(R.array.result_types);
+		helper = new SQLiteHelper(context, database_name, VERSION, resultTypes);
 		userSubject = new DataSubject();
 		activitiesSubject = new DataSubject();
 		openDatabase();
@@ -93,9 +94,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 				RESULT_COLS[0] + " LONG NOT NULL REFERENCES " + ACTIVITY_NAME + "(_id) ON DELETE CASCADE, " + 
 				RESULT_COLS[1] + " INTEGER NOT NULL);";
 
-		public SQLiteHelper(Context context, String name, int version) {
+		
+		public SQLiteHelper(Context context, String name, int version, int[] rTypes) {
 			super(context, name, null, version);
-			resultTypes = context.getResources().getIntArray(R.array.result_types);
+			resultTypes = rTypes;
 		}
 
 		@Override
@@ -237,6 +239,11 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
+
+		android.util.Log.d("DS", "inserting activity: " + activity_id);
+		
+		if(results.isEmpty())
+			android.util.Log.d("DS", "results empty");
 		
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
@@ -264,7 +271,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
 		
+		android.util.Log.d("DS", "activity id: " + activity_id);
+		
 		if(!cursorResult.moveToFirst()){
+			android.util.Log.d("DS", "no results");
 			cursorResult.close();
 			return results;
 		}

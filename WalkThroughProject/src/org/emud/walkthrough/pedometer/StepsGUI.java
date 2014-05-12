@@ -1,4 +1,4 @@
-package org.emud.walkthrough.stub;
+package org.emud.walkthrough.pedometer;
 
 import org.emud.walkthrough.R;
 import org.emud.walkthrough.ResultGUIResolver;
@@ -11,8 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class MaxMoveGUI implements ResultGUIResolver {
-	
+public class StepsGUI implements ResultGUIResolver {
 
 	@Override
 	public View getDetailView(LayoutInflater inflater, Result result) {
@@ -21,20 +20,21 @@ public class MaxMoveGUI implements ResultGUIResolver {
 		view = inflater.inflate(R.layout.base_result_detail, null);
 
 		((ImageView) view.findViewById(R.id.result_icon)).setImageResource(R.drawable.ic_action_done);
-		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_max_move_title);
-		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_max_move_unit);
-		((TextView) view.findViewById(R.id.result_value)).setText(((Double) result.get()).toString());
+		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_steps_title);
+		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_steps_unit);
+		((TextView) view.findViewById(R.id.result_value)).setText("" + ((StepsCount) result).getSteps());
 		
 		return view;
 	}
 
 	@Override
 	public ListAdapter getListAdapter(Context context) {
-		return new MaxMoveListAdapter(context);
+		return new StepsListAdapter(context);
 	}
 
 	@Override
 	public String getTitle() {
-		return "Máxima aceleración";
+		return "Pasos";
 	}
+
 }

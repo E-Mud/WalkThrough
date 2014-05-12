@@ -1,6 +1,10 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough.service;
 
 import org.emud.walkthrough.R;
+import org.emud.walkthrough.analysis.AnalysisStation;
+import org.emud.walkthrough.analysis.AnalysisStationBuilder;
+import org.emud.walkthrough.analysis.OnFallDetectedListener;
+import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
 
 import android.app.NotificationManager;

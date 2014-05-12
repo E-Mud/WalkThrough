@@ -1,6 +1,8 @@
 package org.emud.walkthrough;
 
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.pedometer.StepsCountFactory;
+import org.emud.walkthrough.pedometer.StepsGUI;
 import org.emud.walkthrough.stub.MaxMoveGUI;
 import org.emud.walkthrough.stub.ResultMaxMoveFactory;
 
@@ -40,6 +42,8 @@ public class ResultToolsProvider {
 		switch(resultType){
 		case Result.RT_MAX_MOVE:
 			return new ResultMaxMoveFactory();
+		case Result.RT_STEPS:
+			return new StepsCountFactory();
 		default: return null;
 		}
 	}
@@ -64,6 +68,8 @@ public class ResultToolsProvider {
 		switch(resultType){
 		case Result.RT_MAX_MOVE:
 			return new MaxMoveGUI();
+		case Result.RT_STEPS:
+			return new StepsGUI();
 		default: return null;
 		}
 	}

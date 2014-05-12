@@ -18,15 +18,13 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import org.emud.walkthrough.WalkThroughApplication;
-import org.emud.walkthrough.analysis.AnalysisService;
 import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.service.AnalysisService;
 
 public class CurrentActivity extends Activity implements OnClickListener {
-	public static final String INTENT_ACTION = "org.emud.walkthrough.saveresult";
-	private static final String RESULT_TYPE_KEY = "resultType";
 	private ImageView pauseResumeIcon, stopIcon;
 	private int serviceState;
 	private Messenger service;
@@ -75,6 +73,7 @@ public class CurrentActivity extends Activity implements OnClickListener {
 			case AnalysisService.SERVICE_PREPARED:
 				serviceState = AnalysisService.SERVICE_RUNNING;
 				what = ServiceMessageHandler.MSG_START;
+				findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
 				break;
 			case AnalysisService.SERVICE_RUNNING:
 				serviceState = AnalysisService.SERVICE_PAUSED;
@@ -160,10 +159,12 @@ public class CurrentActivity extends Activity implements OnClickListener {
         
         for(int i=0; i<size; i++){
         	Bundle bundle = msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i);
-    		int type = bundle.getInt(RESULT_TYPE_KEY, -1);
+    		int type = bundle.getInt(ResultFactory.RESULT_TYPE_KEY, -1);
     		ResultFactory factory = app.getResultFactory(type);
         	results.add(factory.buildResultFromBundle(bundle));
         }
+        
+        android.util.Log.d("CA", "results size: " + size);
 
         activity = new WalkActivity((GregorianCalendar) GregorianCalendar.getInstance(), results);
         dataSource.createNewActivity(activity);

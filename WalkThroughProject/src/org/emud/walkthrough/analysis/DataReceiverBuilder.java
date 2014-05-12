@@ -1,6 +1,8 @@
 package org.emud.walkthrough.analysis;
 
 
+import org.emud.walkthrough.service.LinearAccelerometerReceiver;
+
 import android.content.Context;
 
 public class DataReceiverBuilder {

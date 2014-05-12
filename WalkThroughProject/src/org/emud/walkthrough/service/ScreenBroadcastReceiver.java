@@ -1,4 +1,4 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

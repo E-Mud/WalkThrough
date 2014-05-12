@@ -2,9 +2,6 @@ package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.model.Result;
 
-import android.content.ContentValues;
-import android.os.Bundle;
-
 public class ResultMaxMove extends Result {
 
 	public ResultMaxMove() {
@@ -13,31 +10,6 @@ public class ResultMaxMove extends Result {
 	
 	public ResultMaxMove(Object result) {
 		super(result, RT_MAX_MOVE);
-	}
-
-	@Override
-	public Bundle toBundle() {
-		Bundle bundle = new Bundle();
-		
-		bundle.putDouble("maxValue", ((Double)get()).doubleValue());
-		
-		return bundle;
-	}
-
-	@Override
-	public void fromBundle(Bundle bundle) {
-		double maxValue = bundle.getDouble("maxValue");
-		
-		set(Double.valueOf(maxValue));
-	}
-
-	@Override
-	public ContentValues toContentValues() {
-		ContentValues values = new ContentValues();
-		
-		values.put("maxValue", (Double) get());
-		
-		return values;
 	}
 
 }

@@ -1,4 +1,8 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough.service;
+
+import org.emud.walkthrough.analysis.AccelerometerData;
+import org.emud.walkthrough.analysis.WalkDataReceiver;
+import org.emud.walkthrough.analysis.WalkDataReceiver.OnDataReceivedListener;
 
 import android.content.Context;
 import android.hardware.Sensor;

@@ -1,4 +1,4 @@
-package org.emud.walkthrough.stub;
+package org.emud.walkthrough.pedometer;
 
 import org.emud.walkthrough.ResultFactory;
 import org.emud.walkthrough.model.Result;
@@ -7,32 +7,25 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 
-public class ResultMaxMoveFactory implements ResultFactory {
-	private static final String MAX_VALUE_KEY = "maxValue";
+public class StepsCountFactory implements ResultFactory {
+	private static final String STEPS_KEY = "steps";
 	
-	private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
+	private static final String DB_RESULT_STEPS_CREATE = "CREATE TABLE result_steps (" +
             "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			RESULT_ID_COLUMN + " LONG NOT NULL REFERENCES result(_id) ON DELETE CASCADE, " + 
-			MAX_VALUE_KEY + " REAL NOT NULL);";
+			STEPS_KEY + " INTEGER NOT NULL);";
 
 	@Override
 	public Result buildResultFromBundle(Bundle bundle) {
-		int type = bundle.getInt(RESULT_TYPE_KEY, -1);
-		Result result;
+		int steps = bundle.getInt(STEPS_KEY, 0);
 		
-		if(type == -1)
-			return null;
-		
-		result = new ResultMaxMove();
-		result.set(Double.valueOf(bundle.getDouble(MAX_VALUE_KEY)));
-		
-		return result;
+		return new StepsCount(steps);
 	}
 
 	@Override
 	public Bundle buildBundleFromResult(Result result) {
 		Bundle bundle = new Bundle();		
-		bundle.putDouble(MAX_VALUE_KEY, ((Double) result.get()).doubleValue());
+		bundle.putInt(STEPS_KEY, ((StepsCount) result).getSteps());
 		bundle.putInt(RESULT_TYPE_KEY, result.getType());
 		
 		return bundle;
@@ -41,29 +34,27 @@ public class ResultMaxMoveFactory implements ResultFactory {
 	@Override
 	public ContentValues buildContentValuesFromResult(Result result) {
 		ContentValues values = new ContentValues();
-		
-		values.put(MAX_VALUE_KEY, (Double) result.get());
+		values.put(STEPS_KEY, ((StepsCount) result).getSteps());
 		
 		return values;
 	}
 
 	@Override
 	public Result buildResultFromCursor(Cursor cursor) {
-		Result result = new ResultMaxMove();
-		
-		result.set(Double.valueOf(cursor.getDouble(cursor.getColumnIndex(MAX_VALUE_KEY))));
+		StepsCount result = new StepsCount();
+		result.setSteps(cursor.getInt(cursor.getColumnIndex(STEPS_KEY)));
 			
 		return result;
 	}
 
 	@Override
 	public String getTableName() {
-		return "result_mm";
+		return "result_steps";
 	}
 
 	@Override
 	public String getSQLCreateTableStatement() {
-		return DB_RESULT_MAX_MOVE_CREATE;
+		return DB_RESULT_STEPS_CREATE;
 	}
 
 }
