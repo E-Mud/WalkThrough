@@ -1,11 +1,13 @@
 package org.emud.walkthrough.service;
 
 import org.emud.walkthrough.R;
+import org.emud.walkthrough.ServiceMessageHandler;
+import org.emud.walkthrough.ServiceMessageHandler.OnMessageReceivedListener;
 import org.emud.walkthrough.analysis.AnalysisStation;
 import org.emud.walkthrough.analysis.AnalysisStationBuilder;
+import org.emud.walkthrough.analysis.DataReceiverBuilder;
 import org.emud.walkthrough.analysis.OnFallDetectedListener;
-import org.emud.walkthrough.analysis.ServiceMessageHandler;
-import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
+import org.emud.walkthrough.analysis.WalkDataReceiver;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -32,8 +34,10 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 	private int currentState;
 	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId){		
-		station = AnalysisStationBuilder.buildFallingDetector(this, this);
+	public int onStartCommand(Intent intent, int flags, int startId){
+		DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
+		
+		station = AnalysisStationBuilder.buildFallingDetector(receiverBuilder.buildReceiver(WalkDataReceiver.SINGLE_ACCELEROMETER), this);
 
 		messenger = new Messenger(new ServiceMessageHandler(this));
 		

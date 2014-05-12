@@ -2,7 +2,6 @@ package org.emud.walkthrough.service;
 
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
-import org.emud.walkthrough.analysis.WalkDataReceiver.OnDataReceivedListener;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -20,15 +19,16 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 	private SensorManager sensorManager;
 	private Sensor accelerometer;
 	private double[] gravity;
+	private Context context;
 	
-	public LinearAccelerometerReceiver(Context context){
-		super(context);
+	public LinearAccelerometerReceiver(Context cont){
+		context = cont;
 		gravity = new double[3];
 	}
 
 	@Override
 	public void startReceiving() {
-		sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 	    accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	    resumeReceiving();
 	}

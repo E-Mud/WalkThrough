@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.emud.walkthrough.ResultFactory;
 import org.emud.walkthrough.ResultToolsProvider;
+import org.emud.walkthrough.ServiceMessageHandler;
+import org.emud.walkthrough.ServiceMessageHandler.OnMessageReceivedListener;
 import org.emud.walkthrough.analysis.AnalysisStation;
 import org.emud.walkthrough.analysis.AnalysisStationBuilder;
-import org.emud.walkthrough.analysis.ServiceMessageHandler;
-import org.emud.walkthrough.analysis.ServiceMessageHandler.OnMessageReceivedListener;
+import org.emud.walkthrough.analysis.DataReceiverBuilder;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.service.ScreenBroadcastReceiver.ScreenOnOffListener;
 
@@ -49,7 +50,8 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		for(int i=0; i<n; i++)
 			setResultsTypes.add(Integer.valueOf(resultsTypes[i]));
 		
-		station = AnalysisStationBuilder.buildStation(this, receiverType, setResultsTypes);
+		DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
+		station = AnalysisStationBuilder.buildStation(receiverBuilder.buildReceiver(receiverType), receiverType, setResultsTypes);
 		
 		messenger = new Messenger(new ServiceMessageHandler(this));
 		

@@ -1,14 +1,12 @@
 package org.emud.walkthrough.stub;
 
-import java.util.ArrayList;
-
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 
 public class FalseReceiver extends WalkDataReceiver {
 	
 	public FalseReceiver(){
-		super(null);
+		super();
 	}
 
 	@Override

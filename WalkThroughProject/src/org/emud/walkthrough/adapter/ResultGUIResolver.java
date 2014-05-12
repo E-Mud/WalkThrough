@@ -5,7 +5,7 @@ import java.util.List;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.stub.MaxMoveListAdapter;
+/*import org.emud.walkthrough.stub.MaxMoveListAdapter;
 
 import org.emud.walkthrough.R;
 
@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.ImageView;
+import android.widget.ImageView;*/
 
 public class ResultGUIResolver {
 	private ResultGUIResolver(){

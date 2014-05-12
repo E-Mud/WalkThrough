@@ -1,4 +1,4 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough;
 
 import android.os.Handler;
 import android.os.Message;

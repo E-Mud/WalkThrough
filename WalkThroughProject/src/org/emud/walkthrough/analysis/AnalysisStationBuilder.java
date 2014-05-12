@@ -7,8 +7,6 @@ import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.pedometer.StepsCounter;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
 
-import android.content.Context;
-
 public class AnalysisStationBuilder {
 	
 	private AnalysisStationBuilder(){
@@ -22,12 +20,9 @@ public class AnalysisStationBuilder {
 	 * @param resultsTypes Lista de tipos de resultados a obtener.
 	 * @return AnalysisStation inicializado.
 	 */
-	public static AnalysisStation buildStation(Context context, int receiverType, Set<Integer> resultsTypes){
-		WalkDataReceiver dataReceiver;
+	public static AnalysisStation buildStation(WalkDataReceiver dataReceiver, int receiverType, Set<Integer> resultsTypes){
 		AnalysisStation analysisStation;
 		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
-		
-		dataReceiver = DataReceiverBuilder.buildReceiver(context, receiverType);
 		
 		for(Integer resultType : resultsTypes){
 			switch(resultType.intValue()){
@@ -48,12 +43,10 @@ public class AnalysisStationBuilder {
 		return analysisStation;
 	}
 
-	public static AnalysisStation buildFallingDetector(Context context, OnFallDetectedListener listener){
-		WalkDataReceiver dataReceiver;
+	public static AnalysisStation buildFallingDetector(WalkDataReceiver dataReceiver, OnFallDetectedListener listener){
 		AnalysisStation analysisStation;
 		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
 		
-		dataReceiver = DataReceiverBuilder.buildReceiver(context, WalkDataReceiver.SINGLE_ACCELEROMETER);
 		analystList.add(new FallingAnalyst(listener));
 		analysisStation = new AnalysisStation(dataReceiver, analystList);
 		dataReceiver.addOnDataReceveidListener(analysisStation);

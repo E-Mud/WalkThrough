@@ -18,7 +18,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import org.emud.walkthrough.WalkThroughApplication;
-import org.emud.walkthrough.analysis.ServiceMessageHandler;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;

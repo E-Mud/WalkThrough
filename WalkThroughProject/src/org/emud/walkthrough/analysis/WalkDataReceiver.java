@@ -2,19 +2,15 @@ package org.emud.walkthrough.analysis;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 
 public abstract class WalkDataReceiver {
 	protected ArrayList<OnDataReceivedListener> listeners;
-	private Context context;
-	
 	
 	/**
 	 * Constructor de WalkDataReceiver.
 	 * @param context Context en el que se ejecutará el receptor.
 	 */
-	public WalkDataReceiver(Context context){
-		this.context = context;
+	public WalkDataReceiver(){
 		listeners = new ArrayList<OnDataReceivedListener>();
 	}
 
@@ -32,14 +28,6 @@ public abstract class WalkDataReceiver {
 	 */
 	public void removeOnDataReceivedListener(OnDataReceivedListener listener) {
 		listeners.remove(listener);
-	}
-	
-	/**
-	 * Devuelve el Context en el que se ejecuta el receptor.
-	 * @return Context en el que se ejecuta el receptor.
-	 */
-	public Context getContext(){
-		return context;
 	}
 	
 	/**
