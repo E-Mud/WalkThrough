@@ -1,5 +1,7 @@
-package org.emud.walkthrough.analysis;
+package org.emud.walkthrough.fallingdetection;
 
+import org.emud.walkthrough.analysis.AccelerometerData;
+import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
 
 public class FallingAnalyst implements Analyst {

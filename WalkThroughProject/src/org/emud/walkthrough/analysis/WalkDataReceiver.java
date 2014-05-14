@@ -18,7 +18,7 @@ public abstract class WalkDataReceiver {
 	 * Añadde un nuevo OnDataReceivedListener a la lista.
 	 * @param listener 
 	 */
-	public void addOnDataReceveidListener(OnDataReceivedListener listener) {
+	public void addOnDataReceivedListener(OnDataReceivedListener listener) {
 		listeners.add(listener);
 	}
 

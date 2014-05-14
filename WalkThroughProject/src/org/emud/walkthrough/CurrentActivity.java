@@ -18,10 +18,10 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
-import org.emud.walkthrough.service.AnalysisService;
 
 public class CurrentActivity extends Activity implements OnClickListener {
 	private ImageView pauseResumeIcon, stopIcon;

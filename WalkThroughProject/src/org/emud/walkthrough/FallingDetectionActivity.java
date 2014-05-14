@@ -1,6 +1,6 @@
 package org.emud.walkthrough;
 
-import org.emud.walkthrough.service.FallingDetectionService;
+import org.emud.walkthrough.fallingdetection.FallingDetectionService;
 
 import android.net.Uri;
 import android.os.Bundle;

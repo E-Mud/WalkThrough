@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
+import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.fragment.ActivitiesListFragment;
@@ -16,7 +17,6 @@ import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
-import org.emud.walkthrough.service.AnalysisService;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;

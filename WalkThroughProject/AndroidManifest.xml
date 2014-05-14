@@ -43,14 +43,14 @@
         </activity>
 
         <service
-            android:name="org.emud.walkthrough.service.AnalysisService"
+            android:name="org.emud.walkthrough.analysisservice.AnalysisService"
             android:icon="@drawable/ic_launcher"
             android:label="Analysis Service"
             android:process=":analysis_service_process" >
         </service>
         
         <service
-            android:name="org.emud.walkthrough.service.FallingDetectionService"
+            android:name="org.emud.walkthrough.fallingdetection.FallingDetectionService"
             android:icon="@drawable/ic_launcher"
             android:label="Falling Detection Service"
             android:process=":fallingdetection_service_process" >

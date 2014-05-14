@@ -1,4 +1,4 @@
-package org.emud.walkthrough.service;
+package org.emud.walkthrough.analysisservice;
 
 import org.emud.walkthrough.analysis.DataReceiverBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;

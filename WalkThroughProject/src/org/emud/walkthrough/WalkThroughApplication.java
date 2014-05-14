@@ -3,10 +3,10 @@ package org.emud.walkthrough;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
-import org.emud.walkthrough.service.AnalysisService;
 import org.emud.walkthrough.stub.StubWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
