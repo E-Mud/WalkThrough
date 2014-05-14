@@ -215,6 +215,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			setTitle(R.string.newactivity_title);
 			contentFragment = new NewActivityFragment();
 			((NewActivityFragment) contentFragment).setListener(this);
+			((NewActivityFragment) contentFragment).setResultTypes(resultTypes);
 			break;
 		case MY_ACTIVITIES_CONTENT:
 			if(currentContent != NEW_ACTIVITY_CONTENT)
