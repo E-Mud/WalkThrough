@@ -52,6 +52,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	
 	private DateFilterFragment dateFilterFragment;
 
+	private ArrayAdapter<ResultType> spinnerAdapter;
 	private ResultTypeFilter resultTypeFilter;
 	
 	@Override
@@ -85,15 +86,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		
 		ActionBar actionBar = getActionBar();
 		
-		ResultType[] resultTypes = ResultType.values();
+		/*ResultType[] resultTypes = ResultType.values();
 		int n = resultTypes.length;
 		String[] listTitles = new String[n];
 		for(int i=0; i<n; i++)
-			listTitles[i] = resultTypes[i].getGUIResolver().getTitle();
+			listTitles[i] = resultTypes[i].getGUIResolver().getTitle();*/
 		
-		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, listTitles);
-		actionBar.setListNavigationCallbacks(aAdpt, this);
+		spinnerAdapter = new ArrayAdapter<ResultType>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1, ResultType.values());
+		actionBar.setListNavigationCallbacks(spinnerAdapter, this);
 		
 		resultTypeFilter = new ResultTypeFilter(ResultType.RT_STEPS);
 		
@@ -311,7 +312,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		switch(itemPosition){
+		resultTypeFilter.setResultType(spinnerAdapter.getItem(itemPosition));
+		return true;
+		/*switch(itemPosition){
 		case 0:
 			resultTypeFilter.setResultType(ResultType.RT_STEPS);
 			return true;
@@ -323,7 +326,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			return true;
 		default:
 			return false;
-		}
+		}*/
 	}
 	
 }

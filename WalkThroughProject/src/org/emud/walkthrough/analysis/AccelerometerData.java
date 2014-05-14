@@ -1,6 +1,7 @@
 package org.emud.walkthrough.analysis;
 
 public class AccelerometerData {
+	public static final int AP_AXIS = 0, VT_AXIS = 1, MP_AXIS = 2;
 	private long timeStamp;
 	private double[] data;
 	

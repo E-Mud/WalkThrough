@@ -50,7 +50,6 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -68,8 +67,9 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 		data[1] = event.values[1] - gravity[1];
 		data[2] = event.values[2] - gravity[2];
 		
-		/*for(int i=0; i<n; i++)
-			data[i] = event.values[i];*/
+		double aux = data[2];
+		data[2] = data[0];
+		data[0] = -aux;
 		
 		AccelerometerData accelerometerData = new AccelerometerData(data, event.timestamp);
 		

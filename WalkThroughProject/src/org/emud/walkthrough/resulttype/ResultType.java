@@ -35,4 +35,18 @@ public enum ResultType {
 			return null;
 		}
 	}
+	
+	@Override
+	public String toString(){
+		switch(this){
+		case RT_MAX_MOVE:
+			return "Aceleración máxima";
+		case RT_SPEED:
+			return "Velocidad";
+		case RT_STEPS:
+			return "Pasos";
+		default:
+			return null;
+		}
+	}
 }
