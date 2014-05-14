@@ -9,13 +9,11 @@ import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
-import org.emud.walkthrough.R;
-import org.emud.walkthrough.ResultFactory;
-import org.emud.walkthrough.ResultToolsProvider;
-import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.resulttype.ResultFactory;
+import org.emud.walkthrough.resulttype.ResultType;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,7 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 9;
+	private static final int VERSION = 10;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -48,8 +46,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public DataSource(Context cont, String userName){
 		String database_name = buildDatabaseName(userName);
 		context = cont;
-		int[] resultTypes = context.getResources().getIntArray(R.array.result_types);
-		helper = new SQLiteHelper(context, database_name, VERSION, resultTypes);
+		helper = new SQLiteHelper(context, database_name, VERSION);
 		userSubject = new DataSubject();
 		activitiesSubject = new DataSubject();
 		openDatabase();
@@ -72,7 +69,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	}
 
 	private static class SQLiteHelper extends SQLiteOpenHelper{
-		private int[] resultTypes;
 		
 		private static final String DB_PROFILE_CREATE="CREATE TABLE " + PROFILE_NAME +
                 " ("+
@@ -95,9 +91,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 				RESULT_COLS[1] + " INTEGER NOT NULL);";
 
 		
-		public SQLiteHelper(Context context, String name, int version, int[] rTypes) {
+		public SQLiteHelper(Context context, String name, int version) {
 			super(context, name, null, version);
-			resultTypes = rTypes;
 		}
 
 		@Override
@@ -106,12 +101,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			db.execSQL(DB_ACTIVITY_CREATE);
 			db.execSQL(DB_RESULT_CREATE);
 			
-			ResultToolsProvider toolsProvider = new ResultToolsProvider();
-			int n = resultTypes.length;
-			
-			for(int i=0; i<n; i++){
-				ResultFactory factory = toolsProvider.getResultFactory(resultTypes[i]);
-				db.execSQL(factory.getSQLCreateTableStatement());
+			for(ResultType type : ResultType.values()){
+				ResultFactory factory = type.getFactory();
+				db.execSQL(factory.getSQLCreateTableStatement());				
 			}
 		}
 
@@ -121,11 +113,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ RESULT_NAME);
 			
-			ResultToolsProvider toolsProvider = new ResultToolsProvider();
-			int n = resultTypes.length;
-			
-			for(int i=0; i<n; i++){
-				ResultFactory factory = toolsProvider.getResultFactory(resultTypes[i]);
+			for(ResultType type : ResultType.values()){
+				ResultFactory factory = type.getFactory();
 				db.execSQL("DROP TABLE IF EXISTS "+ factory.getTableName());
 			}
 			
@@ -234,7 +223,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public long createNewActivity(WalkActivity act) {
 		ContentValues values = new ContentValues(), valuesResult = new ContentValues(), valuesSubResult;
 		long activity_id, result_id;
-		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		List<Result> results = act.getResults();
 		
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
@@ -247,10 +235,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
-			valuesResult.put(RESULT_COLS[1], result.getType());
+			valuesResult.put(RESULT_COLS[1], result.getType().intValue());
 			result_id = db.insert(RESULT_NAME, null, valuesResult);
 			
-			ResultFactory factory = app.getResultFactory(result.getType());
+			ResultFactory factory = result.getType().getFactory();
 			valuesSubResult = factory.buildContentValuesFromResult(result);
 			valuesSubResult.put(ResultFactory.RESULT_ID_COLUMN, result_id);
 			db.insert(factory.getTableName(), null, valuesSubResult);
@@ -267,7 +255,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public List<Result> getActivityResults(long activity_id) {
 		Cursor cursorResult, cursorSubResult;
 		ArrayList<Result> results = new ArrayList<Result>();
-		WalkThroughApplication app = (WalkThroughApplication) context.getApplicationContext();
 		
 		cursorResult = db.query(RESULT_NAME, null, RESULT_COLS[0] + " = " + activity_id, null, null, null, null);
 		
@@ -281,11 +268,12 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		do{
 			int type = cursorResult.getInt(cursorResult.getColumnIndex(RESULT_COLS[1]));
+			ResultType resultType = ResultType.valueOf(type);
 			String table;
 			Result result;
 			ResultFactory factory;
 			
-			factory = app.getResultFactory(type);
+			factory = resultType.getFactory();
 			table = factory.getTableName();
 			
 			cursorSubResult = db.query(table, null, ResultFactory.RESULT_ID_COLUMN + " = " + cursorResult.getLong(0), null, null, null, null);
@@ -340,7 +328,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			return results;
 		}
 		
-		ResultFactory factory = ((WalkThroughApplication) context.getApplicationContext()).getResultFactory(type);
+		ResultFactory factory = ResultType.valueOf(type).getFactory();
 		cursor = db.query(factory.getTableName(), null, "result_id IN("+builder.toString()+")", null, null, null, null);
 		
 		cursor.moveToFirst();

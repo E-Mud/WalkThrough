@@ -17,7 +17,6 @@ public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
 	private DataSource dataSource;
 	private String activeUser;
-	private ResultToolsProvider resultToolsProvider;
 	private static final String APP_PREFERENCES = "WalkThroughPreferences",
 			USER_PREFERENCES_SUFIX = "Preferences";
 	
@@ -29,7 +28,6 @@ public class WalkThroughApplication extends Application {
 		super.onCreate();
 		activeUser = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getString("activeUserName", null);
-		resultToolsProvider = new ResultToolsProvider();
 	}
 	
 	/**
@@ -269,23 +267,6 @@ public class WalkThroughApplication extends Application {
 		}
 	}
 	
-	/**
-	 * Devuelve el ResultFactory apropiado para resultados de un tipo determinado.
-	 * @param resultType Tipo del resultado
-	 * @return ResultFactory para el tipo indicado o null si el tipo es incorrecto.
-	 */
-	public ResultFactory getResultFactory(int resultType){
-		return resultToolsProvider.getResultFactory(resultType);
-	}
-	
-	/**
-	 * Devuelve el ResultGUIResolver apropiado para resultados de un tipo determinado.
-	 * @param resultType Tipo del resultado
-	 * @return ResultGUIResolver para el tipo indicado o null si el tipo es incorrecto.
-	 */
-	public ResultGUIResolver getGUIResolver(int resultType){
-		return resultToolsProvider.getGUIResolver(resultType);
-	}
 
 	public void setScreenPref(boolean screen) {
 		if(activeUser != null){

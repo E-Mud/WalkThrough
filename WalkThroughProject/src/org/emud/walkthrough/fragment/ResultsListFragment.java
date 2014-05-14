@@ -8,12 +8,11 @@ import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
 import org.emud.walkthrough.DateFilter;
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.ResultGUIResolver;
 import org.emud.walkthrough.ResultTypeFilter;
-import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultGUIResolver;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -65,7 +64,7 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 
 	public void updateResultType(){
 		if(resultTypeFilter != null && isAdded()){
-			ResultGUIResolver resolver = ((WalkThroughApplication) getActivity().getApplicationContext()).getGUIResolver(resultTypeFilter.getResultType());
+			ResultGUIResolver resolver = resultTypeFilter.getResultType().getGUIResolver();
 			setListAdapter(resolver.getListAdapter(getActivity()));
 		}
 	}

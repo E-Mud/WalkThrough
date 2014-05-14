@@ -22,7 +22,7 @@ public class ResultsQuery implements Query<List<Result> > {
 	
 	@Override
 	public List<Result> execute() {
-		return dataSource.getResults(resultTypeFilter.getResultType(), dateFilter.getFromDate(), dateFilter.getToDate());
+		return dataSource.getResults(resultTypeFilter.getResultType().intValue(), dateFilter.getFromDate(), dateFilter.getToDate());
 	}
 
 }

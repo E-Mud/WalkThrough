@@ -17,6 +17,7 @@ import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.resulttype.ResultType;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
@@ -42,9 +43,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			MY_RESULTS_CONTENT = 3;
 	
 	private int currentContent;
-	
-	private int[] resultTypes;
-	private String[] listTitles;
 	
 	private ActionBarDrawerToggle drawerToggle;
 	private DrawerLayout drawerLayout;
@@ -87,13 +85,17 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		
 		ActionBar actionBar = getActionBar();
 		
-		resultTypes = getResources().getIntArray(R.array.result_types);
-		listTitles = getResources().getStringArray(R.array.result_titles);
+		ResultType[] resultTypes = ResultType.values();
+		int n = resultTypes.length;
+		String[] listTitles = new String[n];
+		for(int i=0; i<n; i++)
+			listTitles[i] = resultTypes[i].getGUIResolver().getTitle();
+		
 		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1, listTitles);
 		actionBar.setListNavigationCallbacks(aAdpt, this);
 		
-		resultTypeFilter = new ResultTypeFilter(resultTypes[0]);
+		resultTypeFilter = new ResultTypeFilter(ResultType.RT_STEPS);
 		
 		actionBar.setDisplayHomeAsUpEnabled(true);
         
@@ -215,7 +217,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			setTitle(R.string.newactivity_title);
 			contentFragment = new NewActivityFragment();
 			((NewActivityFragment) contentFragment).setListener(this);
-			((NewActivityFragment) contentFragment).setResultTypes(resultTypes);
 			break;
 		case MY_ACTIVITIES_CONTENT:
 			if(currentContent != NEW_ACTIVITY_CONTENT)
@@ -279,7 +280,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	}
 	
 	@Override
-	public void acceptButtonClicked(int receiver, List<Integer> analystList) {
+	public void acceptButtonClicked(int receiver, List<ResultType> analystList) {
 		int n = analystList.size();
 		int[] resultTypes = new int[n];
 		
@@ -312,13 +313,13 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		switch(itemPosition){
 		case 0:
-			resultTypeFilter.setResultType(Result.RT_STEPS);
+			resultTypeFilter.setResultType(ResultType.RT_STEPS);
 			return true;
 		case 1:
-			resultTypeFilter.setResultType(Result.RT_MAX_MOVE);
+			resultTypeFilter.setResultType(ResultType.RT_MAX_MOVE);
 			return true;
 		case 2:
-			resultTypeFilter.setResultType(Result.RT_SPEED);
+			resultTypeFilter.setResultType(ResultType.RT_SPEED);
 			return true;
 		default:
 			return false;

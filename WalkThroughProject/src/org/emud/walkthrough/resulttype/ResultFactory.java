@@ -1,4 +1,4 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.resulttype;
 
 import org.emud.walkthrough.model.Result;
 

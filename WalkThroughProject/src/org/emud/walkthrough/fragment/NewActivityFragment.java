@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.ResultGUIResolver;
-import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
+import org.emud.walkthrough.resulttype.ResultGUIResolver;
+import org.emud.walkthrough.resulttype.ResultType;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -20,23 +20,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckBox;
 
 public class NewActivityFragment extends Fragment implements OnClickListener {
-	private ArrayList<Integer> analystList;
+	private ArrayList<ResultType> analystList;
 	private int receiver;
 	private OnAcceptButtonClickedListener listener;
-	private int[] resultTypes;
 
 	public void setListener(OnAcceptButtonClickedListener listener) {
 		this.listener = listener;
 	}
 	
-	public void setResultTypes(int[] types){
-		resultTypes = types;
-	}
 	
 	@Override
 	public void onCreate(Bundle onSavedInstanceState){
 		super.onCreate(onSavedInstanceState);
-		analystList = new ArrayList<Integer>();
+		analystList = new ArrayList<ResultType>();
 		receiver = WalkDataReceiver.SINGLE_ACCELEROMETER;
 	}
 	
@@ -55,8 +51,6 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState){
 		super.onActivityCreated(savedInstanceState);
-		WalkThroughApplication app = (WalkThroughApplication) getActivity().getApplicationContext();
-		int n = resultTypes.length;
 		ViewGroup layout = (ViewGroup) getView().findViewById(R.id.analyst_checkBox_content);
 
 		OnClickListener checkBoxListener = new OnClickListener(){
@@ -66,15 +60,14 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 			}
 		};
 		
-		
-		for(int i=0; i<n; i++){
-			ResultGUIResolver resolver = app.getGUIResolver(resultTypes[i]);
+		for(ResultType resultType : ResultType.values()){
+			ResultGUIResolver resolver = resultType.getGUIResolver();
 			CheckBox cb = new CheckBox(getActivity());
 			
 			cb.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 			cb.setText(resolver.getTitle());
 			cb.setOnClickListener(checkBoxListener);
-			cb.setId(i+1);
+			cb.setId(resultType.intValue() + 1);
 			
 			layout.addView(cb);
 		}
@@ -110,16 +103,16 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 	}
 	
 	private void onAnalystCheckBoxClicked(int id, boolean checked){
-		int analyst = resultTypes[id-1];
+		ResultType analyst = ResultType.valueOf(id-1);
 		
 		if(checked){
-			analystList.add(Integer.valueOf(analyst));
+			analystList.add(analyst);
 		}else{
-			analystList.remove(Integer.valueOf(analyst));
+			analystList.remove(analyst);
 		}
 	}
 	
 	public static interface OnAcceptButtonClickedListener{
-		public void acceptButtonClicked(int receiver, List<Integer> analystList);
+		public void acceptButtonClicked(int receiver, List<ResultType> analystList);
 	}
 }

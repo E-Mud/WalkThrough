@@ -1,6 +1,5 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.resulttype;
 
-import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.pedometer.StepsCountFactory;
 import org.emud.walkthrough.pedometer.StepsGUI;
 import org.emud.walkthrough.speedometer.SpeedFactory;
@@ -24,15 +23,15 @@ public class ResultToolsProvider {
 	 * @param resultType Tipo del resultado
 	 * @return ResultFactory para el tipo indicado o null si el tipo es incorrecto.
 	 */
-	public ResultFactory getResultFactory(int resultType){
-		ResultFactory factory = factories.get(resultType);
+	public ResultFactory getResultFactory(ResultType resultType){
+		ResultFactory factory = factories.get(resultType.intValue());
 		
 		if(factory == null){
 			factory = buildResultFactory(resultType);
 			if(factory == null){
 				return null;
 			}else{
-				factories.put(resultType, factory);
+				factories.put(resultType.intValue(), factory);
 			}
 		}
 		
@@ -40,41 +39,41 @@ public class ResultToolsProvider {
 	}
 	
 	
-	private ResultFactory buildResultFactory(int resultType) {
+	private ResultFactory buildResultFactory(ResultType resultType) {
 		switch(resultType){
-		case Result.RT_MAX_MOVE:
+		case RT_MAX_MOVE:
 			return new ResultMaxMoveFactory();
-		case Result.RT_STEPS:
+		case RT_STEPS:
 			return new StepsCountFactory();
-		case Result.RT_SPEED:
+		case RT_SPEED:
 			return new SpeedFactory();
 		default: return null;
 		}
 	}
 	
-	public ResultGUIResolver getGUIResolver(int resultType) {
-		ResultGUIResolver resolver = guiResolvers.get(resultType);
+	public ResultGUIResolver getGUIResolver(ResultType resultType) {
+		ResultGUIResolver resolver = guiResolvers.get(resultType.intValue());
 		
 		if(resolver == null){
 			resolver = buildGUIResolver(resultType);
 			if(resolver == null){
 				return null;
 			}else{
-				guiResolvers.put(resultType, resolver);
+				guiResolvers.put(resultType.intValue(), resolver);
 			}
 		}
 		
 		return resolver;
 	}
 
-	private ResultGUIResolver buildGUIResolver(int resultType) {
+	private ResultGUIResolver buildGUIResolver(ResultType resultType) {
 
 		switch(resultType){
-		case Result.RT_MAX_MOVE:
+		case RT_MAX_MOVE:
 			return new MaxMoveGUI();
-		case Result.RT_STEPS:
+		case RT_STEPS:
 			return new StepsGUI();
-		case Result.RT_SPEED:
+		case RT_SPEED:
 			return new SpeedGUI();
 		default: return null;
 		}

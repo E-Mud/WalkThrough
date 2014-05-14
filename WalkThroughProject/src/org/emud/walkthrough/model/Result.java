@@ -2,32 +2,20 @@ package org.emud.walkthrough.model;
 
 import java.util.GregorianCalendar;
 
+import org.emud.walkthrough.resulttype.ResultType;
+
 
 //TODO
 public abstract class Result {
 	private GregorianCalendar date;
 	
-	private Object result;
-	private int type;
+	private ResultType type;
 	
-	public Result(int type){
-		this(null, type);
-	}	
-
-	public Result(Object result, int type){
-		this.result = result;
+	public Result(ResultType type){
 		this.type = type;
-	}
+	}	
 	
-	public Object get(){
-		return this.result;
-	}
-	
-	public void set(Object res){
-		result = res;
-	}
-	
-	public int getType() {
+	public ResultType getType() {
 		return type;
 	}
 	
@@ -44,10 +32,4 @@ public abstract class Result {
 	public void setDate(GregorianCalendar date) {
 		this.date = date;
 	}
-	
-	public static final int
-		RT_STEPS = 0,
-		RT_MAX_MOVE = 1,
-		RT_SPEED = 2;
-
 }

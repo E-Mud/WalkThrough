@@ -1,7 +1,7 @@
 package org.emud.walkthrough.pedometer;
 
-import org.emud.walkthrough.ResultFactory;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultFactory;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -26,7 +26,7 @@ public class StepsCountFactory implements ResultFactory {
 	public Bundle buildBundleFromResult(Result result) {
 		Bundle bundle = new Bundle();		
 		bundle.putInt(STEPS_KEY, ((StepsCount) result).getSteps());
-		bundle.putInt(RESULT_TYPE_KEY, result.getType());
+		bundle.putInt(RESULT_TYPE_KEY, result.getType().intValue());
 		
 		return bundle;
 	}

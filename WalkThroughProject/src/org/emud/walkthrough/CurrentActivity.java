@@ -22,6 +22,8 @@ import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.resulttype.ResultFactory;
+import org.emud.walkthrough.resulttype.ResultType;
 
 public class CurrentActivity extends Activity implements OnClickListener {
 	private ImageView pauseResumeIcon, stopIcon;
@@ -158,8 +160,8 @@ public class CurrentActivity extends Activity implements OnClickListener {
         
         for(int i=0; i<size; i++){
         	Bundle bundle = msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i);
-    		int type = bundle.getInt(ResultFactory.RESULT_TYPE_KEY, -1);
-    		ResultFactory factory = app.getResultFactory(type);
+    		ResultType resultType = ResultType.valueOf(bundle.getInt(ResultFactory.RESULT_TYPE_KEY, -1));
+    		ResultFactory factory = resultType.getFactory();
         	results.add(factory.buildResultFromBundle(bundle));
         }
         

@@ -2,12 +2,13 @@ package org.emud.walkthrough;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
+import org.emud.walkthrough.resulttype.ResultType;
 
 public class ResultTypeFilter {
-	private int resultType;
+	private ResultType resultType;
 	private DataSubject dataSubject;
 	
-	public ResultTypeFilter(int type){
+	public ResultTypeFilter(ResultType type){
 		resultType = type;
 		dataSubject = new DataSubject();
 	}
@@ -18,11 +19,11 @@ public class ResultTypeFilter {
 	/**
 	 * @return the resultType
 	 */
-	public int getResultType() {
+	public ResultType getResultType() {
 		return resultType;
 	}
 
-	public void setResultType(int type) {
+	public void setResultType(ResultType type) {
 		if(type != resultType){
 			this.resultType = type;
 			dataSubject.notifyObservers();

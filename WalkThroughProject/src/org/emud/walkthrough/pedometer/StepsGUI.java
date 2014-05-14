@@ -1,8 +1,8 @@
 package org.emud.walkthrough.pedometer;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.ResultGUIResolver;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultGUIResolver;
 
 import android.content.Context;
 import android.view.LayoutInflater;

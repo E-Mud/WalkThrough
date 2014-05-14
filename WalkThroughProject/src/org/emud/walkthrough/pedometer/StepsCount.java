@@ -1,6 +1,7 @@
 package org.emud.walkthrough.pedometer;
 
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultType;
 
 public class StepsCount extends Result {
 	private int steps;
@@ -10,7 +11,7 @@ public class StepsCount extends Result {
 	}
 
 	public StepsCount(int count){
-		super(Result.RT_STEPS);
+		super(ResultType.RT_STEPS);
 		steps = count;
 	}
 	

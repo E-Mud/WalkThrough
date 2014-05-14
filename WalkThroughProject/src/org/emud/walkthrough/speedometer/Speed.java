@@ -1,17 +1,18 @@
 package org.emud.walkthrough.speedometer;
 
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultType;
 
 public class Speed extends Result {
 	private double speed;
 
 	public Speed() {
-		super(Result.RT_SPEED);
+		super(ResultType.RT_SPEED);
 		speed = 0;
 	}
 	
 	public Speed(double sp) {
-		super(Result.RT_SPEED);
+		super(ResultType.RT_SPEED);
 		speed = sp;
 	}
 

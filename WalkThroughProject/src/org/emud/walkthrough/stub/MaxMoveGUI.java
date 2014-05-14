@@ -1,8 +1,8 @@
 package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.ResultGUIResolver;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultGUIResolver;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,7 +23,7 @@ public class MaxMoveGUI implements ResultGUIResolver {
 		((ImageView) view.findViewById(R.id.result_icon)).setImageResource(R.drawable.ic_action_done);
 		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_max_move_title);
 		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_max_move_unit);
-		((TextView) view.findViewById(R.id.result_value)).setText(((Double) result.get()).toString());
+		((TextView) view.findViewById(R.id.result_value)).setText("" + ((ResultMaxMove) result).getMaxAcceleration());
 		
 		return view;
 	}

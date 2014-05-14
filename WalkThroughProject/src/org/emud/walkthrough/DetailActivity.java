@@ -67,7 +67,7 @@ public class DetailActivity extends FragmentActivity implements LoaderCallbacks<
 		    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		    
 		    Result result = resultsList.get(position);
-		    View view = ((WalkThroughApplication) getContext().getApplicationContext()).getGUIResolver(result.getType()).getDetailView(inflater, result);
+		    View view = result.getType().getGUIResolver().getDetailView(inflater, result);
 		    
 		    return view;
 		}

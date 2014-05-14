@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.ImageView;*/
+import org.emud.walkthrough.stub.ResultMaxMove;
 
 public class ResultGUIResolver {
 	private ResultGUIResolver(){
@@ -70,7 +71,7 @@ public class ResultGUIResolver {
 		
 		for(int i=0; i<n; i++){
 			Result result = listResults.get(n-1-i);
-			resultData[i] = new GraphViewData(result.getDate().getTimeInMillis(), ((Double) result.get()).doubleValue());
+			resultData[i] = new GraphViewData(result.getDate().getTimeInMillis(), ((ResultMaxMove) result).getMaxAcceleration());
 		}
 		
 		maxValueSeries = new GraphViewSeries(resultData);

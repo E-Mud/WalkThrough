@@ -3,7 +3,6 @@ package org.emud.walkthrough.stub;
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.model.Result;
 
 import android.content.Context;
 import android.text.format.DateFormat;
@@ -13,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class MaxMoveListAdapter extends ArrayAdapter<Result> {
+public class MaxMoveListAdapter extends ArrayAdapter<ResultMaxMove> {
 
 	public MaxMoveListAdapter(Context context) {
 		super(context, R.layout.listitem_maxmove_result);
@@ -30,7 +29,7 @@ public class MaxMoveListAdapter extends ArrayAdapter<Result> {
 			convertView = inflater.inflate(R.layout.listitem_maxmove_result, null);
 		}
 	    
-		result = (ResultMaxMove) getItem(position);
+		result = getItem(position);
 		cal = result.getDate();
 		
 	    label = (TextView) convertView.findViewById(R.id.listitem_maxmove_dateday);
@@ -40,9 +39,7 @@ public class MaxMoveListAdapter extends ArrayAdapter<Result> {
 	    label.setText(DateFormat.format("h:m a", cal));
 	    
 	    label = (TextView) convertView.findViewById(R.id.listitem_maxmove_value);
-	    //double value = ((Double) result.get()).doubleValue();
-	    //label.setText(Double.valueOf(df.format(value)).toString());
-	    label.setText(String.format("%.2f", result.get()));
+	    label.setText(String.format("%.2f", result.getMaxAcceleration()));
 	    
 	    return convertView;
 	}

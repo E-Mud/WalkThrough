@@ -1,7 +1,7 @@
 package org.emud.walkthrough.stub;
 
-import org.emud.walkthrough.ResultFactory;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.resulttype.ResultFactory;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -17,23 +17,15 @@ public class ResultMaxMoveFactory implements ResultFactory {
 
 	@Override
 	public Result buildResultFromBundle(Bundle bundle) {
-		int type = bundle.getInt(RESULT_TYPE_KEY, -1);
-		Result result;
-		
-		if(type == -1)
-			return null;
-		
-		result = new ResultMaxMove();
-		result.set(Double.valueOf(bundle.getDouble(MAX_VALUE_KEY)));
-		
+		ResultMaxMove result = new ResultMaxMove(bundle.getDouble(MAX_VALUE_KEY));
 		return result;
 	}
 
 	@Override
 	public Bundle buildBundleFromResult(Result result) {
 		Bundle bundle = new Bundle();		
-		bundle.putDouble(MAX_VALUE_KEY, ((Double) result.get()).doubleValue());
-		bundle.putInt(RESULT_TYPE_KEY, result.getType());
+		bundle.putDouble(MAX_VALUE_KEY, ((ResultMaxMove) result).getMaxAcceleration());
+		bundle.putInt(RESULT_TYPE_KEY, result.getType().intValue());
 		
 		return bundle;
 	}
@@ -42,17 +34,15 @@ public class ResultMaxMoveFactory implements ResultFactory {
 	public ContentValues buildContentValuesFromResult(Result result) {
 		ContentValues values = new ContentValues();
 		
-		values.put(MAX_VALUE_KEY, (Double) result.get());
+		values.put(MAX_VALUE_KEY, ((ResultMaxMove) result).getMaxAcceleration());
 		
 		return values;
 	}
 
 	@Override
 	public Result buildResultFromCursor(Cursor cursor) {
-		Result result = new ResultMaxMove();
+		Result result = new ResultMaxMove(cursor.getDouble(cursor.getColumnIndex(MAX_VALUE_KEY)));
 		
-		result.set(Double.valueOf(cursor.getDouble(cursor.getColumnIndex(MAX_VALUE_KEY))));
-			
 		return result;
 	}
 
