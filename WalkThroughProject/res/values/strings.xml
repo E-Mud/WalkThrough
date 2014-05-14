@@ -87,8 +87,14 @@
     <!-- Result -->
     <string name="rt_max_move_title">Maxima aceleración.</string>
     <string name="rt_max_move_unit">m/s2</string>
+    
+    <!-- Podometro -->
     <string name="rt_steps_title">Podómetro</string>
     <string name="rt_steps_unit">pasos</string>
+    
+    <!-- Velocimetro -->
+    <string name="rt_speed_title">Velocidad</string>
+    <string name="rt_speed_unit">m/s</string>
     
     <!-- FallingDetectionActivity -->
     <string name="title_activity_falling_detection">Deteccion de caidas</string>

@@ -47,6 +47,7 @@ public abstract class Result {
 	
 	public static final int
 		RT_STEPS = 0,
-		RT_MAX_MOVE = 1;
+		RT_MAX_MOVE = 1,
+		RT_SPEED = 2;
 
 }

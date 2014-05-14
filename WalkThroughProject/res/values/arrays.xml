@@ -13,10 +13,12 @@
     <string-array name="result_titles">
         <item>Pasos</item>
         <item>Máxima aceleración</item>
+        <item>Velocidad media</item>
     </string-array>
     
     <integer-array name="result_types">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </integer-array>
 </resources>

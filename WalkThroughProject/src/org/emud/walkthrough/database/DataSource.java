@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 8;
+	private static final int VERSION = 9;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;

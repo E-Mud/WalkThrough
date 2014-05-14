@@ -317,6 +317,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		case 1:
 			resultTypeFilter.setResultType(Result.RT_MAX_MOVE);
 			return true;
+		case 2:
+			resultTypeFilter.setResultType(Result.RT_SPEED);
+			return true;
 		default:
 			return false;
 		}

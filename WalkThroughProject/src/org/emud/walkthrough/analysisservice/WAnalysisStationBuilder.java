@@ -4,6 +4,7 @@ import org.emud.walkthrough.analysis.AnalysisStationBuilder;
 import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.pedometer.StepsCounter;
+import org.emud.walkthrough.speedometer.Speedometer;
 import org.emud.walkthrough.stub.MaxMoveAnalyst;
 
 public class WAnalysisStationBuilder extends AnalysisStationBuilder {
@@ -15,6 +16,8 @@ public class WAnalysisStationBuilder extends AnalysisStationBuilder {
 			return new MaxMoveAnalyst();
 		case Result.RT_STEPS:
 			return new StepsCounter();
+		case Result.RT_SPEED:
+			return new Speedometer();
 		default:
 			return null;
 		}
