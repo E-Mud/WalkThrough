@@ -2,6 +2,7 @@ package org.emud.walkthrough.analysisservice;
 
 import org.emud.walkthrough.analysis.AnalysisStationBuilder;
 import org.emud.walkthrough.analysis.Analyst;
+import org.emud.walkthrough.cadence.CadenceAnalyst;
 import org.emud.walkthrough.pedometer.StepsCounter;
 import org.emud.walkthrough.resulttype.ResultType;
 import org.emud.walkthrough.speedometer.Speedometer;
@@ -19,6 +20,8 @@ public class WAnalysisStationBuilder extends AnalysisStationBuilder {
 			return new StepsCounter();
 		case RT_SPEED:
 			return new Speedometer();
+		case RT_CADENCE:
+			return new CadenceAnalyst();
 		default:
 			return null;
 		}

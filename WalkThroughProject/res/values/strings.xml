@@ -96,6 +96,10 @@
     <string name="rt_speed_title">Velocidad</string>
     <string name="rt_speed_unit">m/s</string>
     
+    <!-- Ritmo -->
+    <string name="rt_cadence_title">Ritmo</string>
+    <string name="rt_cadence_unit">pasos/minuto</string>
+    
     <!-- FallingDetectionActivity -->
     <string name="title_activity_falling_detection">Deteccion de caidas</string>
     <string name="fallingdetection_changecontact">Cambiar contacto</string>

@@ -2,7 +2,7 @@ package org.emud.walkthrough;
 
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment;
-import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment.OnAcceptButtonListener;
+import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment.OnConfirmListener;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,7 +16,7 @@ import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
-public class SettingsActivity extends FragmentActivity implements OnPreferenceClickListener, OnAcceptButtonListener {
+public class SettingsActivity extends FragmentActivity implements OnPreferenceClickListener, OnConfirmListener {
 	private static final int INVALID_CONTACT_DIALOG = 0,
 			CONFIRM_DELETE_DIALOG = 1;
 
@@ -36,6 +36,8 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
         WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
         long contactId = app.getEmergencyContact();
         
+		settingsFragment.setScreenPref(app.getScreenPref());
+        
         if(contactId >= 0){
             Cursor cursor;
             
@@ -52,6 +54,7 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 	
 	public static class SettingsFragment extends PreferenceFragment {
 		private String contactName;
+		private boolean screen;
 		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -61,9 +64,11 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			findPreference("logout_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
 			findPreference("delete_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
 			findPreference("emergencycontact_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
-			findPreference("screen_pref").setOnPreferenceClickListener((SettingsActivity) getActivity());
+			CheckBoxPreference screenPreference = (CheckBoxPreference) findPreference("screen_pref");
+			screenPreference.setChecked(screen);
+			screenPreference.setOnPreferenceClickListener((SettingsActivity) getActivity());
 		}
-		
+
 		@Override
 		public void onResume(){
 			super.onResume();
@@ -72,6 +77,10 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 				Preference contactPreference = findPreference("emergencycontact_pref");
 				contactPreference.setSummary(contactName);
 			}
+		}
+		
+		public void setScreenPref(boolean screenPref) {
+			screen = screenPref;
 		}
 		
 		public void setContactDisplayName(String name) {
@@ -170,7 +179,7 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			String userName = ((WalkThroughApplication) getApplicationContext()).getActiveUserName();
 			ConfirmDeleteDialogFragment fragment = ConfirmDeleteDialogFragment.newInstance(userName);
 			
-			fragment.setAcceptButtonListener(this);
+			fragment.setConfirmListener(this);
 			fragment.show(getSupportFragmentManager(), "confirmDeleteDialog");
 			break;
 		}

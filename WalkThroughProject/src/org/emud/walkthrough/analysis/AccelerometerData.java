@@ -3,11 +3,13 @@ package org.emud.walkthrough.analysis;
 public class AccelerometerData {
 	public static final int AP_AXIS = 0, VT_AXIS = 1, MP_AXIS = 2;
 	private long timeStamp;
+	private int ratio;
 	private double[] data;
 	
-	public AccelerometerData(double[] data, long timeStamp){
+	public AccelerometerData(double[] data, long timeStamp, int ratio){
 		this.timeStamp = timeStamp;
 		this.data = data;
+		this.ratio = ratio;
 	}
 	
 	/**
@@ -33,5 +35,19 @@ public class AccelerometerData {
 	 */
 	public void setData(double[] data) {
 		this.data = data;
+	}
+
+	/**
+	 * @return the ratio
+	 */
+	public int getRatio() {
+		return ratio;
+	}
+
+	/**
+	 * @param ratio the ratio to set
+	 */
+	public void setRatio(int ratio) {
+		this.ratio = ratio;
 	}
 }

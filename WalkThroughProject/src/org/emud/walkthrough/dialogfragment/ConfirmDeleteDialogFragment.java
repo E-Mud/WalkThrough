@@ -17,7 +17,7 @@ import android.widget.EditText;
 public class ConfirmDeleteDialogFragment extends DialogFragment implements OnClickListener, TextWatcher {
 	private String username;
 	private Button acceptButton;
-	private OnAcceptButtonListener listener;
+	private OnConfirmListener listener;
 
 	public static ConfirmDeleteDialogFragment newInstance(String userName){
 		ConfirmDeleteDialogFragment result = new ConfirmDeleteDialogFragment();
@@ -28,11 +28,11 @@ public class ConfirmDeleteDialogFragment extends DialogFragment implements OnCli
 		return result;
 	}
 	
-	public OnAcceptButtonListener getAcceptButtonListener() {
+	public OnConfirmListener getConfirmListener() {
 		return listener;
 	}
 
-	public void setAcceptButtonListener(OnAcceptButtonListener listener) {
+	public void setConfirmListener(OnConfirmListener listener) {
 		this.listener = listener;
 	}
 	
@@ -95,7 +95,7 @@ public class ConfirmDeleteDialogFragment extends DialogFragment implements OnCli
 	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 	}
 	
-	public static interface OnAcceptButtonListener{
+	public static interface OnConfirmListener{
 		public void buttonClicked();
 	}
 }

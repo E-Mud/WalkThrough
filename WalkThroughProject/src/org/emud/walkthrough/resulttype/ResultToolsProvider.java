@@ -1,5 +1,7 @@
 package org.emud.walkthrough.resulttype;
 
+import org.emud.walkthrough.cadence.CadenceFactory;
+import org.emud.walkthrough.cadence.CadenceGUI;
 import org.emud.walkthrough.pedometer.StepsCountFactory;
 import org.emud.walkthrough.pedometer.StepsGUI;
 import org.emud.walkthrough.speedometer.SpeedFactory;
@@ -47,6 +49,8 @@ public class ResultToolsProvider {
 			return new StepsCountFactory();
 		case RT_SPEED:
 			return new SpeedFactory();
+		case RT_CADENCE:
+			return new CadenceFactory();
 		default: return null;
 		}
 	}
@@ -75,6 +79,8 @@ public class ResultToolsProvider {
 			return new StepsGUI();
 		case RT_SPEED:
 			return new SpeedGUI();
+		case RT_CADENCE:
+			return new CadenceGUI();
 		default: return null;
 		}
 	}

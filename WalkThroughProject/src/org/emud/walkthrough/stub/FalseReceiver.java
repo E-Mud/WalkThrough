@@ -34,7 +34,7 @@ public class FalseReceiver extends WalkDataReceiver {
 	}
 	
 	public void getData(long timestamp, double[] data){
-		AccelerometerData accelerometerData = new AccelerometerData(data, timestamp);
+		AccelerometerData accelerometerData = new AccelerometerData(data, timestamp, 0);
 		
 		for(OnDataReceivedListener listener : listeners)
 			listener.onDataReceveid(accelerometerData);

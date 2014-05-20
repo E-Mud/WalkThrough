@@ -22,7 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 10;
+	private static final int VERSION = 11;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -109,7 +109,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
+			/*db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ RESULT_NAME);
 			
@@ -118,7 +118,8 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 				db.execSQL("DROP TABLE IF EXISTS "+ factory.getTableName());
 			}
 			
-            onCreate(db);
+            onCreate(db);*/
+			db.execSQL(ResultType.RT_CADENCE.getFactory().getSQLCreateTableStatement());
 		}
 	}
 

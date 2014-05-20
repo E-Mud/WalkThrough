@@ -8,7 +8,7 @@ public class MaxMoveAnalyst implements Analyst {
 	private AccelerometerData max;
 	
 	public MaxMoveAnalyst(){
-		max = new AccelerometerData(new double[]{0,0,0}, 0);
+		max = new AccelerometerData(new double[]{0,0,0}, 0, 0);
 	}
 
 	@Override
