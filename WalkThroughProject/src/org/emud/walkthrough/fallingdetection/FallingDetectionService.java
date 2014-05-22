@@ -34,18 +34,22 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 	private int currentState;
 	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId){
+	public void onCreate(){
 		DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
 		AnalysisStationBuilder stationBuilder = new FallingStationBuilder(this);
 		int receiverType = WalkDataReceiver.SINGLE_ACCELEROMETER;
+		
 		station = stationBuilder.buildStation(receiverBuilder, receiverType, 0);
-
-		messenger = new Messenger(new ServiceMessageHandler(this));
-		
+		messenger = new Messenger(new ServiceMessageHandler(this));		
 		currentState = SERVICE_OFF;
-		
+	}
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId){
+		android.util.Log.d("FDS", "onStartCommand");
+
 		Messenger responseMessenger = intent.getParcelableExtra(START_MESSENGER);
-		Message msg = Message.obtain(null, ServiceMessageHandler.MSG_START, 0, 0);
+		Message msg = Message.obtain(null, ServiceMessageHandler.MSG_START, currentState, 0);
 		try {
 			responseMessenger.send(msg);
 		} catch (RemoteException e) {
@@ -58,13 +62,24 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 
     @Override
     public IBinder onBind(Intent intent) {
+		android.util.Log.d("FDS", "onBind");
         if(messenger != null){
+    		android.util.Log.d("FDS", "onBind not null");
         	return messenger.getBinder();
         }else{
+    		android.util.Log.d("FDS", "onBind null");
         	return null;
         }
     }
 
+    /*@Override
+    public boolean onUnbind(Intent intent){
+    	if(currentState == SERVICE_OFF)
+    		stopSelf();
+    	
+    	return false;
+    }*/
+    
 	@Override
 	public void onStartMessage(Message msg) {
 		emergencyContactID = msg.getData().getLong(CONTACT_ID_KEY);
