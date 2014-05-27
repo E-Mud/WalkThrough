@@ -15,11 +15,11 @@ public abstract class AnalysisStationBuilder {
 	 * @param resultType Tipo de resultado a obtener.
 	 * @return AnalysisStation inicializado.
 	 */
-	public AnalysisStation buildStation(DataReceiverBuilder dataReceiverBuilder, int receiverType, int resultType){
+	public AnalysisStation buildStation(WalkDataReceiver dataReceiver, int receiverType, int resultType){
 		Set<Integer> set = new HashSet<Integer>();
 		set.add(Integer.valueOf(resultType));
 		
-		return buildStation(dataReceiverBuilder, receiverType, set);
+		return buildStation(dataReceiver, receiverType, set);
 	}
 	
 	/**
@@ -29,10 +29,9 @@ public abstract class AnalysisStationBuilder {
 	 * @param resultsTypes Lista de tipos de resultados a obtener.
 	 * @return AnalysisStation inicializado.
 	 */
-	public AnalysisStation buildStation(DataReceiverBuilder dataReceiverBuilder, int receiverType, Set<Integer> resultsTypes){
+	public AnalysisStation buildStation(WalkDataReceiver dataReceiver, int receiverType, Set<Integer> resultsTypes){
 		AnalysisStation analysisStation;
 		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
-		WalkDataReceiver dataReceiver;
 		
 		for(Integer resultType : resultsTypes){
 			Analyst analyst = buildAnalyst(resultType, receiverType);
@@ -40,7 +39,6 @@ public abstract class AnalysisStationBuilder {
 				analystList.add(analyst);
 		}
 		
-		dataReceiver = dataReceiverBuilder.buildReceiver(receiverType);
 		analysisStation = new AnalysisStation(dataReceiver, analystList);
 		dataReceiver.addOnDataReceivedListener(analysisStation);
 		

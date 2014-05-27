@@ -1,70 +1,107 @@
 package org.emud.walkthrough.analysisservice;
 
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
-import org.emud.walkthrough.ServiceMessageHandler;
-import org.emud.walkthrough.ServiceMessageHandler.OnMessageReceivedListener;
+import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.AnalysisStation;
 import org.emud.walkthrough.analysis.AnalysisStationBuilder;
 import org.emud.walkthrough.analysis.DataReceiverBuilder;
+import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.ScreenBroadcastReceiver.ScreenOnOffListener;
+import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.resulttype.ResultFactory;
+import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.sensortag.DeviceScanner;
+import org.emud.walkthrough.sensortag.SensorTagConnectionManager;
+import org.emud.walkthrough.sensortag.SensorTagDataReceiver;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.widget.Toast;
 
-public class AnalysisService extends Service implements OnMessageReceivedListener, ScreenOnOffListener{
+@SuppressLint("NewApi")
+public class AnalysisService extends Service implements ScreenOnOffListener{
+	private static final long SCANNING_TIME = 10000;
 	public static final String RECEIVER_TYPE_KEY = "receiverType", RESULTS_TYPES_KEY = "resultsTypes", SCREEN_KEY = "screenPref";
 	public static final String LIST_SIZE_KEY = "listSize",  LIST_ITEM_KEY = "resultBundle_";
 	public static final String BUNDLE_KEY = "bundle";
+	public static final String SUCCESS_KEY = "success",
+			ACTIVITY_ID_KEY = "activityId",
+			N_RECEIVER_KEY = "nReceiver",
+			CONNECTED_KEY = "connected";
 	
 	public static final int
+		SERVICE_UNSTARTED = -1,
 		SERVICE_PREPARED = 0,
 		SERVICE_RUNNING = 1,
 		SERVICE_PAUSED = 2,
 		SERVICE_STOPPED = 3,
-		SERVICE_NONE = 4;
+		SERVICE_CONNECTING = 4;
 	
 	private int currentState;
 	private AnalysisStation station;
-	private Messenger messenger;
+	private IBinder binder;
+	private Handler handler;
 	private boolean receiverRegistered;
 	private ScreenBroadcastReceiver receiver;
+	private int receiverType;
+	private HashSet<Integer> setResultsTypes;
+	
+	private DeviceScanner scanner;
+	
+	@Override
+	public void onCreate(){
+		super.onCreate();
+		currentState = SERVICE_UNSTARTED;
+		
+		handler = new Handler();
+	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		int receiverType = intent.getIntExtra(RECEIVER_TYPE_KEY, -2);
-		int[] resultsTypes = intent.getIntArrayExtra(RESULTS_TYPES_KEY);
-		HashSet<Integer> setResultsTypes = new HashSet<Integer>();
-		int n = resultsTypes.length;
-		
-		for(int i=0; i<n; i++)
-			setResultsTypes.add(Integer.valueOf(resultsTypes[i]));
-		
-		DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
-		AnalysisStationBuilder stationBuilder = new WAnalysisStationBuilder();
-		station = stationBuilder.buildStation(receiverBuilder, receiverType, setResultsTypes);
-		
-		messenger = new Messenger(new ServiceMessageHandler(this));
-		
-		if(intent.getBooleanExtra(SCREEN_KEY, false)){
-			receiver = new ScreenBroadcastReceiver();
-			receiver.setScreenListener(this);
-			registerReceiver(receiver, ScreenBroadcastReceiver.getIntentFilter());
-			receiverRegistered = true;
-		}else{
-			receiverRegistered = false;
+		if(currentState == SERVICE_UNSTARTED){
+			receiverType = intent.getIntExtra(RECEIVER_TYPE_KEY, -2);
+			int[] resultsTypes = intent.getIntArrayExtra(RESULTS_TYPES_KEY);
+			setResultsTypes = new HashSet<Integer>();
+			int n = resultsTypes.length;
+
+			for(int i=0; i<n; i++)
+				setResultsTypes.add(Integer.valueOf(resultsTypes[i]));
+
+			if(receiverType == WalkDataReceiver.SINGLE_ACCELEROMETER){
+				DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
+				WalkDataReceiver receiver = receiverBuilder.buildReceiver(receiverType);
+				initializeStation(receiver);
+			}else{
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+					BluetoothManager bluetoothManager =
+							(BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+					BluetoothAdapter adapter = bluetoothManager.getAdapter();
+					SensorTagConnectionManager manager = new SensorTagConnectionManager(this);
+					scanner = new DeviceScanner(adapter, manager);
+				}
+			}
+
+			binder = new LocalBinder();
+
+			if(intent.getBooleanExtra(SCREEN_KEY, false)){
+				receiver = new ScreenBroadcastReceiver();
+				receiver.setScreenListener(this);
+				registerReceiver(receiver, ScreenBroadcastReceiver.getIntentFilter());
+				receiverRegistered = true;
+			}else{
+				receiverRegistered = false;
+			}
 		}
-		
-		currentState = SERVICE_PREPARED;
 		
 		return START_STICKY;
 	}
@@ -72,89 +109,115 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 
     @Override
     public IBinder onBind(Intent intent) {
-        if(messenger != null){
-            Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT).show();
-        	return messenger.getBinder();
-        }else{
-            Toast.makeText(getApplicationContext(), "binding not allowed", Toast.LENGTH_SHORT).show();
-        	return null;
-        }
+        return binder;
+    }
+    
+    private void initializeStation(WalkDataReceiver receiver){
+    	AnalysisStationBuilder stationBuilder = new WAnalysisStationBuilder();
+    	station = stationBuilder.buildStation(receiver, receiverType, setResultsTypes);
+
+    	currentState = SERVICE_PREPARED;
+    }
+    
+    public void connectSensor(){
+    	currentState = SERVICE_CONNECTING;
+    	scanner.startScan();
+    	
+    	handler.postDelayed(new Runnable(){
+			@Override
+			public void run() {
+				AnalysisService.this.stopScanning();
+			}
+		}, SCANNING_TIME);
+    }
+    
+    public void stopConnecting(){
+    	if(currentState == SERVICE_CONNECTING){
+    		currentState = SERVICE_UNSTARTED;
+    		scanner.stopScan();
+    	}
+    }
+    
+    private void stopScanning(){
+    	stopConnecting();
+    	
+    	if(currentState == SERVICE_UNSTARTED){
+    		Intent intent = new Intent();
+    		intent.setAction(UpdateBroadcastReceiver.ACTION_CONNECTING_RESULT);
+
+    		intent.putExtra(CONNECTED_KEY, false);
+
+    		sendBroadcast(intent);
+    	}
     }
 
-
-	@Override
-	public void onStartMessage(Message msg) {
-		station.startAnalysis();
-		currentState = SERVICE_RUNNING;
+	public int startAnalysis() {
+		if(currentState == SERVICE_PREPARED){
+			station.startAnalysis();
+			currentState = SERVICE_RUNNING;
+		}
+		
+		return currentState;
 	}
 
-
-	@Override
-	public void onPauseMessage(Message msg) {
-		station.pauseAnalysis();
-		currentState = SERVICE_PAUSED;
+	public int pauseAnalysis() {
+		if(currentState == SERVICE_RUNNING){
+			station.pauseAnalysis();
+			currentState = SERVICE_PAUSED;
+		}
+		
+		return currentState;
 	}
 
-
-	@Override
-	public void onResumeMessage(Message msg) {
-		station.resumeAnalysis();
-		currentState = SERVICE_RUNNING;
+	public int resumeAnalysis() {
+		if(currentState == SERVICE_PAUSED){
+			station.resumeAnalysis();
+			currentState = SERVICE_RUNNING;
+		}
+		
+		return currentState;
 	}
 
-
-	@Override
-	public void onStopMessage(Message msg) {
-		station.stopAnalysis();
-		currentState = SERVICE_STOPPED;
+	public int stopAnalysis() {
+		if(currentState == SERVICE_RUNNING || currentState == SERVICE_PAUSED){
+			stopStation();
+			currentState = SERVICE_STOPPED;
+			
+			long id = insertResults(station.collectResults());
+			broadcastResultInserted(id);
+		}
+		
+		return currentState;
+	}
+	
+	private void stopStation() {
 		if(receiverRegistered){
 			unregisterReceiver(receiver);
 			receiverRegistered = false;
 		}
-        sendResultResponse(station.collectResults(), msg.replyTo);
-	}
-	
-	private void sendResultResponse(List<Result> list, Messenger replyTo) {
-		Message msg = Message.obtain(null, ServiceMessageHandler.MSG_STOP, 0, 0);
-		int size = list.size();
-		Bundle resultListBundle = new Bundle(), resultBundle;
-		
-		resultListBundle.putInt(LIST_SIZE_KEY, size);
-
-        android.util.Log.d("AS", "results size: " + size);
-        
-		for(int i=0; i<size; i++){
-			Result result = list.get(i);
-			ResultFactory factory = result.getType().getFactory();
-			resultBundle = factory.buildBundleFromResult(result);
-			resultListBundle.putBundle(LIST_ITEM_KEY + i, resultBundle);
-		}
-		
-		msg.setData(resultListBundle);
-		
-		try {
-			replyTo.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		station.stopAnalysis();
 	}
 
-
-	@Override
-	public void onStateMessage(Message msg) {
-		Message msgResponse = Message.obtain(null, ServiceMessageHandler.MSG_STATE, 0, 0);
-		Bundle bundle = new Bundle();
+	private void broadcastResultInserted(long activityId) {
+		Intent intent = new Intent(UpdateBroadcastReceiver.ACTION_RESULT_INSERTED);
 		
-		bundle.putInt(ServiceMessageHandler.STATE_KEY, currentState);
-		msgResponse.setData(bundle);
+		intent.putExtra(SUCCESS_KEY, activityId >= 0);
+		intent.putExtra(ACTIVITY_ID_KEY, activityId);
 		
-		try {
-			msg.replyTo.send(msgResponse);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}		
+		sendBroadcast(intent);
 	}
 
+	private long insertResults(List<Result> results) {
+		WalkActivity activity;
+		ActivitiesDataSource dataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
+		
+		activity = new WalkActivity((GregorianCalendar) GregorianCalendar.getInstance(), results);
+        return dataSource.createNewActivity(activity);
+	}
+
+	public int getState() {
+		return currentState;	
+	}
 
 	@Override
 	public void onScreenOn() {
@@ -177,9 +240,27 @@ public class AnalysisService extends Service implements OnMessageReceivedListene
 		}
 	}
 
+	public void receiverBuilded(SensorTagDataReceiver receiver) {
+		initializeStation(receiver);
+		Intent intent = new Intent(UpdateBroadcastReceiver.ACTION_CONNECTING_RESULT);
+		
+		intent.putExtra(CONNECTED_KEY, true);
+		intent.putExtra(N_RECEIVER_KEY, 1);
+		
+		sendBroadcast(intent);
+	}
+	
+	public class LocalBinder extends Binder {
+        public AnalysisService getService() {
+            return AnalysisService.this;
+        }
+    }
 
-	/*private void logState() {
-		android.util.Log.d("ServiceAnalysis", "state: " + currentState);
-	}*/
-
+	public void sensorDisconnected() {
+		stopStation();
+		currentState = SERVICE_STOPPED;
+		Intent intent = new Intent(UpdateBroadcastReceiver.ACTION_RECEIVER_DISCONNECTED);
+		
+		sendBroadcast(intent);
+	}
 }

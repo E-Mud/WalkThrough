@@ -4,40 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/buttonService"
-        android:layout_width="wrap_content"
+    <ImageButton
+        android:id="@+id/button1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Run/Stop" />
-    
-    <Button
-        android:id="@+id/buttonBind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bind" />
+        android:background="#DDDDDD"
+        android:src="@drawable/ic_resume_icon" />
 
-    <Button
-        android:id="@+id/buttonStart"
+    <CheckBox
+        android:id="@+id/checkBox1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start" />
-    
-    <Button
-        android:id="@+id/buttonPause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pause" />
-    
-    <Button
-        android:id="@+id/buttonResume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Resume" />
-    
-    <Button
-        android:id="@+id/buttonStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop" />
+        android:text="CheckBox" />
 
 </LinearLayout>

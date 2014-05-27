@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <LinearLayout
+        android:id="@+id/lifeCycleButtons_content"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
@@ -23,7 +24,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_resume_icon" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -32,16 +32,43 @@
             android:layout_height="match_parent"
             android:layout_marginRight="6dp"
             android:layout_weight="1.00"
-            android:visibility="gone"
-            android:background="#DDDDDD" >
+            android:background="#DDDDDD"
+            android:visibility="gone" >
 
             <ImageView
                 android:id="@+id/iconStop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_stop_icon" />
-
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/footButtons_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lifeCycleButtons_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="65dp"
+        android:paddingLeft="6dp" >
+
+        <ToggleButton
+            android:id="@+id/left_toggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOff="@string/currentactivity_leftFoot"
+            android:textOn="@string/currentactivity_leftFoot"
+            android:visibility="invisible" />
+
+        <ToggleButton
+            android:id="@+id/right_toggleButton"
+            style="@style/ToggleToggleButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOff="@string/currentactivity_rightFoot"
+            android:textOn="@string/currentactivity_rightFoot"
+            android:visibility="invisible" />
+
+    </FrameLayout>
 
 </RelativeLayout>

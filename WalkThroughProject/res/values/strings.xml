@@ -81,6 +81,13 @@
     <string name="newactivity_maxmove_title">Aceleracion maxima</string>
     <string name="newactivity_steps_title">Numero de pasos</string>
 
+    <!-- CurrentActivity -->
+    <string name="currentactivity_insertion_success">Se han almacenado nuevos resultados.</string>
+    <string name="currentactivity_insertion_failed">Se ha producido un error al almacenar nuevos resultados.</string>
+    <string name="currentactivity_disconnected">Se ha desconectado el receptor.</string>
+    <string name="currentactivity_rightFoot">Pie derecho</string>
+    <string name="currentactivity_leftFoot">Pie izquierdo</string>
+    
     <!-- Detail Activity -->
     <string name="title_activity_detail">Actividad</string>
 

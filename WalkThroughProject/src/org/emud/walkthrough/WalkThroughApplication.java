@@ -247,9 +247,9 @@ public class WalkThroughApplication extends Application {
 	public int getServiceState(){
 		if(activeUser != null){
 			SharedPreferences userPrefs = getSharedPreferences(activeUser + USER_PREFERENCES_SUFIX, MODE_PRIVATE);
-			return userPrefs.getInt("serviceState", AnalysisService.SERVICE_NONE);		
+			return userPrefs.getInt("serviceState", AnalysisService.SERVICE_UNSTARTED);		
 		}else{
-			return AnalysisService.SERVICE_NONE;
+			return AnalysisService.SERVICE_UNSTARTED;
 		}
 	}
 	

@@ -6,11 +6,13 @@
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" >
     </uses-permission>
     <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:name="org.emud.walkthrough.WalkThroughApplication"
@@ -44,9 +46,9 @@
 
         <service
             android:name="org.emud.walkthrough.analysisservice.AnalysisService"
-            android:icon="@drawable/ic_launcher"
-            android:label="Analysis Service"
-            android:process=":analysis_service_process" >
+            android:icon="@drawable/ic_launcher" >
+            <!--  android:label="Analysis Service"
+            android:process=":analysis_service_process" -->
         </service>
         
         <service

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
+import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.ResultsQuery;
@@ -19,8 +20,14 @@ import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.resulttype.ResultType;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -55,18 +62,30 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	private ArrayAdapter<ResultType> spinnerAdapter;
 	private ResultTypeFilter resultTypeFilter;
 	
+	private List<ResultType> analysts;
+	private int receiverType;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		//((WalkThroughApplication) getApplicationContext()).setServiceState(AnalysisService.SERVICE_NONE);
+		boolean analysisServiceRunning = isAnalysisServiceRunning();
+		
+		if(analysisServiceRunning){
+			Intent intent = new Intent(this, CurrentActivity.class);
+			startActivity(intent);
+			finish();
+			return;			
+		}
+		/*
 		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
 		if(serviceState != AnalysisService.SERVICE_NONE){
 			Intent intent = new Intent(this, CurrentActivity.class);
 			startActivity(intent);
 			finish();
 			return;
-		}
+		}*/
 		
 		setContentView(R.layout.activity_main);
 		
@@ -127,7 +146,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		fragmentTransaction.commit();
 	}
 
-	
+	private boolean isAnalysisServiceRunning() {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (AnalysisService.class.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 
 	@Override
 	public void onStart(){
@@ -176,6 +203,13 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 
 			return true;
 		default: return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(resultCode == RESULT_OK){			
+			startCurrentActivity();
 		}
 	}
 
@@ -280,16 +314,35 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 	}
 	
+	@SuppressLint("NewApi")
 	@Override
 	public void acceptButtonClicked(int receiver, List<ResultType> analystList) {
-		int n = analystList.size();
+		receiverType = receiver;
+		analysts = analystList;
+		if(receiver == WalkDataReceiver.TWO_ACCELEROMETERS){
+			BluetoothManager bluetoothManager =
+	                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+	        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+	        if (!bluetoothAdapter.isEnabled()) {
+	        	Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+	        	startActivityForResult(enableBtIntent, 0);
+	        }else{
+	        	startCurrentActivity();
+	        }
+		}else{
+			startCurrentActivity();
+		}
+	}
+
+	private void startCurrentActivity() {
+		int n = analysts.size();
 		int[] resultTypes = new int[n];
 		
 		for(int i=0; i<n; i++)
-			resultTypes[i] = analystList.get(i).intValue();
+			resultTypes[i] = analysts.get(i).intValue();
 		
 		Intent intentService = new Intent(this, AnalysisService.class);
-		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiver);
+		intentService.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiverType);
 		intentService.putExtra(AnalysisService.RESULTS_TYPES_KEY, resultTypes);
 		intentService.putExtra(AnalysisService.SCREEN_KEY, ((WalkThroughApplication) getApplicationContext()).getScreenPref());
 		startService(intentService);
@@ -308,25 +361,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		startActivity(intent);
 	}
 
-
-
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		resultTypeFilter.setResultType(spinnerAdapter.getItem(itemPosition));
 		return true;
-		/*switch(itemPosition){
-		case 0:
-			resultTypeFilter.setResultType(ResultType.RT_STEPS);
-			return true;
-		case 1:
-			resultTypeFilter.setResultType(ResultType.RT_MAX_MOVE);
-			return true;
-		case 2:
-			resultTypeFilter.setResultType(ResultType.RT_SPEED);
-			return true;
-		default:
-			return false;
-		}*/
 	}
 	
 }

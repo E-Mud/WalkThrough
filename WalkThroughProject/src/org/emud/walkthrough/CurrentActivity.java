@@ -1,37 +1,29 @@
 package org.emud.walkthrough;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import org.emud.walkthrough.analysisservice.AnalysisService;
+import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver;
+import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver.UpdateListener;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
-import org.emud.walkthrough.WalkThroughApplication;
-import org.emud.walkthrough.analysisservice.AnalysisService;
-import org.emud.walkthrough.database.ActivitiesDataSource;
-import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.model.WalkActivity;
-import org.emud.walkthrough.resulttype.ResultFactory;
-import org.emud.walkthrough.resulttype.ResultType;
-
-public class CurrentActivity extends Activity implements OnClickListener {
+public class CurrentActivity extends Activity implements OnClickListener, UpdateListener {
 	private ImageView pauseResumeIcon, stopIcon;
+	private ToggleButton left, right;
 	private int serviceState;
-	private Messenger service;
+	private AnalysisService service;
 	private ServiceConnection connection;
-	private Messenger responseMessenger;
 	private boolean bound;
+	private UpdateBroadcastReceiver updateReceiver;
 	
 
 	@Override
@@ -41,7 +33,11 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		
 		pauseResumeIcon = (ImageView) findViewById(R.id.iconPauseResume);
 		stopIcon = (ImageView) findViewById(R.id.iconStop);
+		left = (ToggleButton) findViewById(R.id.left_toggleButton);
+		right = (ToggleButton) findViewById(R.id.right_toggleButton);
 		
+		//left.setOnClickListener(this);
+		right.setOnClickListener(this);
 		pauseResumeIcon.setOnClickListener(this);
 		stopIcon.setOnClickListener(this);
 		
@@ -50,70 +46,96 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		connection = new ServiceConnection() {
 	        public void onServiceConnected(ComponentName className, IBinder binder) {
 	        	if(binder != null){
-	        		service = new Messenger(binder);
+	        		service = ((AnalysisService.LocalBinder) binder).getService();
 	        		bound = true;
-	        		sendMessageToService(ServiceMessageHandler.MSG_STATE);
+	        		serviceState = service.getState();
+	        		updateUI();
 	        	}
 	        }
-	        public void onServiceDisconnected(ComponentName className) {
+			public void onServiceDisconnected(ComponentName className) {
 	            service = null;
 	            bound = false;
 	        }
 	    };
 	}
 
+
+    private void updateUI() {
+    	android.util.Log.i("CA", "serviceState: " + serviceState);
+		if(serviceState == AnalysisService.SERVICE_RUNNING || serviceState == AnalysisService.SERVICE_PAUSED)
+			findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
+		
+		if(serviceState == AnalysisService.SERVICE_UNSTARTED || serviceState == AnalysisService.SERVICE_CONNECTING){
+			findViewById(R.id.lifeCycleButtons_content).setVisibility(View.INVISIBLE);
+			right.setVisibility(View.VISIBLE);
+		}else{
+			findViewById(R.id.lifeCycleButtons_content).setVisibility(View.VISIBLE);
+			right.setVisibility(View.INVISIBLE);
+		}
+	}
+    
 	@Override
 	public void onClick(View view) {
 		if(!bound)
 			return;
 		
-		int what;
-		
-		if(view.getId() == R.id.iconPauseResume){
+		switch(view.getId()){
+		case R.id.right_toggleButton:
+			if(right.isChecked()){
+				service.connectSensor();
+			}else{
+				service.stopConnecting();
+			}
+			break;
+		case R.id.iconPauseResume:
 			switch(serviceState){
 			case AnalysisService.SERVICE_PREPARED:
-				serviceState = AnalysisService.SERVICE_RUNNING;
-				what = ServiceMessageHandler.MSG_START;
-				findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
+				serviceState = service.startAnalysis();
+				if(serviceState == AnalysisService.SERVICE_RUNNING)
+					findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
 				break;
 			case AnalysisService.SERVICE_RUNNING:
-				serviceState = AnalysisService.SERVICE_PAUSED;
-				what = ServiceMessageHandler.MSG_PAUSE;
+				serviceState = service.pauseAnalysis();
 				break;
 			case AnalysisService.SERVICE_PAUSED:
-				serviceState = AnalysisService.SERVICE_RUNNING;
-				what = ServiceMessageHandler.MSG_RESUME;
+				serviceState = service.resumeAnalysis();
 				break;
 			default: return;
 			}
-			
+
 			setPauseResumeIconSrc();
-		}else{
+			break;
+		case R.id.iconStop:
 			if(serviceState == AnalysisService.SERVICE_PREPARED)
 				return;
 
-			serviceState = AnalysisService.SERVICE_STOPPED;
-			what = ServiceMessageHandler.MSG_STOP;
+			serviceState = service.stopAnalysis();
+			break;			
+		default:
+			return;
 		}
-		
-		sendMessageToService(what);
 	}
 
 	@Override
 	public void onStart(){
 		super.onStart();
 		
+		updateReceiver = new UpdateBroadcastReceiver();
+		updateReceiver.setUpdateListener(this);
+		registerReceiver(updateReceiver, UpdateBroadcastReceiver.getIntentFilter());
+		
 		bindService(new Intent(this, AnalysisService.class), connection, 0);
-		
-		serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
-		
-		setPauseResumeIconSrc();
 	}
 	
 
 	@Override
 	public void onPause(){
 		super.onPause();
+		
+		if(updateReceiver != null){
+			unregisterReceiver(updateReceiver);
+			updateReceiver = null;
+		}
 		
 		((WalkThroughApplication) getApplicationContext()).setServiceState(serviceState);
 		
@@ -133,80 +155,54 @@ public class CurrentActivity extends Activity implements OnClickListener {
 		
 		pauseResumeIcon.setImageResource(src);
 	}
-	
 
-	private void sendMessageToService(int what) {
-		Message msg = Message.obtain(null, what, 0, 0);
+	@Override
+	public void onResultInserted(Intent intent) {
+		boolean success = intent.getBooleanExtra(AnalysisService.SUCCESS_KEY, false);
+		Toast toast;
+		int text;
+
+		text = success ? R.string.currentactivity_insertion_success : R.string.currentactivity_insertion_failed;
 		
-		if(what == ServiceMessageHandler.MSG_STOP || what == ServiceMessageHandler.MSG_STATE){
-			responseMessenger = new Messenger(new ResponseHandler(this));
-			msg.replyTo = responseMessenger;
-		}
-		
-		try {
-			service.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+		toast.show();
+
+        goBackToMainActivity();
 	}
 	
-	private void onServiceStopped(Bundle msgData){        
-        WalkActivity activity;
-        ArrayList<Result> results = new ArrayList<Result>();
-        int size = msgData.getInt(AnalysisService.LIST_SIZE_KEY);
+	private void goBackToMainActivity(){
         Intent stopServiceIntent, backToMainIntent;
-        WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
-        ActivitiesDataSource dataSource = app.getActivitiesDataSource();
         
-        for(int i=0; i<size; i++){
-        	Bundle bundle = msgData.getBundle(AnalysisService.LIST_ITEM_KEY+i);
-    		ResultType resultType = ResultType.valueOf(bundle.getInt(ResultFactory.RESULT_TYPE_KEY, -1));
-    		ResultFactory factory = resultType.getFactory();
-        	results.add(factory.buildResultFromBundle(bundle));
-        }
-        
-        android.util.Log.d("CA", "results size: " + size);
-
-        activity = new WalkActivity((GregorianCalendar) GregorianCalendar.getInstance(), results);
-        dataSource.createNewActivity(activity);
-        
-        unbindService(connection);
+		unbindService(connection);
         bound = false;
-
-        stopServiceIntent = new Intent(this, AnalysisService.class);
-        stopService(stopServiceIntent);
         
-        serviceState = AnalysisService.SERVICE_NONE;
-        app.setServiceState(serviceState);
-        
-        backToMainIntent = new Intent(this, MainActivity.class);
-        startActivity(backToMainIntent);
-        finish();
-	}
-	
+		stopServiceIntent = new Intent(this, AnalysisService.class);
+		stopService(stopServiceIntent);
 
-	private void onStateAnswer(Bundle data) {
-		serviceState = data.getInt(ServiceMessageHandler.STATE_KEY);
-		setPauseResumeIconSrc();
-		if(serviceState != AnalysisService.SERVICE_PREPARED)
-			findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
+		backToMainIntent = new Intent(this, MainActivity.class);
+		startActivity(backToMainIntent);
+		finish();
 	}
-	
-	public static class ResponseHandler extends Handler {
-		private CurrentActivity currentActivity;
-		
-		public ResponseHandler(CurrentActivity ca){
-			currentActivity = ca;
-		}
-		
-        @Override
-        public void handleMessage(Message msg) {
-            if(msg.what == ServiceMessageHandler.MSG_STOP){
-            	currentActivity.onServiceStopped(msg.getData());
-            }else{
-            	currentActivity.onStateAnswer(msg.getData());
-            }
-        }
-    }
 
+	@Override
+	public void onReceiverDisconnected(Intent intent) {
+		Toast toast;
+
+		toast = Toast.makeText(getApplicationContext(), R.string.currentactivity_disconnected, Toast.LENGTH_LONG);
+		toast.show();
+		
+		goBackToMainActivity();
+	}
+
+	@Override
+	public void onConnectingResult(Intent intent) {
+		boolean connected = intent.getBooleanExtra(AnalysisService.CONNECTED_KEY, false);
+		
+		serviceState = service.getState();
+		
+		if(!connected)
+			right.setChecked(false);
+		
+		updateUI();
+	}
 }
