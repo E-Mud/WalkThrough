@@ -30,11 +30,28 @@ public class AccelerometerData {
 	public double[] getData() {
 		return data;
 	}
+	
 	/**
 	 * @param data the data to set
 	 */
 	public void setData(double[] data) {
-		this.data = data;
+		int n = data.length;
+		this.data = new double[n];
+		
+		for(int i=0; i<n; i++)
+			this.data[i] = data[i];
+	}
+	
+	/**
+	 * @param data the data to set
+	 */
+	public void setDataValue(int index, double value) {
+		int n = data.length;
+		
+		if(index < 0 || index >= n)
+			return;
+		
+		data[index] = value;
 	}
 
 	/**
