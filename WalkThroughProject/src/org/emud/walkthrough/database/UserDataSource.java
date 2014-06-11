@@ -12,6 +12,4 @@ public interface UserDataSource {
 	public User getProfile();
 	
 	public void updateProfile(String name, String lastName, int gender, int height, double weight);
-	
-	public String[] getColumns();
 }

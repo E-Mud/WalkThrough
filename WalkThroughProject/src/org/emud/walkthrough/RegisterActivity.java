@@ -11,19 +11,18 @@ import org.emud.walkthrough.webclient.ConnectionFailedException;
 import org.emud.walkthrough.webclient.UsedNicknameException;
 import org.emud.walkthrough.webclient.WebClient;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class RegisterActivity extends FragmentActivity implements OnClickListener, OnDatePickedListener, DialogInterface.OnClickListener {
+public class RegisterActivity extends WtFragmentActivity implements OnClickListener, OnDatePickedListener, DialogInterface.OnClickListener {
 	private static final int DATE_PICKER_DIALOG = 0,
 			SEX_PICKER_DIALOG = 1,
 			USED_NICKNAME_DIALOG = 2,
@@ -35,8 +34,9 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 	private TextView bornDateView, genderView;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		bind(this);
 		setContentView(R.layout.activity_register);
 		
 		bornDate = (GregorianCalendar) GregorianCalendar.getInstance();
@@ -64,27 +64,37 @@ public class RegisterActivity extends FragmentActivity implements OnClickListene
 			return true;
 		}
 		
-		WebClient client = ((WalkThroughApplication) getApplicationContext()).getDefaultWebClient();
+		//WebClient client = ((WalkThroughApplication) getApplicationContext()).getDefaultWebClient();
+		WebClient client = getWebClient();
+		boolean initialized = false;
 		
-		if(!client.checkConnection()){
+		if(!client.isReady())
+			initialized = client.init();
+		
+		if(!initialized || !client.isConnected()){
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;
 		}
 		
 		String nickname = ((TextView)findViewById(R.id.register_nickname)).getText().toString();
-		String name = ((TextView)findViewById(R.id.register_name)).getText().toString();
-		String lastName = ((TextView)findViewById(R.id.register_lastname)).getText().toString();
-		int height = Integer.valueOf(((TextView)findViewById(R.id.register_height)).getText().toString()).intValue();
+		//String name = ((TextView)findViewById(R.id.register_name)).getText().toString();
+		//String lastName = ((TextView)findViewById(R.id.register_lastname)).getText().toString();
+		//int height = Integer.valueOf(((TextView)findViewById(R.id.register_height)).getText().toString()).intValue();
 		double weight = Double.valueOf(((TextView)findViewById(R.id.register_weight)).getText().toString()).intValue();
 		
 		int id = 0; 
 		try {
-			id = client.registerNewUser(nickname, password, name, lastName, bornDate, gender, height, weight);
+			id = client.registerNewUser(nickname, password, weight);
 		} catch (ConnectionFailedException e) {
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;
 		} catch (UsedNicknameException e) {
 			showCustomDialog(USED_NICKNAME_DIALOG);
+			return true;
+		}
+		
+		if(id == -1){
+			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;
 		}
 		

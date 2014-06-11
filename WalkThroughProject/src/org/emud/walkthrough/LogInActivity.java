@@ -84,7 +84,7 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		password = ((EditText)findViewById(R.id.login_password)).getText().toString();
 		
 		try {
-			correctLogIn = webClient.logIn(username, password);
+			correctLogIn = webClient.logInUser(username, password);
 		} catch (ConnectionFailedException e) {
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 		}
@@ -112,8 +112,8 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		
 		webClient = app.getDefaultWebClient();
 		try {
-			webClient.logIn(username, password);
-			user = webClient.getProfile();
+			webClient.logInUser(username, password);
+			user = webClient.getWebProfile();
 		} catch (ConnectionFailedException e) {
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 		} catch (UnauthorizedException e) {

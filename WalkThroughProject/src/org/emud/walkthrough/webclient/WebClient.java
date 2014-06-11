@@ -1,21 +1,26 @@
 package org.emud.walkthrough.webclient;
 
-import java.util.GregorianCalendar;
-
+import org.emud.walkthrough.database.ActivitiesDataSource;
+import org.emud.walkthrough.database.UserDataSource;
 import org.emud.walkthrough.model.User;
+import org.emud.walkthrough.model.WalkActivity;
 
-public interface WebClient {
-	public boolean checkConnection();
+public interface WebClient extends ActivitiesDataSource, UserDataSource{
 	
-	public int registerNewUser(String userName, String password, String name, String lastName,
-			GregorianCalendar borndate, int gender, int height, double weight)
+	public boolean init();
+	
+	public boolean isReady();
+	
+	public boolean isUserLoggedIn();
+	
+	public boolean isConnected();
+	
+	public int registerNewUser(String userName, String password, double weight)
 			throws ConnectionFailedException, UsedNicknameException;
-	
-	public String getAuthToken(String userName, String password) throws ConnectionFailedException;
-	
-	public void setAuthToken(String authToken);
 
-	public boolean logIn(String username, String password) throws ConnectionFailedException;
+	public boolean logInUser(String username, String password) throws ConnectionFailedException;
 
-	public User getProfile() throws ConnectionFailedException, UnauthorizedException;
+	public User getWebProfile() throws ConnectionFailedException, UnauthorizedException;
+	
+	public boolean insertWalkActivity(WalkActivity activity);
 }

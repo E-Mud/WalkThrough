@@ -176,11 +176,6 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		db.update(PROFILE_NAME, values, null, null);
 	}
-
-	@Override
-	public String[] getColumns() {
-		return PROFILE_COLS;
-	}
 	
 	@Override
 	public Subject getUserSubject() {

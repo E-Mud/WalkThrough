@@ -8,11 +8,12 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" >
-    </uses-permission>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="org.emud.walkthrough.WalkThroughApplication"
@@ -44,6 +45,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name="com.zhealth.gnubila.android.gService"/>
+        
         <service
             android:name="org.emud.walkthrough.analysisservice.AnalysisService"
             android:icon="@drawable/ic_launcher" >
