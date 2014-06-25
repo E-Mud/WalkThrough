@@ -47,7 +47,7 @@ public class StubWebClient implements WebClient{
 	public User getWebProfile() throws ConnectionFailedException,
 			UnauthorizedException {
 		// TODO Auto-generated method stub
-		return user;
+		return new User();
 	}
 
 	@Override

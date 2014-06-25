@@ -10,7 +10,9 @@ import org.emud.walkthrough.model.WalkActivity;
 
 import static org.emud.walkthrough.webclient.GWebServiceConstants.*;
 
+import com.zhealth.gnubila.android.gQuery;
 import com.zhealth.gnubila.android.gService;
+import com.zhealth.gnubila.android.utils.gConstants;
 import com.zhealth.gnubila.android.utils.gData;
 
 public class GWebClient implements WebClient {
@@ -92,7 +94,7 @@ public class GWebClient implements WebClient {
 	@Override
 	public void createProfile(User user) {
 		// TODO Auto-generated method stub
-
+		service.launchQueue(PROJECT_ID);
 	}
 
 	@Override
@@ -120,12 +122,25 @@ public class GWebClient implements WebClient {
 		if(!isReady())
 			return -1;
 		
-		String[] atts = new String[]{"D.y", "name", "password", "legLength"};
+		String[] atts = new String[]{"D.y", "username", "password", "leglength"};
 		String[] values = new String[]{"wtuser", userName, password, ""+legLength};
-		gData data = service.insertQuery(PROJECT_ID, atts, values);
+		/*String[] atts = new String[]{"D.y"};
+		String[] values = new String[]{"wtuser"};*/
+		String[] fields = new String[]{"D.k"};
+		String[] ord = new String[]{"D.k", "DESC"};
+		//gData data = service.insertQuery(PROJECT_ID, atts, values);
+		//gData data = service.whereQuery(PROJECT_ID, atts, values, fields, ord);
+		int n = atts.length;
+		String[] params = new String[n+2];
+		params[0] = "D.action=critinsert";
+		params[n+1] = "D.dataformat=xml";
+		for(int i=0; i<n; i++)
+			params[i+1] = atts[i] + "=" + values[i];
+		gData data = service.setGQuery(PROJECT_ID, params);
 		android.util.Log.d("GWC", "registered data:" + data.getJSON());
-		int webId = Integer.parseInt(data.getValue(0, "D.x"));
-		android.util.Log.d("GWC", "registered id: " + webId);
+		android.util.Log.d("GWC", "registered id: " + data.getValue(0, gConstants.TAG_DK));
+		android.util.Log.d("GWC", "validated: " + data.validateGRequest());
+		int webId = Integer.parseInt(data.getValue(0, "D.k"));
 		return webId;
 	}
 

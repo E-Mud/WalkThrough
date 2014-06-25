@@ -8,15 +8,17 @@ public class SensorTagDataReceiver extends WalkDataReceiver implements
 		NotificationListener {
 	private static final int SAMPLE_PERIOD = 220;
 	private volatile boolean running = false;
-	private SensorTag sensorTag;
+	private SensorTag firstSensorTag, secondSensorTag;
 	
-	public SensorTagDataReceiver(SensorTag sensor){
-		sensorTag = sensor;
-		sensorTag.setNotificationListener(this);
+	public SensorTagDataReceiver(SensorTag firstSensor, SensorTag secondSensor){
+		firstSensorTag = firstSensor;
+		firstSensorTag.setNotificationListener(this);
+		secondSensorTag = secondSensor;
+		secondSensorTag.setNotificationListener(this);
 	}
 	
 	@Override
-	public void onNotificationReceived(byte[] values) {
+	public void onNotificationReceived(SensorTag sensorTag, byte[] values) {
 		if(!running)
 			return;
 		
@@ -28,15 +30,24 @@ public class SensorTagDataReceiver extends WalkDataReceiver implements
 		
 		AccelerometerData data = new AccelerometerData(dValues, 0, SAMPLE_PERIOD);
 		
+		if(sensorTag == firstSensorTag){
+			data.setLocation(AccelerometerData.LOCATION_RIGHT_ANKLE);
+		}else{
+			data.setLocation(AccelerometerData.LOCATION_LEFT_ANKLE);			
+		}
+		
 		for(WalkDataReceiver.OnDataReceivedListener listener : listeners)
 			listener.onDataReceveid(data);
 	}
 
 	@Override
 	public void startReceiving() {
-		sensorTag.enableSensor();
-		sensorTag.setPeriod(SAMPLE_PERIOD);
-		sensorTag.setNotificationsEnabled(true);
+		firstSensorTag.enableSensor();
+		secondSensorTag.enableSensor();
+		firstSensorTag.setPeriod(SAMPLE_PERIOD);
+		secondSensorTag.setPeriod(SAMPLE_PERIOD);
+		firstSensorTag.setNotificationsEnabled(true);
+		secondSensorTag.setNotificationsEnabled(true);
 		
 		running = true;
 	}
@@ -54,8 +65,10 @@ public class SensorTagDataReceiver extends WalkDataReceiver implements
 	@Override
 	public void stopReceiving() {
 		running = false;
-		sensorTag.setNotificationsEnabled(false);
-		sensorTag.close();
+		firstSensorTag.setNotificationsEnabled(false);
+		secondSensorTag.setNotificationsEnabled(false);
+		firstSensorTag.close();
+		secondSensorTag.close();
 	}
 
 }

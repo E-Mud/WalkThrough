@@ -13,10 +13,11 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class SensorTagConnectionManager implements LeScanCallback, SensorTag.ConnectionListener {
 	private AnalysisService service;
-	private SensorTag sensorTag;
+	private SensorTag firstSensor;
 
 	public SensorTagConnectionManager(AnalysisService serv){
 		service = serv;
+		firstSensor = null;
 	}
 
 	@Override
@@ -26,17 +27,21 @@ public class SensorTagConnectionManager implements LeScanCallback, SensorTag.Con
 				(BluetoothManager) service.getSystemService(Context.BLUETOOTH_SERVICE);
 		BluetoothAdapter adapter = bluetoothManager.getAdapter();
 		
-		sensorTag = new SensorTag(adapter);
+		SensorTag sensorTag = new SensorTag(adapter);
 		sensorTag.setConnectionListener(this);
 		sensorTag.connectToDevice(service, device.getAddress());
 	}
 	
 	@Override
-	public void connectionStateChanged(boolean success){
+	public void connectionStateChanged(SensorTag sensorTag, boolean success){
 		android.util.Log.i("STCM", "connectionCompleted " + success);
 		if(success){
-			SensorTagDataReceiver receiver = new SensorTagDataReceiver(sensorTag);
-			service.receiverBuilded(receiver);
+			if(firstSensor == null){
+				firstSensor = sensorTag;
+			}else{
+				SensorTagDataReceiver receiver = new SensorTagDataReceiver(firstSensor, sensorTag);
+				service.receiverBuilded(receiver);
+			}
 		}else{
 			service.sensorDisconnected();
 		}

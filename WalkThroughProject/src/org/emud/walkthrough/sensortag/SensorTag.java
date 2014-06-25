@@ -89,7 +89,7 @@ public class SensorTag extends BluetoothGattCallback {
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
         	close();
         	if(connectionListener != null)
-        		connectionListener.connectionStateChanged(false);
+        		connectionListener.connectionStateChanged(this, false);
         	setIdle();
         }
 	}
@@ -107,7 +107,7 @@ public class SensorTag extends BluetoothGattCallback {
 		}
 		
     	if(connectionListener != null)
-    		connectionListener.connectionStateChanged(success);
+    		connectionListener.connectionStateChanged(this, success);
 		
 		setIdle();
 	}
@@ -126,7 +126,7 @@ public class SensorTag extends BluetoothGattCallback {
 		//TODO
 		setIdle();
 		if(notificationListener != null)
-			notificationListener.onNotificationReceived(characteristic.getValue());
+			notificationListener.onNotificationReceived(this, characteristic.getValue());
 	}
 
 	@Override
@@ -225,10 +225,10 @@ public class SensorTag extends BluetoothGattCallback {
 	}
 	
 	public static interface NotificationListener{
-		public void onNotificationReceived(byte[] values);
+		public void onNotificationReceived(SensorTag sensorTag, byte[] values);
 	}
 	
 	public static interface ConnectionListener{
-		public void connectionStateChanged(boolean success);
+		public void connectionStateChanged(SensorTag sensorTag, boolean success);
 	}
 }

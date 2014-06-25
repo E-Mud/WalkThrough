@@ -76,15 +76,17 @@ public class RegisterActivity extends WtFragmentActivity implements OnClickListe
 			return true;
 		}
 		
+		//client.createProfile(null);
+		
 		String nickname = ((TextView)findViewById(R.id.register_nickname)).getText().toString();
 		//String name = ((TextView)findViewById(R.id.register_name)).getText().toString();
 		//String lastName = ((TextView)findViewById(R.id.register_lastname)).getText().toString();
 		//int height = Integer.valueOf(((TextView)findViewById(R.id.register_height)).getText().toString()).intValue();
-		double weight = Double.valueOf(((TextView)findViewById(R.id.register_weight)).getText().toString()).intValue();
-		
+		//double weight = Double.valueOf(((TextView)findViewById(R.id.register_weight)).getText().toString()).intValue();
+		double legLength = 10;
 		int id = 0; 
 		try {
-			id = client.registerNewUser(nickname, password, weight);
+			id = client.registerNewUser(nickname, password, legLength);
 		} catch (ConnectionFailedException e) {
 			showCustomDialog(CONNECTION_FAILED_DIALOG);
 			return true;

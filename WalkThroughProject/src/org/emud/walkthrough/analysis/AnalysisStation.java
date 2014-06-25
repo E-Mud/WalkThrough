@@ -2,12 +2,21 @@ package org.emud.walkthrough.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.emud.walkthrough.model.Result;
 
 public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
+	private static enum AnalysisState{PREPARED,
+		RUNNING,
+		PAUSED,
+		STOPPED};
+		
 	private ArrayList<Analyst> analysts;
 	private WalkDataReceiver walkDataReceiver;
+	private Dispatcher dispatcher;
+	private LinkedBlockingQueue<AccelerometerData> dataQueue;
+	private AnalysisState state;
 	
 	/**
 	 * Constructor de AnalysisStation. Se recomienda usar la clase estatica AnalysisStationBuilder en su lugar.
@@ -17,6 +26,13 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	public AnalysisStation(WalkDataReceiver dr, ArrayList<Analyst> listAnalysts){
 		walkDataReceiver = dr;
 		analysts = new ArrayList<Analyst>(listAnalysts);
+		dataQueue = new LinkedBlockingQueue<AccelerometerData>();
+		state = AnalysisState.PREPARED;
+	}
+	
+	private void dispatch(AccelerometerData data) {
+		for(Analyst analyst : analysts)
+			analyst.analyzeNewData(data);
 	}
 	
 	/**
@@ -24,28 +40,47 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	 * 
 	 */
 	public void startAnalysis(){
-		walkDataReceiver.startReceiving();
+		if(state == AnalysisState.PREPARED){
+			dispatcher = new Dispatcher(this, dataQueue);
+			walkDataReceiver.startReceiving();
+			state = AnalysisState.RUNNING;
+			dispatcher.start();
+		}
 	}
 	
 	/**
 	 * Pausar el análisis.
 	 */
 	public void pauseAnalysis(){
-		walkDataReceiver.pauseReceiving();
+		if(state == AnalysisState.RUNNING){
+			walkDataReceiver.pauseReceiving();
+			state = AnalysisState.PAUSED;
+		}
 	}
 	
 	/**
 	 * Reanudar el análisis.
 	 */
 	public void resumeAnalysis(){
-		walkDataReceiver.resumeReceiving();
+		if(state == AnalysisState.PREPARED){
+			startAnalysis();
+		}else{
+			if(state == AnalysisState.PAUSED){
+				walkDataReceiver.resumeReceiving();
+				state = AnalysisState.RUNNING;
+			}
+		}
 	}
 	
 	/**
 	 * Parar definitivamente el análisis.
 	 */
 	public void stopAnalysis(){
-		walkDataReceiver.stopReceiving();
+		if(state == AnalysisState.RUNNING || state == AnalysisState.PAUSED){
+			walkDataReceiver.stopReceiving();
+			dispatcher.interrupt();
+			state = AnalysisState.STOPPED;
+		}
 	}
 	
 	/**
@@ -66,7 +101,44 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	 */
 	@Override
 	public void onDataReceveid(AccelerometerData accelerometerData) {
-		for(Analyst analyst : analysts)
-			analyst.analyzeNewData(accelerometerData);
+		if(state != AnalysisState.RUNNING)
+			return;
+		try {
+			dataQueue.put(accelerometerData);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static class Dispatcher extends Thread{
+		private boolean exitCorrect;
+		private LinkedBlockingQueue<AccelerometerData> dataQueue;
+		private AnalysisStation analysisStation;
+		
+		public Dispatcher(AnalysisStation station, LinkedBlockingQueue<AccelerometerData> queue){
+			analysisStation = station;
+			dataQueue = queue;
+		}
+		
+		@Override
+		public void interrupt(){
+			exitCorrect = true;
+			super.interrupt();
+		}
+		
+		@Override
+		public void run() {
+			AccelerometerData data;
+			exitCorrect=false;
+			try{
+				while(true){
+					data = dataQueue.take();
+					analysisStation.dispatch(data);
+				}
+			}catch(InterruptedException e){
+				if(!exitCorrect)
+					e.printStackTrace();					
+			}
+		}		
 	}
 }
