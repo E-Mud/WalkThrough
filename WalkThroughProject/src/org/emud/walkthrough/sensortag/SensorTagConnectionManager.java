@@ -32,13 +32,20 @@ public class SensorTagConnectionManager implements LeScanCallback, SensorTag.Con
 		sensorTag.connectToDevice(service, device.getAddress());
 	}
 	
+	private synchronized boolean setFirstSensor(SensorTag sensorTag){
+		if(firstSensor == null){
+			firstSensor = sensorTag;			
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	@Override
 	public void connectionStateChanged(SensorTag sensorTag, boolean success){
 		android.util.Log.i("STCM", "connectionCompleted " + success);
 		if(success){
-			if(firstSensor == null){
-				firstSensor = sensorTag;
-			}else{
+			if(setFirstSensor(sensorTag)){
 				SensorTagDataReceiver receiver = new SensorTagDataReceiver(firstSensor, sensorTag);
 				service.receiverBuilded(receiver);
 			}

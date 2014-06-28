@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_vertical|center"
     android:layout_marginBottom="12dp"
     android:layout_marginTop="12dp"
+    android:gravity="left|center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="12dp" >
+    android:paddingBottom="12dp"
+    android:paddingTop="12dp" >
 
-    <ImageView
+    <!-- ImageView
         android:id="@+id/result_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_action_done" />
+        android:src="@drawable/ic_action_done" /-->
+
+    <ImageView
+        style="@style/BaseSq"
+        android:id="@+id/result_colorbrand"
+        android:minWidth="12dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

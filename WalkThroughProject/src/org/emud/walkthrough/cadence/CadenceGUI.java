@@ -19,7 +19,7 @@ public class CadenceGUI implements ResultGUIResolver {
 
 		view = inflater.inflate(R.layout.base_result_detail, null);
 
-		((ImageView) view.findViewById(R.id.result_icon)).setImageResource(R.drawable.ic_action_done);
+		((ImageView) view.findViewById(R.id.result_colorbrand)).setBackgroundResource(getColorBrandResource());
 		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_cadence_title);
 		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_cadence_unit);
 		((TextView) view.findViewById(R.id.result_value)).setText("" + String.format("%.2f", ((Cadence) result).getCadence()));
@@ -37,4 +37,8 @@ public class CadenceGUI implements ResultGUIResolver {
 		return "Ritmo";
 	}
 
+	@Override
+	public int getColorBrandResource() {
+		return R.color.result_cadence;
+	}
 }

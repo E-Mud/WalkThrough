@@ -197,10 +197,12 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			do{
 				GregorianCalendar cal = new GregorianCalendar();
 				WalkActivity act;
+				long activity_id = cursor.getLong(0);
+				List<Result> results = this.getActivityResults(activity_id);
 				
 				cal.setTimeInMillis(cursor.getLong(1));
-				act = new WalkActivity(cal);
-				act.setId(cursor.getLong(0));
+				act = new WalkActivity(cal, results);
+				act.setId(activity_id);
 				list.add(act);
 			}while(cursor.moveToNext());
 		}

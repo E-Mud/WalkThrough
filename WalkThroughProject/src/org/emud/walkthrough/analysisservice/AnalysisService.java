@@ -13,6 +13,7 @@ import org.emud.walkthrough.analysisservice.ScreenBroadcastReceiver.ScreenOnOffL
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.monitor.Monitor;
 import org.emud.walkthrough.sensortag.DeviceScanner;
 import org.emud.walkthrough.sensortag.SensorTagConnectionManager;
 import org.emud.walkthrough.sensortag.SensorTagDataReceiver;
@@ -58,6 +59,7 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 	private HashSet<Integer> setResultsTypes;
 	
 	private DeviceScanner scanner;
+	private Monitor monitor;
 	
 	@Override
 	public void onCreate(){
@@ -250,6 +252,9 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 		intent.putExtra(N_RECEIVER_KEY, 1);
 		
 		sendBroadcast(intent);
+		
+		monitor = new Monitor(this);
+		receiver.addOnDataReceivedListener(monitor);
 	}
 	
 	public class LocalBinder extends Binder {

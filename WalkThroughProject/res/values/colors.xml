@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_lowest">#2D882D</color>
+    <color name="color_medium">#AA9739</color>
+    <color name="color_highest">#AA3939</color>
+    <color name="color_grey">#DEDEDE</color>
+    <color name="result_steps">#BED269</color>
+    <color name="result_cadence">#63B359</color>
+    <color name="result_maxaccel">#DB6D6D</color>
+    <color name="result_speed">#DBC86D</color>
+    
+</resources>

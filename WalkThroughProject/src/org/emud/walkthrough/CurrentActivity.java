@@ -1,22 +1,26 @@
 package org.emud.walkthrough;
 
+import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver.UpdateListener;
+import org.emud.walkthrough.monitor.MonitorFragment;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class CurrentActivity extends Activity implements OnClickListener, UpdateListener {
+public class CurrentActivity extends FragmentActivity implements OnClickListener, UpdateListener {
 	private ImageView pauseResumeIcon, stopIcon;
 	private ToggleButton left, right;
 	private int serviceState;
@@ -57,6 +61,14 @@ public class CurrentActivity extends Activity implements OnClickListener, Update
 	            bound = false;
 	        }
 	    };
+	    
+	    int receiverType = getIntent().getIntExtra(AnalysisService.RECEIVER_TYPE_KEY, WalkDataReceiver.SINGLE_ACCELEROMETER); 
+	    if(receiverType == WalkDataReceiver.TWO_ACCELEROMETERS){
+	    	Fragment contentFragment = new MonitorFragment();
+	    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+	    	fragmentTransaction.replace(R.id.center_content, contentFragment);
+			fragmentTransaction.commit();
+	    }
 	}
 
 
@@ -200,8 +212,7 @@ public class CurrentActivity extends Activity implements OnClickListener, Update
 		
 		serviceState = service.getState();
 		
-		if(!connected)
-			right.setChecked(false);
+		right.setChecked(false);
 		
 		updateUI();
 	}

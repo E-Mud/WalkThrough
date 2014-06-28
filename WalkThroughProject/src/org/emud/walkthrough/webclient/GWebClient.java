@@ -122,8 +122,8 @@ public class GWebClient implements WebClient {
 		if(!isReady())
 			return -1;
 		
-		String[] atts = new String[]{"D.y", "username", "password", "leglength"};
-		String[] values = new String[]{"wtuser", userName, password, ""+legLength};
+		String[] atts = new String[]{"D.y", "username", "password", "leglength", "activity"};
+		String[] values = new String[]{"wtuser", userName, password, ""+legLength, ""};
 		/*String[] atts = new String[]{"D.y"};
 		String[] values = new String[]{"wtuser"};*/
 		String[] fields = new String[]{"D.k"};

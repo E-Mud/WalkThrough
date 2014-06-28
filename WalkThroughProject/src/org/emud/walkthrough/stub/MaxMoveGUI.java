@@ -20,7 +20,7 @@ public class MaxMoveGUI implements ResultGUIResolver {
 
 		view = inflater.inflate(R.layout.base_result_detail, null);
 
-		((ImageView) view.findViewById(R.id.result_icon)).setImageResource(R.drawable.ic_action_done);
+		((ImageView) view.findViewById(R.id.result_colorbrand)).setBackgroundResource(R.color.result_maxaccel);
 		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_max_move_title);
 		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_max_move_unit);
 		((TextView) view.findViewById(R.id.result_value)).setText("" + ((ResultMaxMove) result).getMaxAcceleration());
@@ -36,5 +36,10 @@ public class MaxMoveGUI implements ResultGUIResolver {
 	@Override
 	public String getTitle() {
 		return "Máxima aceleración";
+	}
+
+	@Override
+	public int getColorBrandResource() {
+		return R.color.result_maxaccel;
 	}
 }

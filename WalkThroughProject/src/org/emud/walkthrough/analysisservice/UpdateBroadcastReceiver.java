@@ -57,5 +57,4 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
 		public void onReceiverDisconnected(Intent intent);
 		public void onConnectingResult(Intent intent);
 	}
-
 }

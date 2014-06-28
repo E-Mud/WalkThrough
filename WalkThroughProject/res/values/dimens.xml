@@ -5,5 +5,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     
     <dimen name="draweritem_padding">6dp</dimen>
+    <dimen name="squarelayout_margin">4dp</dimen>
 
 </resources>

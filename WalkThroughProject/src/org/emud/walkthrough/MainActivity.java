@@ -37,11 +37,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity implements OnClickListener, OnAcceptButtonClickedListener, OnActivitySelectedListener, OnNavigationListener {
 	private static final int NEW_ACTIVITY_CONTENT = 0,
@@ -111,8 +115,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		for(int i=0; i<n; i++)
 			listTitles[i] = resultTypes[i].getGUIResolver().getTitle();*/
 		
-		spinnerAdapter = new ArrayAdapter<ResultType>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, ResultType.values());
+		/*spinnerAdapter = new ArrayAdapter<ResultType>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1, ResultType.values());*/
+		spinnerAdapter = new ResultDropdownAdapter(this);
 		actionBar.setListNavigationCallbacks(spinnerAdapter, this);
 		
 		resultTypeFilter = new ResultTypeFilter(ResultType.RT_STEPS);
@@ -350,6 +355,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		((WalkThroughApplication) getApplicationContext()).setServiceState(AnalysisService.SERVICE_PREPARED);
 		
 		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
+		intentCurrentActivity.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiverType);
 		startActivity(intentCurrentActivity);
 		finish();
 	}
@@ -365,6 +371,41 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		resultTypeFilter.setResultType(spinnerAdapter.getItem(itemPosition));
 		return true;
+	}
+	
+	private static class ResultDropdownAdapter extends ArrayAdapter<ResultType>{
+
+		public ResultDropdownAdapter(Context context) {
+			super(context, R.layout.listitem_dropdown, R.id.item_dropdown_title, ResultType.values());
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup viewGroup){
+			if(convertView == null){
+				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = inflater.inflate(R.layout.listitem_dropdown, null);
+			}
+			
+			ResultType resultType = getItem(position);
+			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resultType.toString());
+			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resultType.getGUIResolver().getColorBrandResource());
+			
+			return convertView;
+		}
+		
+		@Override
+		public View getDropDownView(int position, View convertView, ViewGroup viewGroup){
+			if(convertView == null){
+				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = inflater.inflate(R.layout.listitem_dropdown, null);
+			}
+			
+			ResultType resultType = getItem(position);
+			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resultType.toString());
+			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resultType.getGUIResolver().getColorBrandResource());
+			
+			return convertView;
+		}
 	}
 	
 }

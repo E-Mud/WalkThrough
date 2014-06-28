@@ -13,5 +13,7 @@ public interface ResultGUIResolver {
 	
 	public View getDetailView(LayoutInflater inflater, Result result);
 	
+	public int getColorBrandResource();
+	
 	public ListAdapter getListAdapter(Context context);
 }
