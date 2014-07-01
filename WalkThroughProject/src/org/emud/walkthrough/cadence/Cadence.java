@@ -29,4 +29,14 @@ public class Cadence extends Result {
 		this.cadence = cadence;
 	}
 
+	@Override
+	public double doubleValue() {
+		return cadence;
+	}
+
+	@Override
+	public String valueAsString() {
+		return String.format("%.2f", cadence);
+	}
+
 }

@@ -28,4 +28,14 @@ public class StepsCount extends Result {
 	public void setSteps(int steps) {
 		this.steps = steps;
 	}
+
+	@Override
+	public double doubleValue() {
+		return steps;
+	}
+
+	@Override
+	public String valueAsString() {
+		return ""+steps;
+	}
 }

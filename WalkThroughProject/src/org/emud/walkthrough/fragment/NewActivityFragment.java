@@ -65,7 +65,7 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 			CheckBox cb = new CheckBox(getActivity());
 			
 			cb.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-			cb.setText(resolver.getTitle());
+			cb.setText(resolver.getLongTitleResource());
 			cb.setOnClickListener(checkBoxListener);
 			cb.setId(resultType.intValue() + 1);
 			

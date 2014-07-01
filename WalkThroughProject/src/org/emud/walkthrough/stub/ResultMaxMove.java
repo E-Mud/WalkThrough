@@ -28,6 +28,16 @@ public class ResultMaxMove extends Result {
 	public void setMaxAcceleration(double maxAccel) {
 		this.maxAccel = maxAccel;
 	}
+
+	@Override
+	public double doubleValue() {
+		return maxAccel;
+	}
+
+	@Override
+	public String valueAsString() {
+		return String.format("%.2f", maxAccel);
+	}
 	
 	
 }

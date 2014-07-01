@@ -22,7 +22,7 @@
         <ImageView
             android:id="@+id/item_dropdown_brandcolor"
             style="@style/DropdownSq"
-            android:minWidth="12dp" />
+            android:minWidth="8dp" />
 
     </LinearLayout>
 

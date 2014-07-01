@@ -1,14 +1,9 @@
 package org.emud.walkthrough;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.emud.content.observer.Subject;
-import org.emud.support.v4.content.ObserverLoader;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
-import org.emud.walkthrough.database.ActivitiesDataSource;
-import org.emud.walkthrough.database.ResultsQuery;
 import org.emud.walkthrough.fragment.ActivitiesListFragment;
 import org.emud.walkthrough.fragment.ActivitiesListFragment.OnActivitySelectedListener;
 import org.emud.walkthrough.fragment.DateFilterFragment;
@@ -16,8 +11,8 @@ import org.emud.walkthrough.fragment.NewActivityFragment;
 import org.emud.walkthrough.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
 import org.emud.walkthrough.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.fragment.ResultsListFragment;
-import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
+import org.emud.walkthrough.resulttype.ResultGUIResolver;
 import org.emud.walkthrough.resulttype.ResultType;
 
 import android.annotation.SuppressLint;
@@ -288,11 +283,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				enableResultTypeFilter();
 			if(myResultsGraphFragment == null){
 				myResultsGraphFragment = new ResultsGraphFragment();
-				ActivitiesDataSource actDataSource = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
-				DateFilter dateFilter = dateFilterFragment.getDateFilter();
-				ResultsQuery resultsQuery = new ResultsQuery(resultTypeFilter, actDataSource, dateFilter);
-				ObserverLoader<List<Result> > loader = new ObserverLoader<List<Result> >(this, resultsQuery, Arrays.asList(new Subject[]{dateFilter.getDataSubject(), actDataSource.getActivitiesSubject()}));
-				myResultsGraphFragment.setLoader(loader);
+				myResultsGraphFragment.setDateFilter(dateFilterFragment.getDateFilter());
+				myResultsGraphFragment.setResultTypeFilter(resultTypeFilter);
+				myResultsGraphFragment.setActivitiesDataSource(((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource());
 			}
 			contentFragment = myResultsGraphFragment;
 			break;
@@ -385,10 +378,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflater.inflate(R.layout.listitem_dropdown, null);
 			}
-			
-			ResultType resultType = getItem(position);
-			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resultType.toString());
-			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resultType.getGUIResolver().getColorBrandResource());
+
+			ResultGUIResolver resolver = getItem(position).getGUIResolver();
+			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resolver.getTitleResource());
+			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resolver.getColorBrandResource());
 			
 			return convertView;
 		}
@@ -400,9 +393,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 				convertView = inflater.inflate(R.layout.listitem_dropdown, null);
 			}
 			
-			ResultType resultType = getItem(position);
-			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resultType.toString());
-			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resultType.getGUIResolver().getColorBrandResource());
+			ResultGUIResolver resolver = getItem(position).getGUIResolver();
+			((TextView) convertView.findViewById(R.id.item_dropdown_title)).setText(resolver.getTitleResource());
+			((ImageView) convertView.findViewById(R.id.item_dropdown_brandcolor)).setBackgroundResource(resolver.getColorBrandResource());
 			
 			return convertView;
 		}

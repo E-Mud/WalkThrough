@@ -3,11 +3,10 @@ package org.emud.walkthrough.stub;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 
-import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.analysis.AccelerometerData;
+import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.pedometer.MedianFilter;
-import org.emud.walkthrough.pedometer.StepsCounter;
 
 import android.content.Context;
 

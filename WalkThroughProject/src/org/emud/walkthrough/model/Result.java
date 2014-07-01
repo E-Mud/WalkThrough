@@ -15,6 +15,10 @@ public abstract class Result {
 		this.type = type;
 	}	
 	
+	abstract public double doubleValue();
+	
+	abstract public String valueAsString();
+	
 	public ResultType getType() {
 		return type;
 	}

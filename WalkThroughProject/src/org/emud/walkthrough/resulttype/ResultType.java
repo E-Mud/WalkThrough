@@ -38,7 +38,7 @@ public enum ResultType {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public String toString(){
 		switch(this){
 		case RT_MAX_MOVE:
@@ -52,5 +52,5 @@ public enum ResultType {
 		default:
 			return null;
 		}
-	}
+	}*/
 }

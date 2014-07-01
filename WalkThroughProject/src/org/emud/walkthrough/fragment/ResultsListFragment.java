@@ -18,6 +18,11 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 
 public class ResultsListFragment extends ListFragment  implements LoaderCallbacks<List<Result> >, Observer{
@@ -105,5 +110,45 @@ public class ResultsListFragment extends ListFragment  implements LoaderCallback
 	@Override
 	public void update() {
 		updateResultType();
+	}
+	
+	private static class ChoiceModeListener implements AbsListView.MultiChoiceModeListener{
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.choicemode, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			if(item.getItemId() == R.id.action_delete){
+				
+				
+				return true;
+			}
+			
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onItemCheckedStateChanged(ActionMode mode, int position,
+				long id, boolean checked) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }

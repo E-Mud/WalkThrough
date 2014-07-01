@@ -1,45 +1,30 @@
 package org.emud.walkthrough.stub;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.resulttype.ResultGUIResolver;
+import org.emud.walkthrough.resulttype.ResultListAdapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
-public class MaxMoveGUI implements ResultGUIResolver {
-	
-
-	@Override
-	public View getDetailView(LayoutInflater inflater, Result result) {
-		View view = null;
-
-		view = inflater.inflate(R.layout.base_result_detail, null);
-
-		((ImageView) view.findViewById(R.id.result_colorbrand)).setBackgroundResource(R.color.result_maxaccel);
-		((TextView) view.findViewById(R.id.result_title)).setText(R.string.rt_max_move_title);
-		((TextView) view.findViewById(R.id.result_unit)).setText(R.string.rt_max_move_unit);
-		((TextView) view.findViewById(R.id.result_value)).setText("" + ((ResultMaxMove) result).getMaxAcceleration());
-		
-		return view;
-	}
-
+public class MaxMoveGUI extends ResultGUIResolver {
 	@Override
 	public ListAdapter getListAdapter(Context context) {
-		return new MaxMoveListAdapter(context);
+		return new ResultListAdapter<ResultMaxMove>(context);
 	}
 
 	@Override
-	public String getTitle() {
-		return "Máxima aceleración";
+	public int getTitleResource() {
+		return R.string.rt_max_move_title;
 	}
 
 	@Override
 	public int getColorBrandResource() {
 		return R.color.result_maxaccel;
+	}
+
+	@Override
+	public int getUnitResource() {
+		return R.string.rt_max_move_unit;
 	}
 }
