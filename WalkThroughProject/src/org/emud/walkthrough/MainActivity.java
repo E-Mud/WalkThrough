@@ -63,28 +63,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	
 	private List<ResultType> analysts;
 	private int receiverType;
+
+	private boolean closingOnFinish;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//((WalkThroughApplication) getApplicationContext()).setServiceState(AnalysisService.SERVICE_NONE);
 		boolean analysisServiceRunning = isAnalysisServiceRunning();
 		
 		if(analysisServiceRunning){
 			Intent intent = new Intent(this, CurrentActivity.class);
 			startActivity(intent);
+        	closingOnFinish = false;
 			finish();
 			return;			
 		}
-		/*
-		int serviceState = ((WalkThroughApplication) getApplicationContext()).getServiceState();
-		if(serviceState != AnalysisService.SERVICE_NONE){
-			Intent intent = new Intent(this, CurrentActivity.class);
-			startActivity(intent);
-			finish();
-			return;
-		}*/
 		
 		setContentView(R.layout.activity_main);
 		
@@ -96,7 +90,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 			currentContent = MY_ACTIVITIES_CONTENT;
 		}
 		
-		
 		findViewById(R.id.drawer_newactivity_item).setOnClickListener(this);
 		findViewById(R.id.drawer_myactivities_item).setOnClickListener(this);
 		findViewById(R.id.drawer_myresults_item).setOnClickListener(this);
@@ -104,14 +97,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		
 		ActionBar actionBar = getActionBar();
 		
-		/*ResultType[] resultTypes = ResultType.values();
-		int n = resultTypes.length;
-		String[] listTitles = new String[n];
-		for(int i=0; i<n; i++)
-			listTitles[i] = resultTypes[i].getGUIResolver().getTitle();*/
-		
-		/*spinnerAdapter = new ArrayAdapter<ResultType>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, ResultType.values());*/
 		spinnerAdapter = new ResultDropdownAdapter(this);
 		actionBar.setListNavigationCallbacks(spinnerAdapter, this);
 		
@@ -144,6 +129,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		fragmentTransaction.replace(R.id.main_datefilter_frame, dateFilterFragment);
 		fragmentTransaction.commit();
+		
+		closingOnFinish = true;
 	}
 
 	private boolean isAnalysisServiceRunning() {
@@ -166,10 +153,20 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
         	Intent intent = new Intent();
         	intent.setClass(this, LogInActivity.class);
         	startActivity(intent);
+        	closingOnFinish = false;
         	finish();
         }else{
         	setNewContent(currentContent);
         }
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(closingOnFinish){
+			closingOnFinish = false;
+			((WalkThroughApplication) getApplicationContext()).onClose();
+		}
+		super.onDestroy();
 	}
 	
 	@Override
@@ -350,6 +347,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 		Intent intentCurrentActivity = new Intent(this, CurrentActivity.class);
 		intentCurrentActivity.putExtra(AnalysisService.RECEIVER_TYPE_KEY, receiverType);
 		startActivity(intentCurrentActivity);
+    	closingOnFinish = false;
 		finish();
 	}
 

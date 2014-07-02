@@ -16,7 +16,7 @@
     <string name="register_gender_title">Sexo</string>
     <string name="register_height_title">Altura</string>
     <string name="register_height_hint">Altura (cm)</string>
-    <string name="register_weight_hint">Peso (kg)</string>
+    <string name="register_leglength_hint">Longitud de pierna (cm)</string>
     <string name="register_done_title">OK</string>
     <string name="genderpicker_title">Sexo</string>
     <string name="drawer_open">Abrir menu</string>
@@ -39,6 +39,8 @@
     <string name="icd_message">El contacto de emergencia debe tener número de teléfono.</string>
     <string name="nrpd_title">Lista de analisis incorrecta</string>
     <string name="nrpd_message">Debe escoger al menos un tipo de análisis.</string>
+    <string name="register_progress_message">Registrando datos...</string>
+    <string name="login_progress_message">Identificando usuario...</string>
 
     <!-- LogIN -->
     <string name="login_username_hint">Nombre de usuario</string>

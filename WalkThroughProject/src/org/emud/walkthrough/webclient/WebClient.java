@@ -1,11 +1,9 @@
 package org.emud.walkthrough.webclient;
 
-import org.emud.walkthrough.database.ActivitiesDataSource;
-import org.emud.walkthrough.database.UserDataSource;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
 
-public interface WebClient extends ActivitiesDataSource, UserDataSource{
+public interface WebClient{
 	
 	public boolean init();
 	
@@ -18,9 +16,13 @@ public interface WebClient extends ActivitiesDataSource, UserDataSource{
 	public int registerNewUser(String userName, String password, double weight)
 			throws ConnectionFailedException, UsedNicknameException;
 
-	public boolean logInUser(String username, String password) throws ConnectionFailedException;
+	public User logInUser(String username, String password) throws ConnectionFailedException;
 
-	public User getWebProfile() throws ConnectionFailedException, UnauthorizedException;
+	public User getWebProfile();
 	
 	public boolean insertWalkActivity(WalkActivity activity);
+
+	public void close();
+
+	public void logOutUser();
 }

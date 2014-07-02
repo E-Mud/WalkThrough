@@ -7,11 +7,13 @@ import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
-import org.emud.walkthrough.stub.StubWebClient;
+import org.emud.walkthrough.webclient.GWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+
+import com.zhealth.gnubila.android.gService;
 
 public class WalkThroughApplication extends Application {
 	private WebClient defaultWebClient;
@@ -28,6 +30,15 @@ public class WalkThroughApplication extends Application {
 		super.onCreate();
 		activeUser = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
 				.getString("activeUserName", null);
+	}
+	
+	/**
+	 * Cierra la aplicación. Se recomienda llamar a esta función antes de cerrar la aplicación para que se cierre la conexión de las fuentes de datos.
+	 * 
+	 */
+	public void onClose() {
+		closeDataSource();
+		closeWebClient();
 	}
 	
 	/**
@@ -63,6 +74,8 @@ public class WalkThroughApplication extends Application {
 			editor.remove("activeUserPassword");
 			editor.commit();
 			closeDataSource();
+			if(defaultWebClient != null)
+				defaultWebClient.logOutUser();
 		}
 	}
 
@@ -89,7 +102,6 @@ public class WalkThroughApplication extends Application {
 	 */
 	public UserDataSource getUserDataSource(){
 		return getDataSource();
-		
 	}
 	
 	/**
@@ -187,14 +199,6 @@ public class WalkThroughApplication extends Application {
 	}
 	
 	/**
-	 * Cierra la aplicación. Se recomienda llamar a esta función antes de cerrar la aplicación para que se cierre la conexión de las fuentes de datos.
-	 * 
-	 */
-	public void close() {
-		closeDataSource();
-	}
-	
-	/**
 	 * Cierra la conexión de la fuente de datos activa.
 	 */
 	private void closeDataSource() {
@@ -203,13 +207,20 @@ public class WalkThroughApplication extends Application {
 			dataSource = null;
 		}
 	}
+	
+	private void closeWebClient(){
+		if(defaultWebClient != null){
+			defaultWebClient.close();
+			defaultWebClient = null;
+		}
+	}
 
 	/**
 	 * Devuelve el cliente web asociado a la aplicación.
 	 * @return Cliente web.
 	 */
-	public WebClient getDefaultWebClient(){
-		return defaultWebClient == null ? defaultWebClient = new StubWebClient() : defaultWebClient;
+	public WebClient getDefaultWebClient(gService service){
+		return defaultWebClient == null ? defaultWebClient = new GWebClient(service) : defaultWebClient;
 	}
 	
 	/**

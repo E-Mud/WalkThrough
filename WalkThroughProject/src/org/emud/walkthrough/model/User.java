@@ -1,14 +1,23 @@
 package org.emud.walkthrough.model;
 
-import java.util.GregorianCalendar;
 
 public class User {
-	int wsId, height, gender;
-	double weight;
-	String username, name, lastname;
-	GregorianCalendar borndate;
+	private int wsId;
+	private double legLength;
+	private String username;
 	
 	public User(){
+		this(-1, null, 0.0d);
+	}
+	
+	public User(String username, double legLength){
+		this(-1, username, legLength);
+	}
+	
+	public User(int wsId, String username, double legLength){
+		this.wsId = wsId;
+		this.username = username;
+		this.legLength = legLength;
 	}
 
 	/**
@@ -26,48 +35,6 @@ public class User {
 	}
 
 	/**
-	 * @return the height
-	 */
-	public int getHeight() {
-		return height;
-	}
-
-	/**
-	 * @param height the height to set
-	 */
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	/**
-	 * @return the gender
-	 */
-	public int getGender() {
-		return gender;
-	}
-
-	/**
-	 * @param gender the gender to set
-	 */
-	public void setGender(int gender) {
-		this.gender = gender;
-	}
-
-	/**
-	 * @return the weight
-	 */
-	public double getWeight() {
-		return weight;
-	}
-
-	/**
-	 * @param weight the weight to set
-	 */
-	public void setWeight(double weight) {
-		this.weight = weight;
-	}
-
-	/**
 	 * @return the username
 	 */
 	public String getUsername() {
@@ -82,44 +49,18 @@ public class User {
 	}
 
 	/**
-	 * @return the name
+	 * @return the legLength
 	 */
-	public String getName() {
-		return name;
+	public double getLegLength() {
+		return legLength;
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param legLength the legLength to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setLegLength(double legLength) {
+		this.legLength = legLength;
 	}
-
-	/**
-	 * @return the lastname
-	 */
-	public String getLastname() {
-		return lastname;
-	}
-
-	/**
-	 * @param lastname the lastname to set
-	 */
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-
-	/**
-	 * @return the borndate
-	 */
-	public GregorianCalendar getBorndate() {
-		return borndate;
-	}
-
-	/**
-	 * @param borndate the borndate to set
-	 */
-	public void setBorndate(GregorianCalendar borndate) {
-		this.borndate = borndate;
-	}
+	
+	
 }

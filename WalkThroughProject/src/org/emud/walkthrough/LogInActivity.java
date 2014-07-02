@@ -2,30 +2,46 @@ package org.emud.walkthrough;
 
 import org.emud.walkthrough.database.UserDataSource;
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
+import org.emud.walkthrough.dialogfragment.ProgressDialogFragment;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
-import org.emud.walkthrough.webclient.UnauthorizedException;
 import org.emud.walkthrough.webclient.WebClient;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.content.Intent;
 
-public class LogInActivity extends FragmentActivity implements OnClickListener {
-
-	private static final int CONNECTION_FAILED_DIALOG = 0, WRONG_DATA_DIALOG = 1;
+public class LogInActivity extends WtFragmentActivity implements OnClickListener {
+	private static final int CONNECTION_FAILED_DIALOG = 0, WRONG_DATA_DIALOG = 1, PROGRESS_DIALOG = 2;
+	private boolean closingOnFinish;
+	private EditText usernameEditText, passwordEditText;
+	private DialogFragment progressDialogFragment;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		
+		closingOnFinish = true;
+		
+		usernameEditText = (EditText)findViewById(R.id.login_username);
+		passwordEditText = (EditText)findViewById(R.id.login_password);
+		
 		findViewById(R.id.login_login).setOnClickListener(this);
 		findViewById(R.id.login_register).setOnClickListener(this);
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(closingOnFinish){
+			closingOnFinish = false;
+			((WalkThroughApplication) getApplicationContext()).onClose();
+		}
+		super.onDestroy();
 	}
 
 	@Override
@@ -47,7 +63,8 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		if(resultCode == RESULT_OK){
 			Bundle extra = data.getExtras();
-			setUpNewUser(extra.getString("username"), extra.getString("password"));
+			User user = new User(extra.getInt("id"), extra.getString("username"), extra.getDouble("leglength"));
+			setUpNewUser(user, extra.getString("password"));
 			
 			goToMainActivity();
 		}
@@ -57,6 +74,7 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		Intent intent = new Intent();
 		intent.setClass(this, MainActivity.class);
 		startActivity(intent);
+		closingOnFinish = false;
 		finish();
 	}
 
@@ -71,29 +89,63 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 			dialogFragment = AlertDialogFragment.newInstance(R.string.wdd_title, R.string.wdd_message);
 			dialogFragment.show(getSupportFragmentManager(), "wrongDataDialog");
 			break;
+		case PROGRESS_DIALOG:
+			dialogFragment = ProgressDialogFragment.newInstance(R.string.login_progress_message);
+			dialogFragment.show(getSupportFragmentManager(), "progressDialog");
+			progressDialogFragment = dialogFragment;
+			break;
 		}
 	}
 	
-	private void logIn() {
-		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
+	private void logIn(){
+		final WebClient webClient = getWebClient();
 		String username, password;
-		WebClient webClient = app.getDefaultWebClient();
-		boolean correctLogIn = false;
+
+		username = usernameEditText.getText().toString();
+		password = passwordEditText.getText().toString();
 		
-		username = ((EditText)findViewById(R.id.login_username)).getText().toString();
-		password = ((EditText)findViewById(R.id.login_password)).getText().toString();
+		new AsyncTask<String, Void, User>(){
+			private Exception exceptionThrowed = null;
+			
+			@Override
+			protected User doInBackground(String... params) {
+				User user = null;
+				try {
+					user = webClient.logInUser(params[0], params[1]);
+				} catch (ConnectionFailedException e) {
+					exceptionThrowed = e;
+				}
+				
+				return user;
+			}
+			
+			@Override
+			protected void onPostExecute(User user){
+				if(progressDialogFragment != null){
+					progressDialogFragment.dismiss();
+					progressDialogFragment = null;
+				}
+				
+				if(exceptionThrowed == null){
+					onLoggedIn(user);
+				}else{
+					showCustomDialog(CONNECTION_FAILED_DIALOG);
+				}
+			}
+			
+		}.execute(username, password);
 		
-		try {
-			correctLogIn = webClient.logInUser(username, password);
-		} catch (ConnectionFailedException e) {
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-		}
+	}
+	
+	private void onLoggedIn(User user){
+		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
+		String password = passwordEditText.getText().toString();
 		
-		if(correctLogIn){
-			if(!app.containsRegisteredUser(username)){
-				setUpNewUser(username, password);
+		if(user != null){
+			if(app.containsRegisteredUser(user.getUsername())){
+				app.setActiveUser(user.getUsername(), password);
 			}else{
-				app.setActiveUser(username, password);
+				setUpNewUser(user, password);
 			}
 			goToMainActivity();
 		}else{
@@ -101,24 +153,13 @@ public class LogInActivity extends FragmentActivity implements OnClickListener {
 		}
 	}
 
-	private void setUpNewUser(String username, String password) {
+	private void setUpNewUser(User user, String password) {
 		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
 		UserDataSource userDataSource;
-		WebClient webClient;
-		User user = null;
+		String username = user.getUsername();
 		
 		app.addUser(username);
 		app.setActiveUser(username, password);
-		
-		webClient = app.getDefaultWebClient();
-		try {
-			webClient.logInUser(username, password);
-			user = webClient.getWebProfile();
-		} catch (ConnectionFailedException e) {
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-		} catch (UnauthorizedException e) {
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-		}
 		
 		userDataSource = app.getUserDataSource();
 		userDataSource.createProfile(user);

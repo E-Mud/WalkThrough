@@ -22,7 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 11;
+	private static final int VERSION = 12;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -31,7 +31,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	
 	//FIXME Mejorar esto si o si
 	private static final String[] PROFILE_COLS = new String[]{
-		"wsId", "nickname", "name", "lastname", "borndate", "gender", "height", "weight"
+		"wsId", "username", "leglength"
 	};
 	private static final String[] ACTIVITY_COLS = new String[]{
 		"date"
@@ -73,14 +73,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		private static final String DB_PROFILE_CREATE="CREATE TABLE " + PROFILE_NAME +
                 " ("+
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                PROFILE_COLS[0] + " LONG NOT NULL, " +
+                PROFILE_COLS[0] + " INTEGER NOT NULL, " +
                 PROFILE_COLS[1] + " TEXT NOT NULL , " + 
-                PROFILE_COLS[2] + " TEXT NOT NULL, " +
-                PROFILE_COLS[3] + " TEXT NOT NULL , " +
-                PROFILE_COLS[4] + " LONG NOT NULL , " +
-                PROFILE_COLS[5] + " INTEGER NOT NULL, " +
-                PROFILE_COLS[6] + " INTEGER NOT NULL, " +
-                PROFILE_COLS[7] + " REAL );";
+                PROFILE_COLS[2] + " REAL NOT NULL);";
 		private static final String DB_ACTIVITY_CREATE = "CREATE TABLE " + ACTIVITY_NAME + " (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				ACTIVITY_COLS[0] + " LONG NOT NULL);";
@@ -109,7 +104,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			/*db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "+ PROFILE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ ACTIVITY_NAME);
 			db.execSQL("DROP TABLE IF EXISTS "+ RESULT_NAME);
 			
@@ -118,8 +113,9 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 				db.execSQL("DROP TABLE IF EXISTS "+ factory.getTableName());
 			}
 			
-            onCreate(db);*/
-			db.execSQL(ResultType.RT_CADENCE.getFactory().getSQLCreateTableStatement());
+            onCreate(db);
+			
+			//db.execSQL(ResultType.RT_CADENCE.getFactory().getSQLCreateTableStatement());
 		}
 	}
 
@@ -130,12 +126,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 
 		values.put(PROFILE_COLS[0], user.getWebServiceId());
 		values.put(PROFILE_COLS[1], user.getUsername());
-		values.put(PROFILE_COLS[2], user.getName());
-		values.put(PROFILE_COLS[3], user.getLastname());
-		values.put(PROFILE_COLS[4], user.getBorndate().getTimeInMillis());
-		values.put(PROFILE_COLS[5], user.getGender());
-		values.put(PROFILE_COLS[6], user.getHeight());
-		values.put(PROFILE_COLS[7], user.getWeight());
+		values.put(PROFILE_COLS[2], user.getLegLength());
 		
 		db.insert(PROFILE_NAME, null, values);
 	}
@@ -150,14 +141,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		result.setWebServiceId(cursor.getInt(0));
 		result.setUsername(cursor.getString(1));
-		result.setName(cursor.getString(2));
-		result.setLastname(cursor.getString(3));
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTimeInMillis(cursor.getLong(4));
-		result.setBorndate(calendar);
-		result.setGender(cursor.getInt(5));
-		result.setHeight(cursor.getInt(6));
-		result.setWeight(cursor.getDouble(7));
+		result.setLegLength(cursor.getDouble(2));
 		
 		cursor.close();
 		

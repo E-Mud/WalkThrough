@@ -1,53 +1,39 @@
 package org.emud.walkthrough;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
-import org.emud.walkthrough.dialogfragment.GenderPickerDialogFragment;
+import org.emud.walkthrough.dialogfragment.ProgressDialogFragment;
 import org.emud.walkthrough.webclient.ConnectionFailedException;
 import org.emud.walkthrough.webclient.UsedNicknameException;
 import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
 
-public class RegisterActivity extends WtFragmentActivity implements OnClickListener, OnDatePickedListener, DialogInterface.OnClickListener {
-	private static final int DATE_PICKER_DIALOG = 0,
-			SEX_PICKER_DIALOG = 1,
-			USED_NICKNAME_DIALOG = 2,
+public class RegisterActivity extends WtFragmentActivity{
+	private static final int USED_NICKNAME_DIALOG = 2,
 			PASSWORDS_NOT_EQUAL_DIALOG = 3,
-			CONNECTION_FAILED_DIALOG = 4;
+			CONNECTION_FAILED_DIALOG = 4,
+			PROGRESS_DIALOG = 5;
 	
-	private GregorianCalendar bornDate;
-	private int gender;
-	private TextView bornDateView, genderView;
+	private EditText usernameEditText, passwordEditText, leglengthEditText;
+
+	private DialogFragment progressDialogFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		bind(this);
 		setContentView(R.layout.activity_register);
 		
-		bornDate = (GregorianCalendar) GregorianCalendar.getInstance();
-		bornDateView = ((TextView)findViewById(R.id.register_borndate));
-		bornDateView.setText(""+bornDate.get(Calendar.DAY_OF_MONTH)+"/"+bornDate.get(Calendar.MONTH)+"/"+bornDate.get(Calendar.YEAR));
-		bornDateView.setOnClickListener(this);
-		
-		gender = 0;
-		genderView = ((TextView)findViewById(R.id.register_gender));
-		genderView.setText(getResources().getStringArray(R.array.genderpicker_stringarray)[gender]);
-		genderView.setOnClickListener(this);
+		usernameEditText = (EditText)findViewById(R.id.register_username);
+		passwordEditText = (EditText)findViewById(R.id.register_password1);
+		leglengthEditText = (EditText)findViewById(R.id.register_leglength);
 	}
 
 	@Override
@@ -57,64 +43,80 @@ public class RegisterActivity extends WtFragmentActivity implements OnClickListe
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		String password = ((TextView)findViewById(R.id.register_password1)).getText().toString();
+	public boolean onOptionsItemSelected(MenuItem item){		
+		final String password = passwordEditText.getText().toString();
 		if(!password.equals(((TextView)findViewById(R.id.register_password2)).getText().toString())){
 			showCustomDialog(PASSWORDS_NOT_EQUAL_DIALOG);
 			return true;
 		}
 		
-		//WebClient client = ((WalkThroughApplication) getApplicationContext()).getDefaultWebClient();
-		WebClient client = getWebClient();
-		boolean initialized = false;
+		final String username = usernameEditText.getText().toString();
+		final double legLength = Double.parseDouble(leglengthEditText.getText().toString());
+		final WebClient client = getWebClient();
 		
-		if(!client.isReady())
-			initialized = client.init();
+		showCustomDialog(PROGRESS_DIALOG);
 		
-		if(!initialized || !client.isConnected()){
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-			return true;
-		}
+		new AsyncTask<Void, Void, Integer>(){
+			private Exception exceptionThrowed = null;
+			
+			@Override
+			protected Integer doInBackground(Void... params) {
+				int id;
+				android.util.Log.d("RegAT", "diInBackground");
+				try {
+					id = client.registerNewUser(username, password, legLength);
+				} catch (Exception e) {
+					android.util.Log.d("RegAT", "catched " + e.getClass().getCanonicalName());
+					e.printStackTrace();
+					exceptionThrowed = e;
+					return -1;
+				}
+				
+				return id;
+			}
+			
+			@Override
+			protected void onPostExecute(Integer result) {
+				if(progressDialogFragment != null){
+					progressDialogFragment.dismiss();
+					progressDialogFragment = null;
+				}
+				android.util.Log.d("RegAT", "onPostExecute: " + result);
+				if(exceptionThrowed != null){
+					if(exceptionThrowed instanceof ConnectionFailedException){
+						showCustomDialog(CONNECTION_FAILED_DIALOG);						
+					}else{
+						if(exceptionThrowed instanceof UsedNicknameException)
+							showCustomDialog(USED_NICKNAME_DIALOG);
+					}
+				}else{
+					userRegistered(result);
+				}
+		     }
+		}.execute();
 		
-		//client.createProfile(null);
-		
-		String nickname = ((TextView)findViewById(R.id.register_nickname)).getText().toString();
-		//String name = ((TextView)findViewById(R.id.register_name)).getText().toString();
-		//String lastName = ((TextView)findViewById(R.id.register_lastname)).getText().toString();
-		//int height = Integer.valueOf(((TextView)findViewById(R.id.register_height)).getText().toString()).intValue();
-		//double weight = Double.valueOf(((TextView)findViewById(R.id.register_weight)).getText().toString()).intValue();
-		double legLength = 10;
-		int id = 0; 
-		try {
-			id = client.registerNewUser(nickname, password, legLength);
-		} catch (ConnectionFailedException e) {
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-			return true;
-		} catch (UsedNicknameException e) {
-			showCustomDialog(USED_NICKNAME_DIALOG);
-			return true;
-		}
-		
-		if(id == -1){
-			showCustomDialog(CONNECTION_FAILED_DIALOG);
-			return true;
-		}
+		return true;
+	}
+	
+	private void userRegistered(int wsId){
+		String username = usernameEditText.getText().toString(),
+				password = passwordEditText.getText().toString();
+		double leglength = Double.parseDouble(leglengthEditText.getText().toString());
 		
 		Intent intent = new Intent();
-		intent.putExtra("id", id);
+		intent.putExtra("id", wsId);
 		intent.putExtra("password", password);
-		intent.putExtra("username", nickname);
+		intent.putExtra("username", username);
+		intent.putExtra("leglength", leglength);
 		setResult(Activity.RESULT_OK, intent);
 		
 		finish();
-		
-		return true;
 	}
 	
 	private void showCustomDialog(int dialogId){
 		DialogFragment dialogFragment;
 		switch(dialogId){
-		case DATE_PICKER_DIALOG:
+		/*case DATE_PICKER_DIALOG:
 			dialogFragment = DatePickerDialogFragment.newInstance(bornDate.get(Calendar.DAY_OF_MONTH), bornDate.get(Calendar.MONTH), bornDate.get(Calendar.YEAR));
 			((DatePickerDialogFragment)dialogFragment).setOnDatePickedListener(this);
 			dialogFragment.show(getSupportFragmentManager(), "datePickerDialog");
@@ -122,7 +124,7 @@ public class RegisterActivity extends WtFragmentActivity implements OnClickListe
 		case SEX_PICKER_DIALOG:
 			dialogFragment = GenderPickerDialogFragment.newInstance(gender);
 			dialogFragment.show(getSupportFragmentManager(), "genderPickerDialog");
-			break;
+			break;*/
 		case USED_NICKNAME_DIALOG:
 			dialogFragment = AlertDialogFragment.newInstance(R.string.und_title, R.string.und_message);
 			dialogFragment.show(getSupportFragmentManager(), "usedNickNameDialog");
@@ -135,9 +137,14 @@ public class RegisterActivity extends WtFragmentActivity implements OnClickListe
 			dialogFragment = AlertDialogFragment.newInstance(R.string.cfd_title, R.string.cfd_message);
 			dialogFragment.show(getSupportFragmentManager(), "connectionFailedDialog");
 			break;
+		case PROGRESS_DIALOG:
+			dialogFragment = ProgressDialogFragment.newInstance(R.string.register_progress_message);
+			dialogFragment.show(getSupportFragmentManager(), "progressDialog");
+			progressDialogFragment = dialogFragment;
+			break;
 		}
 	}
-
+/*
 	@Override
 	public void onClick(View view) {
 		if(view == bornDateView){
@@ -161,5 +168,5 @@ public class RegisterActivity extends WtFragmentActivity implements OnClickListe
 		bornDate.set(Calendar.YEAR, year);
 		bornDateView.setText(""+day+"/"+month+"/"+year);
 	}
-
+*/
 }

@@ -17,7 +17,7 @@
     >
 
     <EditText
-        android:id="@+id/register_nickname"
+        android:id="@+id/register_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -45,84 +45,14 @@
         android:imeOptions="actionNext" />
 
     <EditText
-        android:id="@+id/register_name"
+        android:id="@+id/register_leglength"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/register_name_hint"
-        android:inputType="textPersonName"
-        android:imeOptions="actionNext" />
-
-    <EditText
-        android:id="@+id/register_lastname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/register_lastname_hint"
-        android:inputType="textPersonName"
-        android:imeOptions="actionNext" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/register_born"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register_born_title"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/register_borndate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/register_gender_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register_gender_title"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/register_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmallPopupMenu" />
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/register_height"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/register_height_hint"
-        android:inputType="number"
-        android:imeOptions="actionNext" />
-
-    <EditText
-        android:id="@+id/register_weight"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/register_weight_hint"
+        android:hint="@string/register_leglength_hint"
         android:inputType="numberDecimal"
         android:imeOptions="actionDone" />
 
 </LinearLayout>
 
-    <!--  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".RegisterActivity" -->
 </ScrollView>
