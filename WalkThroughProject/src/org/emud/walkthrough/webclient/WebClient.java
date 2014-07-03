@@ -18,11 +18,13 @@ public interface WebClient{
 
 	public User logInUser(String username, String password) throws ConnectionFailedException;
 
+	public void logOutUser();
+
 	public User getWebProfile();
+	
+	public boolean deleteUserProfile() throws ConnectionFailedException;
 	
 	public boolean insertWalkActivity(WalkActivity activity);
 
 	public void close();
-
-	public void logOutUser();
 }

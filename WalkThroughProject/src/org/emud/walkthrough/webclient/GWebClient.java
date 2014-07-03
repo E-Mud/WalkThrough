@@ -19,10 +19,10 @@ public class GWebClient implements WebClient {
 	private User userLoggedIn;
 	
 	
-	public GWebClient(gService service){
+	public GWebClient(gService service, User user){
 		this.service = service;
 		serviceUserLoggedIn = false;
-		userLoggedIn = null;
+		userLoggedIn = user;
 	}
 	
 	@Override
@@ -157,6 +157,18 @@ public class GWebClient implements WebClient {
 	}
 
 	@Override
+	public boolean deleteUserProfile() throws ConnectionFailedException {
+		checkReady();
+		
+		if(userLoggedIn == null)
+			return false;
+		
+		gData data = service.removeQueryByID(PROJECT_ID, ""+userLoggedIn.getWebServiceId());
+		return data.getValue(0, gConstants.TAG_DK) != null;
+	}
+
+	
+	@Override
 	public boolean insertWalkActivity(WalkActivity activity) {
 		// TODO Auto-generated method stub
 		return false;
@@ -169,5 +181,4 @@ public class GWebClient implements WebClient {
 		service.logOut(PROJECT_ID);
 		service.stop();
 	}
-
 }

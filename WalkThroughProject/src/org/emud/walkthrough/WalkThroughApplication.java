@@ -7,6 +7,7 @@ import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 import org.emud.walkthrough.database.UserDataSource;
+import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.webclient.GWebClient;
 import org.emud.walkthrough.webclient.WebClient;
 
@@ -220,7 +221,15 @@ public class WalkThroughApplication extends Application {
 	 * @return Cliente web.
 	 */
 	public WebClient getDefaultWebClient(gService service){
-		return defaultWebClient == null ? defaultWebClient = new GWebClient(service) : defaultWebClient;
+		if(defaultWebClient == null){
+			User user = null;
+			UserDataSource ds = getUserDataSource();
+			if(ds != null)
+				user = ds.getProfile();
+			
+			defaultWebClient = new GWebClient(service, user);
+		}
+		return defaultWebClient;
 	}
 	
 	/**

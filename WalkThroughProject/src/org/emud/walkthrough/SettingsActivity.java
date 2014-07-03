@@ -2,11 +2,16 @@ package org.emud.walkthrough;
 
 import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment;
+import org.emud.walkthrough.dialogfragment.ProgressDialogFragment;
 import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment.OnConfirmListener;
+import org.emud.walkthrough.webclient.ConnectionFailedException;
+import org.emud.walkthrough.webclient.UsedNicknameException;
+import org.emud.walkthrough.webclient.WebClient;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -14,17 +19,20 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 
-public class SettingsActivity extends FragmentActivity implements OnPreferenceClickListener, OnConfirmListener {
+public class SettingsActivity extends WtFragmentActivity implements OnPreferenceClickListener, OnConfirmListener {
 	private static final int INVALID_CONTACT_DIALOG = 0,
-			CONFIRM_DELETE_DIALOG = 1;
+			CONFIRM_DELETE_DIALOG = 1,
+			CONNECTION_FAILED_DIALOG = 2,
+			PROGRESS_DIALOG = 3;
 
 	private SettingsFragment settingsFragment;
 	private boolean resumingWithBadResult = false;
+
+	private DialogFragment progressDialogFragment;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
 		settingsFragment = new SettingsFragment();
@@ -182,14 +190,62 @@ public class SettingsActivity extends FragmentActivity implements OnPreferenceCl
 			fragment.setConfirmListener(this);
 			fragment.show(getSupportFragmentManager(), "confirmDeleteDialog");
 			break;
+		case CONNECTION_FAILED_DIALOG:
+			dialogFragment = AlertDialogFragment.newInstance(R.string.cfd_title, R.string.cfd_message);
+			dialogFragment.show(getSupportFragmentManager(), "connectionFailedDialog");
+			break;
+		case PROGRESS_DIALOG:
+			dialogFragment = ProgressDialogFragment.newInstance(R.string.delete_progress_message);
+			dialogFragment.show(getSupportFragmentManager(), "progressDialog");
+			progressDialogFragment = dialogFragment;
+			break;
 		}
 	}
 
 	@Override
 	public void buttonClicked() {
-		WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
+		final WebClient webClient = getWebClient(); 
 		
-		app.removeUser(app.getActiveUserName());
-		finish();
+		showCustomDialog(PROGRESS_DIALOG);
+		
+		new AsyncTask<Void, Void, Boolean>(){
+			private Exception exceptionThrowed = null;
+			
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				boolean result;
+				try {
+					result = webClient.deleteUserProfile();
+				} catch (Exception e) {
+					exceptionThrowed = e;
+					return false;
+				}
+				
+				return result;
+			}
+			
+			@Override
+			protected void onPostExecute(Boolean result) {
+				if(progressDialogFragment != null){
+					progressDialogFragment.dismiss();
+					progressDialogFragment = null;
+				}
+
+				if(exceptionThrowed != null){
+					if(exceptionThrowed instanceof ConnectionFailedException)
+						showCustomDialog(CONNECTION_FAILED_DIALOG);
+				}else{
+					userDeleted(result);
+				}
+		     }
+		}.execute();
+	}
+	
+	private void userDeleted(boolean res){
+		if(res){
+			WalkThroughApplication app = (WalkThroughApplication) getApplicationContext();
+			app.removeUser(app.getActiveUserName());
+			finish();
+		}
 	}
 }

@@ -66,8 +66,6 @@ public class RegisterActivity extends WtFragmentActivity{
 				try {
 					id = client.registerNewUser(username, password, legLength);
 				} catch (Exception e) {
-					android.util.Log.d("RegAT", "catched " + e.getClass().getCanonicalName());
-					e.printStackTrace();
 					exceptionThrowed = e;
 					return -1;
 				}

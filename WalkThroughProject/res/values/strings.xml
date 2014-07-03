@@ -41,6 +41,7 @@
     <string name="nrpd_message">Debe escoger al menos un tipo de análisis.</string>
     <string name="register_progress_message">Registrando datos...</string>
     <string name="login_progress_message">Identificando usuario...</string>
+    <string name="delete_progress_message">Borrando usuario...</string>
 
     <!-- LogIN -->
     <string name="login_username_hint">Nombre de usuario</string>
