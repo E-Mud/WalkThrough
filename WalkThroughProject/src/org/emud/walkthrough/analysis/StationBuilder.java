@@ -7,9 +7,9 @@ import java.util.Set;
 import org.emud.walkthrough.fallingdetection.FallingAnalyst;
 import org.emud.walkthrough.fallingdetection.OnFallDetectedListener;
 
-public abstract class AnalysisStationBuilder {
+public abstract class StationBuilder {
 	/**
-	 * Construye un nuevo AnalysisStationBuilder según las especificaciones.
+	 * Construye un nuevo StationBuilder según las especificaciones.
 	 * @param context Context en el que se ejecutará el análisis.
 	 * @param receiverType Tipo del receptor de datos.
 	 * @param resultType Tipo de resultado a obtener.
@@ -23,7 +23,7 @@ public abstract class AnalysisStationBuilder {
 	}
 	
 	/**
-	 * Construye un nuevo AnalysisStationBuilder según las especificaciones. 
+	 * Construye un nuevo StationBuilder según las especificaciones. 
 	 * @param context Context en el que se ejecutará el análisis.
 	 * @param receiverType Tipo del receptor de datos.
 	 * @param resultsTypes Lista de tipos de resultados a obtener.

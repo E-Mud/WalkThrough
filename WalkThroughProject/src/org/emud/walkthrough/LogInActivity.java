@@ -104,6 +104,8 @@ public class LogInActivity extends WtFragmentActivity implements OnClickListener
 		username = usernameEditText.getText().toString();
 		password = passwordEditText.getText().toString();
 		
+		showCustomDialog(PROGRESS_DIALOG);
+		
 		new AsyncTask<String, Void, User>(){
 			private Exception exceptionThrowed = null;
 			

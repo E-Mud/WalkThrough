@@ -3,14 +3,14 @@ package org.emud.walkthrough.pedometer;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.resulttype.ResultType;
 
-public class StepsCount extends Result {
+public class Steps extends Result {
 	private int steps;
 
-	public StepsCount() {
+	public Steps() {
 		this(0);
 	}
 
-	public StepsCount(int count){
+	public Steps(int count){
 		super(ResultType.RT_STEPS);
 		steps = count;
 	}

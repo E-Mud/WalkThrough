@@ -4,17 +4,13 @@ import org.emud.walkthrough.R;
 import org.emud.walkthrough.ServiceMessageHandler;
 import org.emud.walkthrough.ServiceMessageHandler.OnMessageReceivedListener;
 import org.emud.walkthrough.analysis.AnalysisStation;
-import org.emud.walkthrough.analysis.AnalysisStationBuilder;
-import org.emud.walkthrough.analysis.DataReceiverBuilder;
+import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
-import org.emud.walkthrough.analysisservice.AndroidDataReceiverBuilder;
+import org.emud.walkthrough.analysisservice.LinearAccelerometerReceiver;
 
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
-import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.provider.ContactsContract.RawContacts;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,6 +18,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.RawContacts;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 
@@ -35,10 +34,9 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 	
 	@Override
 	public void onCreate(){
-		DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this); 
-		AnalysisStationBuilder stationBuilder = new FallingStationBuilder(this);
+		StationBuilder stationBuilder = new FallingStationBuilder(this);
 		int receiverType = WalkDataReceiver.SINGLE_ACCELEROMETER;
-		WalkDataReceiver receiver = receiverBuilder.buildReceiver(receiverType);
+		WalkDataReceiver receiver = new LinearAccelerometerReceiver(this);
 		
 		station = stationBuilder.buildStation(receiver, receiverType, 0);
 		messenger = new Messenger(new ServiceMessageHandler(this));		

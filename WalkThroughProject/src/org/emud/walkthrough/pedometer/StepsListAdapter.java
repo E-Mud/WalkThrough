@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class StepsListAdapter extends ArrayAdapter<StepsCount>{
+public class StepsListAdapter extends ArrayAdapter<Steps>{
 	
 	public StepsListAdapter(Context context) {
 		super(context, R.layout.listitem_steps);
@@ -22,7 +22,7 @@ public class StepsListAdapter extends ArrayAdapter<StepsCount>{
 	public View getView(int position, View convertView, ViewGroup parent){
 		TextView label;
 		GregorianCalendar cal;
-		StepsCount result;
+		Steps result;
 		
 		if(convertView == null){
 			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

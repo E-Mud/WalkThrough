@@ -6,6 +6,7 @@ import java.util.List;
 
 public class WalkActivity {
 	private long id;
+	private int webId;
 	private GregorianCalendar date;
 	private ArrayList<Result> results;
 	
@@ -53,4 +54,19 @@ public class WalkActivity {
 		return results;
 	}
 
+	/**
+	 * @return the webId
+	 */
+	public int getWebId() {
+		return webId;
+	}
+
+	/**
+	 * @param webId the webId to set
+	 */
+	public void setWebId(int webId) {
+		this.webId = webId;
+	}
+
+	
 }

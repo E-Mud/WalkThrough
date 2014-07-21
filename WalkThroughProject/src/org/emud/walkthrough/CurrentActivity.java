@@ -4,11 +4,15 @@ import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver.UpdateListener;
+import org.emud.walkthrough.database.ActivitiesDataSource;
+import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.MonitorFragment;
+import org.emud.walkthrough.webclient.WebClient;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -20,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class CurrentActivity extends FragmentActivity implements OnClickListener, UpdateListener {
+public class CurrentActivity extends WtFragmentActivity implements OnClickListener, UpdateListener {
 	private ImageView pauseResumeIcon, stopIcon;
 	private ToggleButton left, right;
 	private int serviceState;
@@ -31,7 +35,7 @@ public class CurrentActivity extends FragmentActivity implements OnClickListener
 	
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_currentactivity);
 		
@@ -174,7 +178,28 @@ public class CurrentActivity extends FragmentActivity implements OnClickListener
 		Toast toast;
 		int text;
 
-		text = success ? R.string.currentactivity_insertion_success : R.string.currentactivity_insertion_failed;
+		if(success){
+			text = R.string.currentactivity_insertion_success;
+			long activity_id = intent.getLongExtra(AnalysisService.ACTIVITY_ID_KEY, -1);
+			if(activity_id != -1){
+				final WebClient webClient = getWebClient();
+				final ActivitiesDataSource ds = ((WalkThroughApplication) getApplicationContext()).getActivitiesDataSource();
+				new AsyncTask<Long,Void,Void>(){
+					@Override
+					protected Void doInBackground(Long... params) {
+						long activity_id = params[0];
+						WalkActivity activity = ds.getActivity(activity_id);
+						int webId = webClient.insertWalkActivity(activity);
+						if(webId != -1)
+							ds.updateActivity(activity_id, activity);
+
+						return null;
+					}
+				}.execute(new Long[]{activity_id});
+			}
+		}else{
+			text = R.string.currentactivity_insertion_failed;
+		}
 		
 		toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
 		toast.show();

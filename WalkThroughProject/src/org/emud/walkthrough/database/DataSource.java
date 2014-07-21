@@ -22,7 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 12;
+	private static final int VERSION = 14;
 	private SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -34,10 +34,10 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		"wsId", "username", "leglength"
 	};
 	private static final String[] ACTIVITY_COLS = new String[]{
-		"date"
+		"date", "wsId"
 	};
 	private static final String[] RESULT_COLS = new String[]{
-		"activity_id", "resultType"
+		"activity_id", "resultType", "wsId"
 	};
 	private static final String PROFILE_NAME = "profile",
 			ACTIVITY_NAME = "activity",
@@ -78,12 +78,14 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
                 PROFILE_COLS[2] + " REAL NOT NULL);";
 		private static final String DB_ACTIVITY_CREATE = "CREATE TABLE " + ACTIVITY_NAME + " (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				ACTIVITY_COLS[0] + " LONG NOT NULL);";
+				ACTIVITY_COLS[0] + " LONG NOT NULL, " +
+				ACTIVITY_COLS[1] + " INTEGER NOT NULL);";
 
 		private static final String DB_RESULT_CREATE = "CREATE TABLE " + RESULT_NAME + " (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				RESULT_COLS[0] + " LONG NOT NULL REFERENCES " + ACTIVITY_NAME + "(_id) ON DELETE CASCADE, " + 
-				RESULT_COLS[1] + " INTEGER NOT NULL);";
+				RESULT_COLS[1] + " INTEGER NOT NULL, " +
+				RESULT_COLS[2] + " INTEGER NOT NULL);";
 
 		
 		public SQLiteHelper(Context context, String name, int version) {
@@ -187,6 +189,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 				cal.setTimeInMillis(cursor.getLong(1));
 				act = new WalkActivity(cal, results);
 				act.setId(activity_id);
+				act.setWebId(cursor.getInt(2));
 				list.add(act);
 			}while(cursor.moveToNext());
 		}
@@ -208,6 +211,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		List<Result> results = act.getResults();
 		
 		values.put(ACTIVITY_COLS[0], act.getDate().getTimeInMillis());
+		values.put(ACTIVITY_COLS[1], act.getWebId());
 		activity_id = db.insert(ACTIVITY_NAME, null, values);
 
 		android.util.Log.d("DS", "inserting activity: " + activity_id);
@@ -218,12 +222,14 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		for(Result result : results){
 			valuesResult.put(RESULT_COLS[0], activity_id);
 			valuesResult.put(RESULT_COLS[1], result.getType().intValue());
+			valuesResult.put(RESULT_COLS[2], result.getWebId());
 			result_id = db.insert(RESULT_NAME, null, valuesResult);
 			
 			ResultFactory factory = result.getType().getFactory();
 			valuesSubResult = factory.buildContentValuesFromResult(result);
 			valuesSubResult.put(ResultFactory.RESULT_ID_COLUMN, result_id);
 			db.insert(factory.getTableName(), null, valuesSubResult);
+			result.setId(result_id);
 		}
 		
 		getActivitiesSubject().notifyObservers();
@@ -262,6 +268,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 			cursorSubResult.moveToFirst();
 			
 			result = factory.buildResultFromCursor(cursorSubResult);
+			result.setId(cursorResult.getLong(0));
 			results.add(result);
 			
 			cursorSubResult.close();
@@ -272,6 +279,50 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		return results;
 	}
 
+	@Override
+	public WalkActivity getActivity(long activity_id){
+		WalkActivity act = null;
+		Cursor cursor;
+		
+		cursor = db.query(ACTIVITY_NAME, null, "_id = " + activity_id, null, null, null, null);
+		
+		if(cursor.moveToFirst()){
+			GregorianCalendar cal = new GregorianCalendar();
+			List<Result> results = this.getActivityResults(activity_id);
+			
+			cal.setTimeInMillis(cursor.getLong(1));
+			act = new WalkActivity(cal, results);
+			act.setId(activity_id);
+			act.setWebId(cursor.getInt(2));
+		}
+		
+		return act;
+	}
+	
+	public void updateActivity(long activity_id, WalkActivity activity){
+		ContentValues values = new ContentValues();
+		
+		values.put(ACTIVITY_COLS[0], activity.getDate().getTimeInMillis());
+		values.put(ACTIVITY_COLS[1], activity.getWebId());
+		
+		android.util.Log.d("DS", "update activity id: " + activity_id);
+		
+		db.update(ACTIVITY_NAME, values, "_id = " + activity_id, null);
+		
+		List<Result> results = activity.getResults();
+		
+		for(Result result : results)
+			updateResult(result);
+	}
+	
+	private void updateResult(Result result){
+		ResultFactory factory = result.getType().getFactory();
+		ContentValues values = factory.buildContentValuesFromResult(result);
+		
+		android.util.Log.d("DS", "update result id: " + result.getId());
+		
+		db.update(factory.getTableName(), values, ResultFactory.RESULT_ID_COLUMN + " = " + result.getId(), null);
+	}
 
 	@Override
 	public List<Result> getResults(int type, GregorianCalendar startDate,

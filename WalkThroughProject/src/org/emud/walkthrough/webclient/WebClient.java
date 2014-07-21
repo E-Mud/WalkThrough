@@ -24,7 +24,7 @@ public interface WebClient{
 	
 	public boolean deleteUserProfile() throws ConnectionFailedException;
 	
-	public boolean insertWalkActivity(WalkActivity activity);
+	public int insertWalkActivity(WalkActivity activity);
 
 	public void close();
 }

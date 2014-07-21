@@ -5,14 +5,13 @@ import org.emud.walkthrough.analysis.WalkDataReceiver;
 
 import android.content.Context;
 
-public class AndroidDataReceiverBuilder implements DataReceiverBuilder{
+public class AndroidDataReceiverBuilder{
 	private Context context;
 	
 	public AndroidDataReceiverBuilder(Context con){
 		context = con;
 	}
 	
-	@Override
 	public WalkDataReceiver buildReceiver(int type){
 		WalkDataReceiver receiver = null;
 

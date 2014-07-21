@@ -10,7 +10,7 @@ import android.widget.ListAdapter;
 public class StepsGUI extends ResultGUIResolver {
 	@Override
 	public ListAdapter getListAdapter(Context context) {
-		return new ResultListAdapter<StepsCount>(context);
+		return new ResultListAdapter<Steps>(context);
 	}
 
 	@Override

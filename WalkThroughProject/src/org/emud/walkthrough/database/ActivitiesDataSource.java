@@ -40,9 +40,23 @@ public interface ActivitiesDataSource {
 	 * Devuelve una lista con los resultados asociados a una actividad.
 	 * @param activity_id Identifiacdor unico de la actividad en la fuente de datos.
 	 * @return Lista de resultados asociados a la actividad.
+	 * @deprecated
 	 */
 	public List<Result> getActivityResults(long activity_id);
 	
+	/**
+	 * Devuelve una actividad junto con sus resultados asociados
+	 * @param activity_id Identifiacdor unico de la actividad en la fuente de datos.
+	 * @return Actividad identificada o null si no existe actividad con ese identificador.
+	 */
+	public WalkActivity getActivity(long activity_id);
+	
+	/**
+	 * Actualiza los datos de una actividad
+	 * @param activity_id Identificador unico de la actividad en la fuente de datos.
+	 * @param activity Nueva actividad.
+	 */
+	public void updateActivity(long activity_id, WalkActivity activity);
 	
 	/**
 	 * @param type

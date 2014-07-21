@@ -19,13 +19,13 @@ public class StepsCountFactory implements ResultFactory {
 	public Result buildResultFromBundle(Bundle bundle) {
 		int steps = bundle.getInt(STEPS_KEY, 0);
 		
-		return new StepsCount(steps);
+		return new Steps(steps);
 	}
 
 	@Override
 	public Bundle buildBundleFromResult(Result result) {
 		Bundle bundle = new Bundle();		
-		bundle.putInt(STEPS_KEY, ((StepsCount) result).getSteps());
+		bundle.putInt(STEPS_KEY, ((Steps) result).getSteps());
 		bundle.putInt(RESULT_TYPE_KEY, result.getType().intValue());
 		
 		return bundle;
@@ -34,14 +34,14 @@ public class StepsCountFactory implements ResultFactory {
 	@Override
 	public ContentValues buildContentValuesFromResult(Result result) {
 		ContentValues values = new ContentValues();
-		values.put(STEPS_KEY, ((StepsCount) result).getSteps());
+		values.put(STEPS_KEY, ((Steps) result).getSteps());
 		
 		return values;
 	}
 
 	@Override
 	public Result buildResultFromCursor(Cursor cursor) {
-		StepsCount result = new StepsCount();
+		Steps result = new Steps();
 		result.setSteps(cursor.getInt(cursor.getColumnIndex(STEPS_KEY)));
 			
 		return result;

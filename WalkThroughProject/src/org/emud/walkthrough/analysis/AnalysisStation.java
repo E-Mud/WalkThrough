@@ -19,7 +19,7 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	private AnalysisState state;
 	
 	/**
-	 * Constructor de AnalysisStation. Se recomienda usar la clase estatica AnalysisStationBuilder en su lugar.
+	 * Constructor de AnalysisStation. Se recomienda usar la clase estatica StationBuilder en su lugar.
 	 * @param dr Receptor de datos.
 	 * @param listAnalysts Lista de Analyst que realizarán los análisis a partir de los datos recibidos.
 	 */

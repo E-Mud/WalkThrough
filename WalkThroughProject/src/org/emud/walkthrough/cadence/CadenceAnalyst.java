@@ -3,17 +3,17 @@ package org.emud.walkthrough.cadence;
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
-import org.emud.walkthrough.pedometer.StepsCount;
-import org.emud.walkthrough.pedometer.StepsCounter;
+import org.emud.walkthrough.pedometer.Steps;
+import org.emud.walkthrough.pedometer.Pedometer;
 
 public class CadenceAnalyst implements Analyst {
 	private static final double MIN_TIME = 0.25;
-	private StepsCounter pedometer;
+	private Pedometer pedometer;
 	private long nSamples;
 	private int ratio;
 	
 	public CadenceAnalyst(){
-		pedometer = new StepsCounter();
+		pedometer = new Pedometer();
 		nSamples = 0;
 		ratio = -1;
 	}
@@ -32,7 +32,7 @@ public class CadenceAnalyst implements Analyst {
 		double analysisTime = (nSamples * ratio) / 60000000;
 		
 		if(analysisTime >= MIN_TIME){
-			cadence = ((StepsCount) pedometer.getResult()).getSteps()/analysisTime;
+			cadence = ((Steps) pedometer.getResult()).getSteps()/analysisTime;
 		}else{
 			cadence = 0;
 		}

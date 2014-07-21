@@ -6,8 +6,7 @@ import java.util.List;
 
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.AnalysisStation;
-import org.emud.walkthrough.analysis.AnalysisStationBuilder;
-import org.emud.walkthrough.analysis.DataReceiverBuilder;
+import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.ScreenBroadcastReceiver.ScreenOnOffListener;
 import org.emud.walkthrough.database.ActivitiesDataSource;
@@ -15,7 +14,7 @@ import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.Monitor;
 import org.emud.walkthrough.sensortag.DeviceScanner;
-import org.emud.walkthrough.sensortag.SensorTagConnectionManager;
+import org.emud.walkthrough.sensortag.SensorTagConnector;
 import org.emud.walkthrough.sensortag.SensorTagDataReceiver;
 import org.emud.walkthrough.stub.DebugAnalysisStationBuilder;
 
@@ -81,15 +80,14 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 				setResultsTypes.add(Integer.valueOf(resultsTypes[i]));
 
 			if(receiverType == WalkDataReceiver.SINGLE_ACCELEROMETER){
-				DataReceiverBuilder receiverBuilder = new AndroidDataReceiverBuilder(this);
-				WalkDataReceiver receiver = receiverBuilder.buildReceiver(receiverType);
+				WalkDataReceiver receiver = new LinearAccelerometerReceiver(this);
 				initializeStation(receiver);
 			}else{
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
 					BluetoothManager bluetoothManager =
 							(BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 					BluetoothAdapter adapter = bluetoothManager.getAdapter();
-					SensorTagConnectionManager manager = new SensorTagConnectionManager(this);
+					SensorTagConnector manager = new SensorTagConnector(this);
 					scanner = new DeviceScanner(adapter, manager);
 				}
 			}
@@ -116,8 +114,8 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     }
     
     private void initializeStation(WalkDataReceiver receiver){
-    	//AnalysisStationBuilder stationBuilder = new WAnalysisStationBuilder();
-    	AnalysisStationBuilder stationBuilder = new DebugAnalysisStationBuilder(this);
+    	//StationBuilder stationBuilder = new WAnalysisStationBuilder();
+    	StationBuilder stationBuilder = new DebugAnalysisStationBuilder(this);
     	station = stationBuilder.buildStation(receiver, receiverType, setResultsTypes);
 
     	currentState = SERVICE_PREPARED;

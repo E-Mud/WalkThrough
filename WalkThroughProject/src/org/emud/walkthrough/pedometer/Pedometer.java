@@ -4,13 +4,13 @@ import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
 
-public class StepsCounter implements Analyst {
+public class Pedometer implements Analyst {
 	private static final int FILTER_SIZE = 5;
 	private MedianFilter medianFilter;
 	private int nSamples, sign, peaksCount;
 	private double currentPeakValue;
 	
-	public StepsCounter(){
+	public Pedometer(){
 		medianFilter = new MedianFilter(FILTER_SIZE);
 		nSamples = 0;
 	}
@@ -51,7 +51,7 @@ public class StepsCounter implements Analyst {
 
 	@Override
 	public Result getResult() {
-		return new StepsCount(peaksCount);
+		return new Steps(peaksCount);
 	}
 
 }

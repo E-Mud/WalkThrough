@@ -11,11 +11,11 @@ import android.content.Context;
 import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class SensorTagConnectionManager implements LeScanCallback, SensorTag.ConnectionListener {
+public class SensorTagConnector implements LeScanCallback, SensorTag.ConnectionListener {
 	private AnalysisService service;
 	private SensorTag firstSensor;
 
-	public SensorTagConnectionManager(AnalysisService serv){
+	public SensorTagConnector(AnalysisService serv){
 		service = serv;
 		firstSensor = null;
 	}

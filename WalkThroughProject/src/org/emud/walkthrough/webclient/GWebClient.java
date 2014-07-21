@@ -6,8 +6,13 @@ import static org.emud.walkthrough.webclient.GWebServiceConstants.SERVER_URL;
 import static org.emud.walkthrough.webclient.GWebServiceConstants.SERVER_USER_NAME;
 import static org.emud.walkthrough.webclient.GWebServiceConstants.SERVER_USER_PASSWORD;
 
+import java.util.List;
+
+import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
+
+import android.text.format.DateFormat;
 
 import com.zhealth.gnubila.android.gService;
 import com.zhealth.gnubila.android.utils.gConstants;
@@ -74,7 +79,7 @@ public class GWebClient implements WebClient {
 		
 		gData data;
 		
-		data = service.getGQuery("walkthrough", new String[]{"where=D.y=wtuser+username="+username,
+		data = service.getGQuery(PROJECT_ID, new String[]{"where=D.y=wtuser+username="+username,
 				"fields=D.k",
 				"D.dataformat=xml"});
 		
@@ -91,7 +96,7 @@ public class GWebClient implements WebClient {
 
 		log("registering user");
 		
-		data = service.insertQuery("walkthrough", atts, values);		
+		data = service.insertQuery(PROJECT_ID, atts, values);		
 		webId = Integer.parseInt(data.getValue(0, gConstants.TAG_DK));
 		
 		log("user registered: " + webId);
@@ -114,7 +119,7 @@ public class GWebClient implements WebClient {
 			throws ConnectionFailedException {
 		checkReady();
 		
-		gData data = service.getGQuery("walkthrough", new String[]{"where=D.y=wtuser+username="+username,
+		gData data = service.getGQuery(PROJECT_ID, new String[]{"where=D.y=wtuser+username="+username,
 				"fields=D.k,username,leglength",
 				"D.dataformat=xml"});
 		
@@ -169,9 +174,67 @@ public class GWebClient implements WebClient {
 
 	
 	@Override
-	public boolean insertWalkActivity(WalkActivity activity) {
-		// TODO Auto-generated method stub
-		return false;
+	public int insertWalkActivity(WalkActivity activity) {
+		try {
+			checkReady();
+		} catch (ConnectionFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String[] atts, values;
+		int webId = -1;
+		gData data;
+		
+		String date = DateFormat.format("yyyy/MM/dd", activity.getDate()).toString();
+		
+		atts = new String[]{"D.y", "activitydate", "activityowner"};
+		values = new String[]{"activity", date, ""+userLoggedIn.getWebServiceId()};
+
+		log("registering activity " + activity.getId());
+		
+		data = service.insertQuery(PROJECT_ID, atts, values);
+		
+		log("data null " + (data != null));
+		log("data json " + data.getJSON());
+		log("data count " + (data.getCount() > 0));
+		log("data value " + (data.getValue(0, gConstants.TAG_DK) != null));
+		if(data != null && data.getCount() > 0 && data.getValue(0, gConstants.TAG_DK) != null){
+			webId = Integer.parseInt(data.getValue(0, gConstants.TAG_DK));
+			activity.setWebId(webId);
+			List<Result> results = activity.getResults();
+			for(Result result : results){
+				int resWebId = insertResult(webId, result);
+				if(webId != -1)
+					result.setWebId(resWebId);
+			}
+		}
+		
+		log("activity registered: " + webId);
+		
+		return webId;
+	}
+	
+	private int insertResult(int activityWebId, Result result){
+		String[] atts, values;
+		int webId = -1;
+		gData data;
+		
+		atts = new String[]{"D.y", "resulttype", "resultvalue", "resultactivity"};
+		values = new String[]{"result", ""+result.getType().intValue(), ""+result.doubleValue(), ""+activityWebId};
+		
+		log("registering result " + result.getId());
+		
+		data = service.insertQuery(PROJECT_ID, atts, values);
+		
+		if(data != null && data.getCount() > 0 && data.getValue(0, gConstants.TAG_DK) != null){
+			webId = Integer.parseInt(data.getValue(0, gConstants.TAG_DK));
+			result.setWebId(webId);
+		}
+		
+		log("resultRegistered " + webId);
+		
+		return webId;
 	}
 
 	@Override

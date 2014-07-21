@@ -1,9 +1,9 @@
 package org.emud.walkthrough.fallingdetection;
 
-import org.emud.walkthrough.analysis.AnalysisStationBuilder;
+import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.analysis.Analyst;
 
-public class FallingStationBuilder extends AnalysisStationBuilder {
+public class FallingStationBuilder extends StationBuilder {
 	private OnFallDetectedListener listener;
 	
 	public FallingStationBuilder(OnFallDetectedListener lstn){
