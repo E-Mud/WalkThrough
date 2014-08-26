@@ -1,13 +1,20 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.gui;
 
+import org.emud.walkthrough.ActivitiesDataSource;
+import org.emud.walkthrough.R;
+import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.WebClient;
+import org.emud.walkthrough.WtFragmentActivity;
+import org.emud.walkthrough.R.drawable;
+import org.emud.walkthrough.R.id;
+import org.emud.walkthrough.R.layout;
+import org.emud.walkthrough.R.string;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver.UpdateListener;
-import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.MonitorFragment;
-import org.emud.walkthrough.webclient.WebClient;
 
 import android.content.ComponentName;
 import android.content.Intent;

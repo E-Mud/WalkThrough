@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.emud.content.DataSubject;
 import org.emud.content.observer.Subject;
+import org.emud.walkthrough.ActivitiesDataSource;
+import org.emud.walkthrough.UserDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
@@ -23,7 +25,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
 	private static final int VERSION = 14;
-	private SQLiteDatabase db;
+	protected SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
 	
@@ -46,10 +48,14 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 	public DataSource(Context cont, String userName){
 		String database_name = buildDatabaseName(userName);
 		context = cont;
-		helper = new SQLiteHelper(context, database_name, VERSION);
+		helper = buildHelper(context, database_name, VERSION);
 		userSubject = new DataSubject();
 		activitiesSubject = new DataSubject();
 		openDatabase();
+	}
+	
+	protected SQLiteHelper buildHelper(Context cont, String name, int version){
+		return new SQLiteHelper(cont, name, version);
 	}
 	
 	private void openDatabase() {

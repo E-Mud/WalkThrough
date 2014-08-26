@@ -1,11 +1,11 @@
-package org.emud.walkthrough.fragment;
+package org.emud.walkthrough.gui.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.emud.walkthrough.R;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
-import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.resulttype.ResultGUIResolver;
 import org.emud.walkthrough.resulttype.ResultType;
 

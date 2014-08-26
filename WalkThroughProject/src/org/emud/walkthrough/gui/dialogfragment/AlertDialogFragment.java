@@ -1,4 +1,4 @@
-package org.emud.walkthrough.dialogfragment;
+package org.emud.walkthrough.gui.dialogfragment;
 
 import org.emud.walkthrough.R;
 

@@ -1,7 +1,5 @@
 package org.emud.walkthrough;
 
-import org.emud.walkthrough.webclient.WebClient;
-
 import android.os.Bundle;
 
 import com.zhealth.gnubila.android.customviews.gActivity;

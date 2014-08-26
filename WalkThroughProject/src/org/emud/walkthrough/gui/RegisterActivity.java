@@ -1,10 +1,16 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.gui;
 
-import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
-import org.emud.walkthrough.dialogfragment.ProgressDialogFragment;
-import org.emud.walkthrough.webclient.ConnectionFailedException;
-import org.emud.walkthrough.webclient.UsedNicknameException;
-import org.emud.walkthrough.webclient.WebClient;
+import org.emud.walkthrough.ConnectionFailedException;
+import org.emud.walkthrough.R;
+import org.emud.walkthrough.UsedNicknameException;
+import org.emud.walkthrough.WebClient;
+import org.emud.walkthrough.WtFragmentActivity;
+import org.emud.walkthrough.R.id;
+import org.emud.walkthrough.R.layout;
+import org.emud.walkthrough.R.menu;
+import org.emud.walkthrough.R.string;
+import org.emud.walkthrough.gui.dialogfragment.AlertDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.ProgressDialogFragment;
 
 import android.app.Activity;
 import android.content.Intent;

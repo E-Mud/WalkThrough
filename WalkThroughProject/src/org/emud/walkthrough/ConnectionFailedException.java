@@ -1,4 +1,4 @@
-package org.emud.walkthrough.webclient;
+package org.emud.walkthrough;
 
 public class ConnectionFailedException extends Exception {
 

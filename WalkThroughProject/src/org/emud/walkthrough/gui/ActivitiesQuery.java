@@ -1,8 +1,9 @@
-package org.emud.walkthrough.database;
+package org.emud.walkthrough.gui;
 
 import java.util.List;
 
 import org.emud.content.Query;
+import org.emud.walkthrough.ActivitiesDataSource;
 import org.emud.walkthrough.DateFilter;
 import org.emud.walkthrough.model.WalkActivity;
 

@@ -4,12 +4,12 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
+import org.emud.walkthrough.ActivitiesDataSource;
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.analysis.AnalysisStation;
 import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.ScreenBroadcastReceiver.ScreenOnOffListener;
-import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.Monitor;

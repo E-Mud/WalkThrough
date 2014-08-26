@@ -1,12 +1,17 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.gui;
 
-import org.emud.walkthrough.dialogfragment.AlertDialogFragment;
-import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment;
-import org.emud.walkthrough.dialogfragment.ProgressDialogFragment;
-import org.emud.walkthrough.dialogfragment.ConfirmDeleteDialogFragment.OnConfirmListener;
-import org.emud.walkthrough.webclient.ConnectionFailedException;
-import org.emud.walkthrough.webclient.UsedNicknameException;
-import org.emud.walkthrough.webclient.WebClient;
+import org.emud.walkthrough.ConnectionFailedException;
+import org.emud.walkthrough.R;
+import org.emud.walkthrough.UsedNicknameException;
+import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.WebClient;
+import org.emud.walkthrough.WtFragmentActivity;
+import org.emud.walkthrough.R.string;
+import org.emud.walkthrough.R.xml;
+import org.emud.walkthrough.gui.dialogfragment.AlertDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.ConfirmDeleteDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.ProgressDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.ConfirmDeleteDialogFragment.OnConfirmListener;
 
 import android.content.Intent;
 import android.database.Cursor;

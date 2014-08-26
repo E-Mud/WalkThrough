@@ -1,4 +1,4 @@
-package org.emud.walkthrough.database;
+package org.emud.walkthrough;
 
 import java.util.GregorianCalendar;
 import java.util.List;

@@ -1,5 +1,9 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.gui;
 
+import org.emud.walkthrough.R;
+import org.emud.walkthrough.ServiceMessageHandler;
+import org.emud.walkthrough.R.id;
+import org.emud.walkthrough.R.layout;
 import org.emud.walkthrough.fallingdetection.FallingDetectionService;
 
 import android.net.Uri;

@@ -4,12 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.emud.walkthrough.analysisservice.AnalysisService;
-import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
-import org.emud.walkthrough.database.UserDataSource;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.webclient.GWebClient;
-import org.emud.walkthrough.webclient.WebClient;
 
 import android.app.Application;
 import android.content.SharedPreferences;

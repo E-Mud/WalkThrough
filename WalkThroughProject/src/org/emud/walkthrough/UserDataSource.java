@@ -1,4 +1,4 @@
-package org.emud.walkthrough.database;
+package org.emud.walkthrough;
 
 import org.emud.content.observer.Subject;
 import org.emud.walkthrough.model.User;

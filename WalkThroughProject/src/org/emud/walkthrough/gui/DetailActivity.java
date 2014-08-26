@@ -1,10 +1,14 @@
-package org.emud.walkthrough;
+package org.emud.walkthrough.gui;
 
 import java.util.List;
 
 import org.emud.support.v4.content.ObserverLoader;
 import org.emud.content.Query;
-import org.emud.walkthrough.database.ActivitiesDataSource;
+import org.emud.walkthrough.ActivitiesDataSource;
+import org.emud.walkthrough.R;
+import org.emud.walkthrough.WalkThroughApplication;
+import org.emud.walkthrough.R.id;
+import org.emud.walkthrough.R.layout;
 import org.emud.walkthrough.model.Result;
 
 import android.os.Bundle;

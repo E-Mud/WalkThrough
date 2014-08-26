@@ -1,12 +1,12 @@
-package org.emud.walkthrough.fragment;
+package org.emud.walkthrough.gui.fragment;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.emud.walkthrough.DateFilter;
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment;
-import org.emud.walkthrough.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
+import org.emud.walkthrough.gui.dialogfragment.DatePickerDialogFragment;
+import org.emud.walkthrough.gui.dialogfragment.DatePickerDialogFragment.OnDatePickedListener;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

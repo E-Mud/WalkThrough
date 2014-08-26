@@ -1,4 +1,4 @@
-package org.emud.walkthrough.fragment;
+package org.emud.walkthrough.gui.fragment;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.emud.content.observer.Subject;
 import org.emud.support.v4.content.ObserverLoader;
+import org.emud.walkthrough.ActivitiesDataSource;
 import org.emud.walkthrough.DateFilter;
 import org.emud.walkthrough.R;
 import org.emud.walkthrough.ResultTypeFilter;
-import org.emud.walkthrough.database.ActivitiesDataSource;
-import org.emud.walkthrough.database.ResultsQuery;
+import org.emud.walkthrough.gui.ResultsQuery;
 import org.emud.walkthrough.model.Result;
 
 import android.annotation.SuppressLint;

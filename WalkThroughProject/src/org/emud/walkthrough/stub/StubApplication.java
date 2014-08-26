@@ -1,7 +1,7 @@
 package org.emud.walkthrough.stub;
 
+import org.emud.walkthrough.ActivitiesDataSource;
 import org.emud.walkthrough.WalkThroughApplication;
-import org.emud.walkthrough.database.ActivitiesDataSource;
 import org.emud.walkthrough.database.DataSource;
 
 import android.content.SharedPreferences;

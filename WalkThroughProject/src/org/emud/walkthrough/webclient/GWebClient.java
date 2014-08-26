@@ -8,6 +8,9 @@ import static org.emud.walkthrough.webclient.GWebServiceConstants.SERVER_USER_PA
 
 import java.util.List;
 
+import org.emud.walkthrough.ConnectionFailedException;
+import org.emud.walkthrough.UsedNicknameException;
+import org.emud.walkthrough.WebClient;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;

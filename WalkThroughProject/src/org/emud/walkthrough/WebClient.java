@@ -1,4 +1,4 @@
-package org.emud.walkthrough.webclient;
+package org.emud.walkthrough;
 
 import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
