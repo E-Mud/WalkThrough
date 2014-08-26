@@ -6,7 +6,7 @@
     <color name="color_grey">#DEDEDE</color>
     <color name="result_steps">#BED269</color>
     <color name="result_cadence">#63B359</color>
-    <color name="result_maxaccel">#DB6D6D</color>
+    <color name="result_regularity">#DB6D6D</color>
     <color name="result_speed">#DBC86D</color>
     
 </resources>

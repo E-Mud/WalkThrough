@@ -94,9 +94,9 @@
     <!-- Detail Activity -->
     <string name="title_activity_detail">Actividad</string>
 
-    <!-- Result -->
-    <string name="rt_max_move_title">Maxima aceleración.</string>
-    <string name="rt_max_move_unit">m/s2</string>
+    <!-- Regualrity -->
+    <string name="rt_regularity_title">Regularidad.</string>
+    <string name="rt_regularity_unit"></string>
     
     <!-- Podometro -->
     <string name="rt_steps_title">Podómetro</string>

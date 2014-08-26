@@ -197,6 +197,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 						long activity_id = params[0];
 						WalkActivity activity = ds.getActivity(activity_id);
 						int webId = webClient.insertWalkActivity(activity);
+						activity.setWebId(webId);
 						if(webId != -1)
 							ds.updateActivity(activity_id, activity);
 

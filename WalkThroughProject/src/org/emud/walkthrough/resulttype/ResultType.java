@@ -2,7 +2,7 @@ package org.emud.walkthrough.resulttype;
 
 
 public enum ResultType {
-	RT_STEPS(0), RT_SPEED(2), RT_MAX_MOVE(1), RT_CADENCE(3);
+	RT_STEPS(0), RT_SPEED(2), RT_REGULARITY(1), RT_CADENCE(3);
 
 	private int value;
 	private static ResultToolsProvider toolsProvider = new ResultToolsProvider();
@@ -28,7 +28,7 @@ public enum ResultType {
 		case 0:
 			return RT_STEPS;
 		case 1:
-			return RT_MAX_MOVE;
+			return RT_REGULARITY;
 		case 2:
 			return RT_SPEED;
 		case 3:

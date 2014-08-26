@@ -4,10 +4,10 @@ import org.emud.walkthrough.cadence.CadenceFactory;
 import org.emud.walkthrough.cadence.CadenceGUI;
 import org.emud.walkthrough.pedometer.StepsCountFactory;
 import org.emud.walkthrough.pedometer.StepsGUI;
+import org.emud.walkthrough.regularity.RegularityFactory;
+import org.emud.walkthrough.regularity.RegularityGUI;
 import org.emud.walkthrough.speedometer.SpeedFactory;
 import org.emud.walkthrough.speedometer.SpeedGUI;
-import org.emud.walkthrough.stub.MaxMoveGUI;
-import org.emud.walkthrough.stub.ResultMaxMoveFactory;
 
 import android.util.SparseArray;
 
@@ -43,8 +43,8 @@ public class ResultToolsProvider {
 	
 	private ResultFactory buildResultFactory(ResultType resultType) {
 		switch(resultType){
-		case RT_MAX_MOVE:
-			return new ResultMaxMoveFactory();
+		case RT_REGULARITY:
+			return new RegularityFactory();
 		case RT_STEPS:
 			return new StepsCountFactory();
 		case RT_SPEED:
@@ -73,8 +73,8 @@ public class ResultToolsProvider {
 	private ResultGUIResolver buildGUIResolver(ResultType resultType) {
 
 		switch(resultType){
-		case RT_MAX_MOVE:
-			return new MaxMoveGUI();
+		case RT_REGULARITY:
+			return new RegularityGUI();
 		case RT_STEPS:
 			return new StepsGUI();
 		case RT_SPEED:

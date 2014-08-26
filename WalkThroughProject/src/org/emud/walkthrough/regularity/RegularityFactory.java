@@ -1,4 +1,4 @@
-package org.emud.walkthrough.stub;
+package org.emud.walkthrough.regularity;
 
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.resulttype.ResultFactory;
@@ -7,24 +7,26 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 
-public class ResultMaxMoveFactory implements ResultFactory {
-	private static final String MAX_VALUE_KEY = "maxValue";
+public class RegularityFactory implements ResultFactory {
+	private static final String REGULARITY_KEY = "regularity", TABLE_NAME = "result_regularity";
 	
-	private static final String DB_RESULT_MAX_MOVE_CREATE = "CREATE TABLE result_mm (" +
+	private static final String DB_RESULT_REGULARITY_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
             "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			RESULT_ID_COLUMN + " LONG NOT NULL REFERENCES result(_id) ON DELETE CASCADE, " + 
-			MAX_VALUE_KEY + " REAL NOT NULL);";
+			REGULARITY_KEY + " REAL NOT NULL);";
 
 	@Override
 	public Result buildResultFromBundle(Bundle bundle) {
-		ResultMaxMove result = new ResultMaxMove(bundle.getDouble(MAX_VALUE_KEY));
-		return result;
+		double regularity = bundle.getDouble(REGULARITY_KEY);
+		
+		return new Regularity(regularity);
 	}
 
 	@Override
 	public Bundle buildBundleFromResult(Result result) {
-		Bundle bundle = new Bundle();		
-		bundle.putDouble(MAX_VALUE_KEY, ((ResultMaxMove) result).getMaxAcceleration());
+		Bundle bundle = new Bundle();
+		
+		bundle.putDouble(REGULARITY_KEY, ((Regularity) result).getRegularity());
 		bundle.putInt(RESULT_TYPE_KEY, result.getType().intValue());
 		
 		return bundle;
@@ -34,26 +36,26 @@ public class ResultMaxMoveFactory implements ResultFactory {
 	public ContentValues buildContentValuesFromResult(Result result) {
 		ContentValues values = new ContentValues();
 		
-		values.put(MAX_VALUE_KEY, ((ResultMaxMove) result).getMaxAcceleration());
+		values.put(REGULARITY_KEY, ((Regularity) result).getRegularity());
 		
 		return values;
 	}
 
 	@Override
 	public Result buildResultFromCursor(Cursor cursor) {
-		Result result = new ResultMaxMove(cursor.getDouble(cursor.getColumnIndex(MAX_VALUE_KEY)));
+		double regularity = cursor.getDouble(cursor.getColumnIndex(REGULARITY_KEY));
 		
-		return result;
+		return new Regularity(regularity);
 	}
 
 	@Override
 	public String getTableName() {
-		return "result_mm";
+		return TABLE_NAME;
 	}
 
 	@Override
 	public String getSQLCreateTableStatement() {
-		return DB_RESULT_MAX_MOVE_CREATE;
+		return DB_RESULT_REGULARITY_CREATE;
 	}
 
 }

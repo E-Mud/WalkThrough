@@ -16,7 +16,6 @@ import org.emud.walkthrough.monitor.Monitor;
 import org.emud.walkthrough.sensortag.DeviceScanner;
 import org.emud.walkthrough.sensortag.SensorTagConnector;
 import org.emud.walkthrough.sensortag.SensorTagDataReceiver;
-import org.emud.walkthrough.stub.DebugAnalysisStationBuilder;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -114,8 +113,7 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     }
     
     private void initializeStation(WalkDataReceiver receiver){
-    	//StationBuilder stationBuilder = new WAnalysisStationBuilder();
-    	StationBuilder stationBuilder = new DebugAnalysisStationBuilder(this);
+    	StationBuilder stationBuilder = new WAnalysisStationBuilder();
     	station = stationBuilder.buildStation(receiver, receiverType, setResultsTypes);
 
     	currentState = SERVICE_PREPARED;

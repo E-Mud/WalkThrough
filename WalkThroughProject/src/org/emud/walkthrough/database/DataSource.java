@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataSource implements UserDataSource, ActivitiesDataSource{
-	private static final int VERSION = 14;
+	private static final int VERSION = 15;
 	protected SQLiteDatabase db;
 	private SQLiteHelper helper;
 	private Context context;
@@ -313,6 +313,7 @@ public class DataSource implements UserDataSource, ActivitiesDataSource{
 		
 		android.util.Log.d("DS", "update activity id: " + activity_id);
 		
+		android.util.Log.d("DS", "update activity id: " + (db == null));
 		db.update(ACTIVITY_NAME, values, "_id = " + activity_id, null);
 		
 		List<Result> results = activity.getResults();

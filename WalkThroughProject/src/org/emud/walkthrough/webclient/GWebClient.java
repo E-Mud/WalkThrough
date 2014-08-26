@@ -104,6 +104,8 @@ public class GWebClient implements WebClient {
 		
 		log("user registered: " + webId);
 		
+		userLoggedIn = new User(webId, username, legLength);
+		
 		return webId;
 	}
 
@@ -183,6 +185,7 @@ public class GWebClient implements WebClient {
 		} catch (ConnectionFailedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return -1;
 		}
 		
 		String[] atts, values;
