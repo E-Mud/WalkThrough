@@ -1,6 +1,5 @@
 package org.emud.walkthrough.analysisservice;
 
-import org.emud.walkthrough.analysis.DataReceiverBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 
 import android.content.Context;
@@ -16,10 +15,10 @@ public class AndroidDataReceiverBuilder{
 		WalkDataReceiver receiver = null;
 
 		switch(type){
-		case WalkDataReceiver.SINGLE_ACCELEROMETER:
+		case AnalysisService.SINGLE_ACCELEROMETER:
 			receiver = new LinearAccelerometerReceiver(context);
 			break;
-		case WalkDataReceiver.TWO_ACCELEROMETERS:
+		case AnalysisService.TWO_ACCELEROMETERS:
 			//TODO
 			break;
 		default:

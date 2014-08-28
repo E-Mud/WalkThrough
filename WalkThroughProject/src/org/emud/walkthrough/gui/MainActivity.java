@@ -5,20 +5,14 @@ import java.util.List;
 import org.emud.walkthrough.R;
 import org.emud.walkthrough.ResultTypeFilter;
 import org.emud.walkthrough.WalkThroughApplication;
-import org.emud.walkthrough.R.drawable;
-import org.emud.walkthrough.R.id;
-import org.emud.walkthrough.R.layout;
-import org.emud.walkthrough.R.menu;
-import org.emud.walkthrough.R.string;
-import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.gui.fragment.ActivitiesListFragment;
+import org.emud.walkthrough.gui.fragment.ActivitiesListFragment.OnActivitySelectedListener;
 import org.emud.walkthrough.gui.fragment.DateFilterFragment;
 import org.emud.walkthrough.gui.fragment.NewActivityFragment;
+import org.emud.walkthrough.gui.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
 import org.emud.walkthrough.gui.fragment.ResultsGraphFragment;
 import org.emud.walkthrough.gui.fragment.ResultsListFragment;
-import org.emud.walkthrough.gui.fragment.ActivitiesListFragment.OnActivitySelectedListener;
-import org.emud.walkthrough.gui.fragment.NewActivityFragment.OnAcceptButtonClickedListener;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.resulttype.ResultGUIResolver;
 import org.emud.walkthrough.resulttype.ResultType;
@@ -322,7 +316,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener, O
 	public void acceptButtonClicked(int receiver, List<ResultType> analystList) {
 		receiverType = receiver;
 		analysts = analystList;
-		if(receiver == WalkDataReceiver.TWO_ACCELEROMETERS){
+		if(receiver == AnalysisService.TWO_ACCELEROMETERS){
 			BluetoothManager bluetoothManager =
 	                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 	        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();

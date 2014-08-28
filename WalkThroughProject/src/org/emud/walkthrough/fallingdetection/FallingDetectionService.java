@@ -35,10 +35,9 @@ public class FallingDetectionService extends Service implements OnMessageReceive
 	@Override
 	public void onCreate(){
 		StationBuilder stationBuilder = new FallingStationBuilder(this);
-		int receiverType = WalkDataReceiver.SINGLE_ACCELEROMETER;
 		WalkDataReceiver receiver = new LinearAccelerometerReceiver(this);
 		
-		station = stationBuilder.buildStation(receiver, receiverType, 0);
+		station = stationBuilder.buildStation(receiver, 0, 0);
 		messenger = new Messenger(new ServiceMessageHandler(this));		
 		currentState = SERVICE_OFF;
 	}

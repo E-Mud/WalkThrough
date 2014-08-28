@@ -50,23 +50,16 @@
         android:layout_above="@+id/lifeCycleButtons_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="65dp"
-        android:paddingLeft="6dp" >
-
-        <ToggleButton
-            android:id="@+id/left_toggleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textOff="@string/currentactivity_leftFoot"
-            android:textOn="@string/currentactivity_leftFoot"
-            android:visibility="invisible" />
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp" >
 
         <ToggleButton
             android:id="@+id/right_toggleButton"
             style="@style/ToggleToggleButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textOff="@string/currentactivity_rightFoot"
-            android:textOn="@string/currentactivity_rightFoot"
+            android:textOff="@string/currentactivity_connect"
+            android:textOn="@string/currentactivity_connecting"
             android:visibility="invisible" />
 
     </FrameLayout>

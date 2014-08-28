@@ -47,6 +47,8 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 		SERVICE_STOPPED = 3,
 		SERVICE_CONNECTING = 4;
 	
+	public static final int SINGLE_ACCELEROMETER = 0, TWO_ACCELEROMETERS = 1;
+	
 	private int currentState;
 	private AnalysisStation station;
 	private IBinder binder;
@@ -78,11 +80,11 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 			for(int i=0; i<n; i++)
 				setResultsTypes.add(Integer.valueOf(resultsTypes[i]));
 
-			if(receiverType == WalkDataReceiver.SINGLE_ACCELEROMETER){
+			if(receiverType == SINGLE_ACCELEROMETER){
 				WalkDataReceiver receiver = new LinearAccelerometerReceiver(this);
 				initializeStation(receiver);
 			}else{
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
 					BluetoothManager bluetoothManager =
 							(BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 					BluetoothAdapter adapter = bluetoothManager.getAdapter();

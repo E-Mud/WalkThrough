@@ -65,15 +65,5 @@ public abstract class WalkDataReceiver {
 	public static interface OnErrorReceivingListener{
 		
 	}
-	
-	/**
-	 * Constante para el tipo de receptor de un solo acelerómetro.
-	 */
-	public static final int	SINGLE_ACCELEROMETER = 0;
-	/**
-	 * Constante para el tipo de receptor de dos acelerómetros.
-	 * 
-	 */
-	public static final int	TWO_ACCELEROMETERS = 1;		
-	public static final int	GUI_RECEIVER = -1;
+
 }

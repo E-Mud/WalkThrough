@@ -5,14 +5,10 @@ import org.emud.walkthrough.R;
 import org.emud.walkthrough.WalkThroughApplication;
 import org.emud.walkthrough.WebClient;
 import org.emud.walkthrough.WtFragmentActivity;
-import org.emud.walkthrough.R.drawable;
-import org.emud.walkthrough.R.id;
-import org.emud.walkthrough.R.layout;
-import org.emud.walkthrough.R.string;
-import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver;
 import org.emud.walkthrough.analysisservice.UpdateBroadcastReceiver.UpdateListener;
+import org.emud.walkthrough.gui.fragment.HelpFragment;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.MonitorFragment;
 
@@ -22,8 +18,6 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,12 +27,14 @@ import android.widget.ToggleButton;
 
 public class CurrentActivity extends WtFragmentActivity implements OnClickListener, UpdateListener {
 	private ImageView pauseResumeIcon, stopIcon;
-	private ToggleButton left, right;
-	private int serviceState;
+	private ToggleButton connectButton;
+	private int serviceState, receiverType;
 	private AnalysisService service;
 	private ServiceConnection connection;
 	private boolean bound;
 	private UpdateBroadcastReceiver updateReceiver;
+	private HelpFragment helpFragment;
+	private MonitorFragment monitorFragment;
 	
 
 	@Override
@@ -48,11 +44,10 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 		
 		pauseResumeIcon = (ImageView) findViewById(R.id.iconPauseResume);
 		stopIcon = (ImageView) findViewById(R.id.iconStop);
-		left = (ToggleButton) findViewById(R.id.left_toggleButton);
-		right = (ToggleButton) findViewById(R.id.right_toggleButton);
+		connectButton = (ToggleButton) findViewById(R.id.right_toggleButton);
 		
 		//left.setOnClickListener(this);
-		right.setOnClickListener(this);
+		connectButton.setOnClickListener(this);
 		pauseResumeIcon.setOnClickListener(this);
 		stopIcon.setOnClickListener(this);
 		
@@ -63,7 +58,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 	        	if(binder != null){
 	        		service = ((AnalysisService.LocalBinder) binder).getService();
 	        		bound = true;
-	        		serviceState = service.getState();
+	        		setServiceState(service.getState());
 	        		updateUI();
 	        	}
 	        }
@@ -73,27 +68,36 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 	        }
 	    };
 	    
-	    int receiverType = getIntent().getIntExtra(AnalysisService.RECEIVER_TYPE_KEY, WalkDataReceiver.SINGLE_ACCELEROMETER); 
-	    if(receiverType == WalkDataReceiver.TWO_ACCELEROMETERS){
-	    	Fragment contentFragment = new MonitorFragment();
-	    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-	    	fragmentTransaction.replace(R.id.center_content, contentFragment);
-			fragmentTransaction.commit();
-	    }
+	    receiverType = getIntent().getIntExtra(AnalysisService.RECEIVER_TYPE_KEY, AnalysisService.SINGLE_ACCELEROMETER); 
+	    
+	    helpFragment = new HelpFragment();
+	    helpFragment.setArguments(HelpFragment.buildArguments(receiverType, -10));
+	    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+	    fragmentTransaction.replace(R.id.center_content, helpFragment);
+	    fragmentTransaction.commit();
 	}
 
 
     private void updateUI() {
     	android.util.Log.i("CA", "serviceState: " + serviceState);
+    	
+    	if(serviceState == AnalysisService.SERVICE_RUNNING && monitorFragment == null
+    			&& receiverType == AnalysisService.TWO_ACCELEROMETERS){
+	    	monitorFragment = new MonitorFragment();
+	    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+	    	fragmentTransaction.replace(R.id.center_content, monitorFragment);
+			fragmentTransaction.commit();    		
+    	}
+    	
 		if(serviceState == AnalysisService.SERVICE_RUNNING || serviceState == AnalysisService.SERVICE_PAUSED)
 			findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
 		
 		if(serviceState == AnalysisService.SERVICE_UNSTARTED || serviceState == AnalysisService.SERVICE_CONNECTING){
 			findViewById(R.id.lifeCycleButtons_content).setVisibility(View.INVISIBLE);
-			right.setVisibility(View.VISIBLE);
+			connectButton.setVisibility(View.VISIBLE);
 		}else{
 			findViewById(R.id.lifeCycleButtons_content).setVisibility(View.VISIBLE);
-			right.setVisibility(View.INVISIBLE);
+			connectButton.setVisibility(View.INVISIBLE);
 		}
 	}
     
@@ -104,7 +108,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 		
 		switch(view.getId()){
 		case R.id.right_toggleButton:
-			if(right.isChecked()){
+			if(connectButton.isChecked()){
 				service.connectSensor();
 			}else{
 				service.stopConnecting();
@@ -113,15 +117,15 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 		case R.id.iconPauseResume:
 			switch(serviceState){
 			case AnalysisService.SERVICE_PREPARED:
-				serviceState = service.startAnalysis();
+				setServiceState(service.startAnalysis());
 				if(serviceState == AnalysisService.SERVICE_RUNNING)
 					findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
 				break;
 			case AnalysisService.SERVICE_RUNNING:
-				serviceState = service.pauseAnalysis();
+				setServiceState(service.pauseAnalysis());
 				break;
 			case AnalysisService.SERVICE_PAUSED:
-				serviceState = service.resumeAnalysis();
+				setServiceState(service.resumeAnalysis());
 				break;
 			default: return;
 			}
@@ -132,7 +136,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 			if(serviceState == AnalysisService.SERVICE_PREPARED)
 				return;
 
-			serviceState = service.stopAnalysis();
+			setServiceState(service.stopAnalysis());
 			break;			
 		default:
 			return;
@@ -166,6 +170,13 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 			unbindService(connection);
 			bound = false;
 		}
+	}
+	
+	public void setServiceState(int servState){
+		if(helpFragment != null)
+			helpFragment.setServiceStatus(servState);
+		
+		serviceState = servState;
 	}
 
 	private void setPauseResumeIconSrc() {
@@ -245,7 +256,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 		
 		serviceState = service.getState();
 		
-		right.setChecked(false);
+		connectButton.setChecked(false);
 		
 		updateUI();
 	}

@@ -88,8 +88,8 @@
     <string name="currentactivity_insertion_success">Se han almacenado nuevos resultados.</string>
     <string name="currentactivity_insertion_failed">Se ha producido un error al almacenar nuevos resultados.</string>
     <string name="currentactivity_disconnected">Se ha desconectado el receptor.</string>
-    <string name="currentactivity_rightFoot">Pie derecho</string>
-    <string name="currentactivity_leftFoot">Pie izquierdo</string>
+    <string name="currentactivity_connect">Conectar</string>
+    <string name="currentactivity_connecting">Conectando...</string>
     
     <!-- Detail Activity -->
     <string name="title_activity_detail">Actividad</string>
@@ -121,4 +121,9 @@
     <string name="falling_notificationtitle">Caída detectada.</string>
     <string name="falling_notificationtext">Se ha detectado una caída y se ha notificado al contacto de emergencia.</string>
 
+    <!-- Ayuda -->
+    <string name="help_sa_prepared">Coloquese el teléfono en la parte inferior de la espalda. Pulse <b>Play</b> cuando esté listo.</string>
+    <string name="help_ta_unstarted">Presione <b>Conectar</b> para comenzar el escaneo de los dispositivos. A continuación pulse el botón que se encuentra en el lateral de ambos dispositivos.</string>
+    <string name="help_ta_prepared">Coloquese los dispositivos en la parte exterior de ambos tobillos. Pulse <b>Play</b> cuando esté listo.</string>
+    <string name="help_ta_connecting">Conectando...</string>
 </resources>

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.emud.walkthrough.R;
-import org.emud.walkthrough.analysis.WalkDataReceiver;
+import org.emud.walkthrough.analysisservice.AnalysisService;
 import org.emud.walkthrough.gui.dialogfragment.AlertDialogFragment;
 import org.emud.walkthrough.resulttype.ResultGUIResolver;
 import org.emud.walkthrough.resulttype.ResultType;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -33,7 +34,7 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 	public void onCreate(Bundle onSavedInstanceState){
 		super.onCreate(onSavedInstanceState);
 		analystList = new ArrayList<ResultType>();
-		receiver = WalkDataReceiver.SINGLE_ACCELEROMETER;
+		receiver = AnalysisService.SINGLE_ACCELEROMETER;
 	}
 	
 	@Override
@@ -44,6 +45,8 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 		view.findViewById(R.id.receiver_radio0).setOnClickListener(this);
 		view.findViewById(R.id.receiver_radio1).setOnClickListener(this);
 		view.findViewById(R.id.newactivity_acceptbutton).setOnClickListener(this);
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+			view.findViewById(R.id.receiver_layout).setVisibility(View.GONE);
 		
 		return view;
 	}
@@ -94,10 +97,10 @@ public class NewActivityFragment extends Fragment implements OnClickListener {
 	private void onReceiverRadioClicked(int id){
 		switch(id){
 		case R.id.receiver_radio0:
-			receiver = WalkDataReceiver.SINGLE_ACCELEROMETER;
+			receiver = AnalysisService.SINGLE_ACCELEROMETER;
 			break;
 		case R.id.receiver_radio1:
-			receiver = WalkDataReceiver.TWO_ACCELEROMETERS;
+			receiver = AnalysisService.TWO_ACCELEROMETERS;
 			break;
 		}
 	}
