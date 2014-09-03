@@ -34,7 +34,8 @@ public class DeviceScanner {
 	public void stopScan(){
 		if(scanning){
 			scanning = false;
-			
+
+			android.util.Log.i("DS", "stopingScanner");
 			bluetoothAdapter.stopLeScan(scanCallback);
 		}
 	}

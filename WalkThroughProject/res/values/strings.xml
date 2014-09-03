@@ -21,7 +21,9 @@
     <string name="genderpicker_title">Sexo</string>
     <string name="drawer_open">Abrir menu</string>
     <string name="drawer_close">Cerrar menu</string>
-
+    <string name="share">Compartir</string>
+    <string name="share_with">Compartir usando...</string>
+    
     <!-- Dialog -->
     <string name="accept_label">Aceptar</string>
     <string name="cancel_label">Cancelar</string>

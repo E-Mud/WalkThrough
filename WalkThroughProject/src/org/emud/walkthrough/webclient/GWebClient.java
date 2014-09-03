@@ -201,7 +201,7 @@ public class GWebClient implements WebClient {
 		
 		data = service.insertQuery(PROJECT_ID, atts, values);
 		
-		log("data null " + (data != null));
+		log("data null " + (data == null));
 		log("data json " + data.getJSON());
 		log("data count " + (data.getCount() > 0));
 		log("data value " + (data.getValue(0, gConstants.TAG_DK) != null));

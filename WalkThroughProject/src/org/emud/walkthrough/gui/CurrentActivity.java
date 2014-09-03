@@ -118,8 +118,7 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 			switch(serviceState){
 			case AnalysisService.SERVICE_PREPARED:
 				setServiceState(service.startAnalysis());
-				if(serviceState == AnalysisService.SERVICE_RUNNING)
-					findViewById(R.id.iconStop_content).setVisibility(View.VISIBLE);
+				updateUI();
 				break;
 			case AnalysisService.SERVICE_RUNNING:
 				setServiceState(service.pauseAnalysis());
@@ -253,8 +252,8 @@ public class CurrentActivity extends WtFragmentActivity implements OnClickListen
 	@Override
 	public void onConnectingResult(Intent intent) {
 		boolean connected = intent.getBooleanExtra(AnalysisService.CONNECTED_KEY, false);
-		
-		serviceState = service.getState();
+		android.util.Log.i("CA", "onConnectingResult " + connected);
+		setServiceState(service.getState());
 		
 		connectButton.setChecked(false);
 		

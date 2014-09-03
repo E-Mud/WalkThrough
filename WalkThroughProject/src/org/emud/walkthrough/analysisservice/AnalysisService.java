@@ -115,26 +115,34 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     }
     
     private void initializeStation(WalkDataReceiver receiver){
-    	StationBuilder stationBuilder = new WAnalysisStationBuilder();
+    	StationBuilder stationBuilder = getStationBuilder();
     	station = stationBuilder.buildStation(receiver, receiverType, setResultsTypes);
 
     	currentState = SERVICE_PREPARED;
     }
     
+    protected StationBuilder getStationBuilder(){
+    	return new WAnalysisStationBuilder();
+    }
+    
     public void connectSensor(){
-    	currentState = SERVICE_CONNECTING;
-    	scanner.startScan();
-    	
-    	handler.postDelayed(new Runnable(){
-			@Override
-			public void run() {
-				AnalysisService.this.stopScanning();
-			}
-		}, SCANNING_TIME);
+    	if(currentState == SERVICE_UNSTARTED){
+    		currentState = SERVICE_CONNECTING;
+			android.util.Log.i("AS", "connectSensor");
+    		scanner.startScan();
+
+    		handler.postDelayed(new Runnable(){
+    			@Override
+    			public void run() {
+    				AnalysisService.this.stopScanning();
+    			}
+    		}, SCANNING_TIME);
+    	}
     }
     
     public void stopConnecting(){
     	if(currentState == SERVICE_CONNECTING){
+			android.util.Log.i("AS", "stopConnecting");
     		currentState = SERVICE_UNSTARTED;
     		scanner.stopScan();
     	}
@@ -144,6 +152,7 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     	stopConnecting();
     	
     	if(currentState == SERVICE_UNSTARTED){
+			android.util.Log.i("AS", "stopScanning");
     		Intent intent = new Intent();
     		intent.setAction(UpdateBroadcastReceiver.ACTION_CONNECTING_RESULT);
 
@@ -242,7 +251,13 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 		}
 	}
 
-	public void receiverBuilded(SensorTagDataReceiver receiver) {
+	public void receiverBuilt(SensorTagDataReceiver receiver) {
+		stopScanning();
+
+		monitor = new Monitor(this);
+		receiver.addOnDataReceivedListener(monitor);
+		
+		android.util.Log.i("AS", "receiverBuilt");
 		initializeStation(receiver);
 		Intent intent = new Intent(UpdateBroadcastReceiver.ACTION_CONNECTING_RESULT);
 		
@@ -250,9 +265,6 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
 		intent.putExtra(N_RECEIVER_KEY, 1);
 		
 		sendBroadcast(intent);
-		
-		monitor = new Monitor(this);
-		receiver.addOnDataReceivedListener(monitor);
 	}
 	
 	public class LocalBinder extends Binder {

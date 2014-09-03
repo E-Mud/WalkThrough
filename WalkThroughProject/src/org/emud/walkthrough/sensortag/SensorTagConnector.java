@@ -47,7 +47,7 @@ public class SensorTagConnector implements LeScanCallback, SensorTag.ConnectionL
 		if(success){
 			if(setFirstSensor(sensorTag)){
 				SensorTagDataReceiver receiver = new SensorTagDataReceiver(firstSensor, sensorTag);
-				service.receiverBuilded(receiver);
+				service.receiverBuilt(receiver);
 			}
 		}else{
 			service.sensorDisconnected();
