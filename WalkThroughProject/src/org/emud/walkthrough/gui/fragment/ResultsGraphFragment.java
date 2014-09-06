@@ -14,6 +14,7 @@ import org.emud.walkthrough.gui.ResultsQuery;
 import org.emud.walkthrough.model.Result;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -113,6 +114,8 @@ public class ResultsGraphFragment extends Fragment implements LoaderCallbacks<Li
 		            ViewGroup.LayoutParams.MATCH_PARENT,
 		            ViewGroup.LayoutParams.WRAP_CONTENT));
 			graphView.setCustomLabelFormatter(labelFormatter);
+			graphView.getGraphViewStyle().setHorizontalLabelsColor(Color.GRAY);
+			graphView.getGraphViewStyle().setVerticalLabelsColor(Color.GRAY);
 			container.addView(graphView);
 		}else{
 			graphView.removeAllSeries();

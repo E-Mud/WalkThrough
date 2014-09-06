@@ -42,6 +42,9 @@ public class ResultListAdapter<T extends Result> extends ArrayAdapter<T> {
 	    label = (TextView) convertView.findViewById(R.id.listitem_result_value);
 	    label.setText(result.valueAsString());
 	    
+	    label = (TextView) convertView.findViewById(R.id.listitem_result_unit);
+	    label.setText(result.getType().getGUIResolver().getUnitResource());
+	    
 	    return convertView;
 	}
 }

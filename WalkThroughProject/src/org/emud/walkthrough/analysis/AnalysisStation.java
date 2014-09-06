@@ -17,20 +17,43 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	private Dispatcher dispatcher;
 	private LinkedBlockingQueue<AccelerometerData> dataQueue;
 	private AnalysisState state;
+	private List<Filter> filters;
 	
 	/**
 	 * Constructor de AnalysisStation. Se recomienda usar la clase estatica StationBuilder en su lugar.
 	 * @param dr Receptor de datos.
-	 * @param listAnalysts Lista de Analyst que realizarán los análisis a partir de los datos recibidos.
+	 * @param analystList Lista de Analyst que realizarán los análisis a partir de los datos recibidos.
 	 */
-	public AnalysisStation(WalkDataReceiver dr, ArrayList<Analyst> listAnalysts){
+	public AnalysisStation(WalkDataReceiver dr, List<Analyst> analystList){
 		walkDataReceiver = dr;
-		analysts = new ArrayList<Analyst>(listAnalysts);
+		analysts = new ArrayList<Analyst>(analystList);
 		dataQueue = new LinkedBlockingQueue<AccelerometerData>();
+		filters = new ArrayList<Filter>();
 		state = AnalysisState.PREPARED;
 	}
 	
-	private void dispatch(AccelerometerData data) {
+	/**
+	 * Constructor de AnalysisStation. Se recomienda usar la clase estatica StationBuilder en su lugar.
+	 * @param dr Receptor de datos.
+	 * @param analystList Lista de Analyst que realizarán los análisis a partir de los datos recibidos.
+	 */
+	public AnalysisStation(WalkDataReceiver dr, List<Analyst> analystList, List<Filter> filterList){
+		walkDataReceiver = dr;
+		analysts = new ArrayList<Analyst>(analystList);
+		dataQueue = new LinkedBlockingQueue<AccelerometerData>();
+		filters = new ArrayList<Filter>(filterList);
+		state = AnalysisState.PREPARED;
+	}
+	
+	private void dispatch(AccelerometerData accData) {
+		AccelerometerData data = accData;
+		
+		for(Filter filter : filters){
+			data = filter.filter(data);
+			if(data == null)
+				return;
+		}
+		
 		for(Analyst analyst : analysts)
 			analyst.analyzeNewData(data);
 	}
@@ -90,8 +113,11 @@ public class AnalysisStation implements WalkDataReceiver.OnDataReceivedListener{
 	public List<Result> collectResults(){
 		ArrayList<Result> results = new ArrayList<Result>();
 		
-		for(Analyst analyst : analysts)
-			results.add(analyst.getResult());
+		for(Analyst analyst : analysts){
+			Result result = analyst.getResult();
+			if(result != null)
+				results.add(result);
+		}
 		
 		return results;
 	}

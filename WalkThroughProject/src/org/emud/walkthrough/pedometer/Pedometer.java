@@ -2,6 +2,7 @@ package org.emud.walkthrough.pedometer;
 
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Analyst;
+import org.emud.walkthrough.analysisservice.GaitCycle;
 import org.emud.walkthrough.model.Result;
 
 public class Pedometer implements Analyst {
@@ -10,14 +11,17 @@ public class Pedometer implements Analyst {
 	private int nSamples, sign, peaksCount;
 	private double currentPeakValue;
 	
-	public Pedometer(){
+	private GaitCycle gaitCycle;
+	
+	public Pedometer(GaitCycle gaitCycle){
 		medianFilter = new MedianFilter(FILTER_SIZE);
 		nSamples = 0;
+		this.gaitCycle = gaitCycle;
 	}
 
 	@Override
 	public void analyzeNewData(AccelerometerData accelerometerData) {
-		double filteredAtp = medianFilter.applyFilter(accelerometerData.getData()[0]);
+		/*double filteredAtp = medianFilter.applyFilter(accelerometerData.getData()[0]);
 		
 		nSamples++;
 		
@@ -26,7 +30,10 @@ public class Pedometer implements Analyst {
 			
 			if(sign == 1 && filteredAtp > currentPeakValue)
 				currentPeakValue = filteredAtp;
-		}
+		}*/
+		
+		if(gaitCycle.cycleCompleted(accelerometerData.getLocation()))
+			peaksCount++;
 	}
 
 	private void checkSign(double currentValue) {

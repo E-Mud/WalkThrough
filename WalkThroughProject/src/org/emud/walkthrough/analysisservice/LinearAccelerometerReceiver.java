@@ -16,7 +16,7 @@ import android.hardware.SensorManager;
  *
  */
 public class LinearAccelerometerReceiver extends WalkDataReceiver implements SensorEventListener{
-	private static final int RATIO = 220000;
+	private static final int RATIO = 220;
 	private SensorManager sensorManager;
 	private Sensor accelerometer;
 	private double[] gravity;
@@ -41,7 +41,7 @@ public class LinearAccelerometerReceiver extends WalkDataReceiver implements Sen
 
 	@Override
 	public void resumeReceiving() {
-		sensorManager.registerListener(this, accelerometer, RATIO);
+		sensorManager.registerListener(this, accelerometer, RATIO*1000);
 	}
 
 	@Override

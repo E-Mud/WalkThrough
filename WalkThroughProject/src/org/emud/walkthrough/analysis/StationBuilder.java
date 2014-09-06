@@ -2,6 +2,7 @@ package org.emud.walkthrough.analysis;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.emud.walkthrough.fallingdetection.FallingAnalyst;
@@ -31,6 +32,24 @@ public abstract class StationBuilder {
 	 */
 	public AnalysisStation buildStation(WalkDataReceiver dataReceiver, int receiverType, Set<Integer> resultsTypes){
 		AnalysisStation analysisStation;
+		List<Analyst> analystList;
+		List<Filter> filterList;
+
+		filterList = buildFilterList(receiverType, resultsTypes);
+		analystList = buildAnalystList(receiverType, resultsTypes);
+		
+		if(filterList == null){
+			analysisStation = new AnalysisStation(dataReceiver, analystList);
+		}else{
+			analysisStation = new AnalysisStation(dataReceiver, analystList, filterList);
+		}
+		
+		dataReceiver.addOnDataReceivedListener(analysisStation);
+		
+		return analysisStation;
+	}
+	
+	protected List<Analyst> buildAnalystList(int receiverType, Set<Integer> resultsTypes){
 		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
 		
 		for(Integer resultType : resultsTypes){
@@ -39,21 +58,11 @@ public abstract class StationBuilder {
 				analystList.add(analyst);
 		}
 		
-		analysisStation = new AnalysisStation(dataReceiver, analystList);
-		dataReceiver.addOnDataReceivedListener(analysisStation);
-		
-		return analysisStation;
+		return analystList;
 	}
-
-	public AnalysisStation buildFallingDetector(WalkDataReceiver dataReceiver, OnFallDetectedListener listener){
-		AnalysisStation analysisStation;
-		ArrayList<Analyst> analystList = new ArrayList<Analyst>();
-		
-		analystList.add(new FallingAnalyst(listener));
-		analysisStation = new AnalysisStation(dataReceiver, analystList);
-		dataReceiver.addOnDataReceivedListener(analysisStation);
-		
-		return analysisStation;
+	
+	protected List<Filter> buildFilterList(int receiverType, Set<Integer> resultsTypes){
+		return null;
 	}
 	
 	public abstract Analyst buildAnalyst(int resultType, int receiverType);

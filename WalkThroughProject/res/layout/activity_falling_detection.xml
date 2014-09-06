@@ -40,7 +40,7 @@
 
     <ToggleButton
         android:id="@+id/falling_detection_onoff"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/linearLayout1"
         android:layout_alignParentBottom="true"

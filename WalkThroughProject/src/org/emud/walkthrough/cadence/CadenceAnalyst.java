@@ -2,6 +2,7 @@ package org.emud.walkthrough.cadence;
 
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Analyst;
+import org.emud.walkthrough.analysisservice.GaitCycle;
 import org.emud.walkthrough.model.Result;
 import org.emud.walkthrough.pedometer.Steps;
 import org.emud.walkthrough.pedometer.Pedometer;
@@ -12,8 +13,8 @@ public class CadenceAnalyst implements Analyst {
 	private long nSamples;
 	private int ratio;
 	
-	public CadenceAnalyst(){
-		pedometer = new Pedometer();
+	public CadenceAnalyst(GaitCycle gaitCycle){
+		pedometer = new Pedometer(gaitCycle);
 		nSamples = 0;
 		ratio = -1;
 	}
@@ -21,7 +22,8 @@ public class CadenceAnalyst implements Analyst {
 	@Override
 	public void analyzeNewData(AccelerometerData accelerometerData) {
 		pedometer.analyzeNewData(accelerometerData);
-		nSamples++;
+		if(accelerometerData.getLocation() != AccelerometerData.LOCATION_LEFT_ANKLE)
+			nSamples++;
 		if(ratio == -1)
 			ratio = accelerometerData.getRatio();
 	}
@@ -29,15 +31,14 @@ public class CadenceAnalyst implements Analyst {
 	@Override
 	public Result getResult() {
 		double cadence;
-		double analysisTime = (nSamples * ratio) / 60000000;
-		
+		double analysisTime = (nSamples * ratio) / 60000.0;
+
 		if(analysisTime >= MIN_TIME){
 			cadence = ((Steps) pedometer.getResult()).getSteps()/analysisTime;
+			return new Cadence(cadence);
 		}else{
-			cadence = 0;
-		}
-		
-		return new Cadence(cadence);
+			return null;
+		}		
 	}
 
 }

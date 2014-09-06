@@ -122,7 +122,7 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     }
     
     protected StationBuilder getStationBuilder(){
-    	return new WAnalysisStationBuilder();
+    	return new WAnalysisStationBuilder(receiverType);
     }
     
     public void connectSensor(){

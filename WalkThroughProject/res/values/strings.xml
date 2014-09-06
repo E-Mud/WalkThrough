@@ -97,7 +97,7 @@
     <string name="title_activity_detail">Actividad</string>
 
     <!-- Regualrity -->
-    <string name="rt_regularity_title">Regularidad.</string>
+    <string name="rt_regularity_title">Regularidad</string>
     <string name="rt_regularity_unit"></string>
     
     <!-- Podometro -->
