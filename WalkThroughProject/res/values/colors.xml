@@ -8,5 +8,6 @@
     <color name="result_cadence">#63B359</color>
     <color name="result_regularity">#DB6D6D</color>
     <color name="result_speed">#DBC86D</color>
+    <color name="result_length">#226666</color>
     
 </resources>

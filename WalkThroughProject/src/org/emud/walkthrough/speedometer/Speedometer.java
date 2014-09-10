@@ -5,11 +5,11 @@ import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.model.Result;
 
 public class Speedometer implements Analyst {
-	private double speedSum, currentSpeed;
+	private double speedSum;
 	private int nSamples;
 	
 	public Speedometer(){
-		speedSum = currentSpeed = 0.0d;
+		speedSum = 0.0d;
 		nSamples = 0;
 	}
 
@@ -17,8 +17,10 @@ public class Speedometer implements Analyst {
 	public void analyzeNewData(AccelerometerData accelerometerData) {
 		double forwardAcceleration = accelerometerData.getData()[0];
 		
-		currentSpeed += forwardAcceleration;
-		speedSum += currentSpeed;
+		if(nSamples >= 5){
+			speedSum += 0.05*forwardAcceleration;
+		}
+		
 		nSamples++;
 	}
 

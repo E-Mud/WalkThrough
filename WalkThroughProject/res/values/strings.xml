@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">WalkThrough</string>
+    <string name="app_name">Gait Analyzer</string>
     <string name="title_activity_register">Registro</string>
     <string name="title_activity_log_in">Log In</string>
     <string name="title_activity_settings">Preferencias</string>
@@ -96,9 +96,15 @@
     <!-- Detail Activity -->
     <string name="title_activity_detail">Actividad</string>
 
-    <!-- Regualrity -->
+    <!-- Regularity -->
     <string name="rt_regularity_title">Regularidad</string>
+    <string name="rt_regularity_long_title">Regularidad de paso</string>
     <string name="rt_regularity_unit"></string>
+    
+    <!-- Distancia de paso -->
+    <string name="rt_length_title">Longitud</string>
+    <string name="rt_length_long_title">Longitud media de paso</string>
+    <string name="rt_length_unit">cm</string>
     
     <!-- Podometro -->
     <string name="rt_steps_title">Podómetro</string>

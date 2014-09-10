@@ -11,6 +11,7 @@ import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.analysis.WalkDataReceiver;
 import org.emud.walkthrough.analysisservice.ScreenBroadcastReceiver.ScreenOnOffListener;
 import org.emud.walkthrough.model.Result;
+import org.emud.walkthrough.model.User;
 import org.emud.walkthrough.model.WalkActivity;
 import org.emud.walkthrough.monitor.Monitor;
 import org.emud.walkthrough.sensortag.DeviceScanner;
@@ -122,7 +123,8 @@ public class AnalysisService extends Service implements ScreenOnOffListener{
     }
     
     protected StationBuilder getStationBuilder(){
-    	return new WAnalysisStationBuilder(receiverType);
+    	User user = ((WalkThroughApplication) getApplicationContext()).getUserDataSource().getProfile();
+    	return new WAnalysisStationBuilder(receiverType, user.getLegLength());
     }
     
     public void connectSensor(){

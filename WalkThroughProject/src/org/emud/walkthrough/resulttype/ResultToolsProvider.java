@@ -2,6 +2,8 @@ package org.emud.walkthrough.resulttype;
 
 import org.emud.walkthrough.cadence.CadenceFactory;
 import org.emud.walkthrough.cadence.CadenceGUI;
+import org.emud.walkthrough.length.LengthFactory;
+import org.emud.walkthrough.length.LengthGUI;
 import org.emud.walkthrough.pedometer.StepsCountFactory;
 import org.emud.walkthrough.pedometer.StepsGUI;
 import org.emud.walkthrough.regularity.RegularityFactory;
@@ -51,7 +53,10 @@ public class ResultToolsProvider {
 			return new SpeedFactory();
 		case RT_CADENCE:
 			return new CadenceFactory();
-		default: return null;
+		case RT_LENGTH:
+			return new LengthFactory();
+		default:
+			return null;
 		}
 	}
 	
@@ -81,6 +86,8 @@ public class ResultToolsProvider {
 			return new SpeedGUI();
 		case RT_CADENCE:
 			return new CadenceGUI();
+		case RT_LENGTH:
+			return new LengthGUI();
 		default: return null;
 		}
 	}

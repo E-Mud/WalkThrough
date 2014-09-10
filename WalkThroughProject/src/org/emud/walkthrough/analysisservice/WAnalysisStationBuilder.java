@@ -8,6 +8,7 @@ import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.analysis.Filter;
 import org.emud.walkthrough.analysis.StationBuilder;
 import org.emud.walkthrough.cadence.CadenceAnalyst;
+import org.emud.walkthrough.length.MeanLengthAnalyst;
 import org.emud.walkthrough.pedometer.Pedometer;
 import org.emud.walkthrough.regularity.RegularityAnalyst;
 import org.emud.walkthrough.resulttype.ResultType;
@@ -16,9 +17,11 @@ import org.emud.walkthrough.speedometer.Speedometer;
 
 public class WAnalysisStationBuilder extends StationBuilder {
 	private GaitCycle gaitCycle;
+	private double userLegLength;
 	
-	public WAnalysisStationBuilder(int receiverType){
+	public WAnalysisStationBuilder(int receiverType, double legLength){
 		gaitCycle = new GaitCycle(receiverType);
+		userLegLength = legLength;
 	}
 
 	@Override
@@ -41,6 +44,8 @@ public class WAnalysisStationBuilder extends StationBuilder {
 			return new Speedometer();
 		case RT_CADENCE:
 			return new CadenceAnalyst(gaitCycle);
+		case RT_LENGTH:
+			return new MeanLengthAnalyst(gaitCycle, userLegLength);
 		default:
 			return null;
 		}
