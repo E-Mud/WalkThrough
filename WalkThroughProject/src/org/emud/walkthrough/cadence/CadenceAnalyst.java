@@ -34,7 +34,9 @@ public class CadenceAnalyst implements Analyst {
 		double analysisTime = (nSamples * ratio) / 60000.0;
 
 		if(analysisTime >= MIN_TIME){
-			cadence = ((Steps) pedometer.getResult()).getSteps()/analysisTime;
+			double samplesPerMin = 60000/(double)ratio,
+					stepsPerSample = ((Steps) pedometer.getResult()).getSteps()/(double)nSamples;
+			cadence = samplesPerMin * stepsPerSample;
 			return new Cadence(cadence);
 		}else{
 			return null;
