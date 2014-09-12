@@ -3,6 +3,7 @@ package org.emud.walkthrough.pedometer;
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Analyst;
 import org.emud.walkthrough.analysisservice.GaitCycle;
+import org.emud.walkthrough.analysisservice.MedianFilter;
 import org.emud.walkthrough.model.Result;
 
 public class Pedometer implements Analyst {

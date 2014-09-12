@@ -1,4 +1,4 @@
-package org.emud.walkthrough.pedometer;
+package org.emud.walkthrough.analysisservice;
 
 import java.util.Arrays;
 

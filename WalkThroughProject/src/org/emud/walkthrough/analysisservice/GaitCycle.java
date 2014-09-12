@@ -2,7 +2,6 @@ package org.emud.walkthrough.analysisservice;
 
 import org.emud.walkthrough.analysis.AccelerometerData;
 import org.emud.walkthrough.analysis.Filter;
-import org.emud.walkthrough.pedometer.MedianFilter;
 
 public class GaitCycle implements Filter {
 	private static final int FILTER_SIZE = 5;
